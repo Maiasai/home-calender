@@ -36,5 +36,11 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+generated/
 .env
 .env
+my-app_old_20260112/
+
+# local prisma dev db
+prisma/dev.db
+prisma/dev.db.*

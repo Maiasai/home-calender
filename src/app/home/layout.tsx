@@ -1,22 +1,34 @@
-//【クライアント】全ページ共通ヘッダー
+//【クライアント】レイアウト
 
-import Link from "next/link";
+'use client'
 
-const header = () =>{
+import Header from "../_components/Header";
+import { useRouteGuard } from "./hooks/useRouteGuard";
+import { useSupabaseSession } from "./hooks/useSupabaseSession";
+
+
+
+const RootLayout = ({ children }: { children: React.ReactNode }) =>{
+  useRouteGuard()
+  const { session , isLoading } = useSupabaseSession()
+  
+  if ( isLoading ) return <p>読み込み中…</p>
   
   return(
-    <nav className="mt-20 w-full">
-      <div className="flex justify-center w-[1200px] mx-auto">
-      <Link href="/">献立</Link>
-      <Link href="/">レシピ</Link>
-      <Link href="/">買い物リスト</Link>
-      <Link href="/">マイページ</Link>
-      </div>
-    </nav>
+    <div>
+
+      <nav className="!font-hui">
+        <Header />{/* Header.tsx で定義したコンポーネントを ここに表示する */}
+      </nav>
+
+      <main>
+        {children}{/*ここに page.tsx の表示結果が入る */}
+      </main>
+    </div>
 
   )
-
 }
 
 
-export default header;
+export default RootLayout;
+

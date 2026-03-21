@@ -1,15 +1,20 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 //　メモ）装飾（ ?　）がない行は必須（null不可になる）
+// @map→ Prisma ⇄ DB の変換のためのもの。フロントでの名称は自由。API側でPrisma表記に直せばOK
+//@default(cuid()) →APIでそのモデル内のcreateをするたびに、idを自動生成するという意味
 
-generator client {
+generator client { //（生成の指示）「Prisma Client（JS/TS用）を生成するプログラム（prisma-client-js）を使ってね」
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
-datasource db {
+datasource db {   //（接続先の指定）「接続先のDBは PostgreSQL だよ」※Prisma が PostgreSQL向けのSQL/接続方法で話す必要がある
   provider = "postgresql"
 }
 
+
+//modelが（箱の設計図）
 
 enum AuthProvider {
   EMAIL
@@ -28,6 +33,13 @@ enum RecipeSourceType {
   URL     // URLから
 }
 
+//献立分類
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
 
 
 model User {
@@ -38,10 +50,13 @@ model User {
   authProvider AuthProvider @map("auth_provider")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now())
 
   // relations
   recipes Recipe[]
+
+  //お気に入りテーブルとのリレーション
+  userRecipeStatus UserRecipeStatus[]
 
   @@map("users")
 }
@@ -62,23 +77,30 @@ model Ingredient {
 
 model Recipe {
   id           String           @id @default(cuid()) //主キーのこと
-  ownerUserId  String           @map("owner_user_id") //@map→Prizma上ではownerUserIdとして扱うが、DBのカラム名はowner_user_idにする
+  ownerUserId  String           @map("owner_user_id") //@map→Prizma上ではownerUserIdとして扱うが、DBのカラム名はowner_user_idにする。参照している値はuserのid
   title        String
-  category     RecipeCategory   @default(UNCLASSIFIED)
-  sourceType   RecipeSourceType @map("source_type")
-  sourceUrl    String?          @map("source_url")
+  category     RecipeCategory?  @default(UNCLASSIFIED)//実質カテゴリも任意だが、未分類がデフォルトとなるため？は不要
+  sourceType   RecipeSourceType @map("source_type")   //登録方式
+  sourceUrl    String?          @map("source_url") //URLで登録ならその元のURL
   sourceText   String?          @map("source_text")
   thumbnailUrl String?          @map("thumbnail_url")
   memo         String?
-  servings     Int?
+  servings     Int  //何人分か
 
   createdAt DateTime @default(now()) @map("created_at")　//now()→デフォルトがnowってこと。作成時刻を自動で入れる
   updatedAt DateTime @updatedAt @map("last_updated_at")　//updateAtは更新時に自動更新（自動で今の時刻になる）ってこと
 
-  ownerUser User @relation(fields: [ownerUserId], references: [id]) //意味　Recipe.owner_user_id は User.id を参照するための列
+  ownerUser User @relation(fields: [ownerUserId], references: [id]) 
+  //例）Aさんがレシピを保存したら、このリレーションを使用することでuserテーブルのidを引っ張ってきて、DBの「owner_user_id」に保存できるという意味。
 
   recipeIngredients RecipeIngredient[]
   recipeSteps       RecipeStep[]
+
+  //お気に入りテーブルとのリレーション
+  userRecipeStatus UserRecipeStatus[] 
+
+  //献立カレンダーとのリレーション
+  menuRecipes MenuRecipe[]
 
   @@map("recipes")
 }
@@ -89,7 +111,8 @@ model RecipeIngredient {
   recipeId     String   @map("recipe_id")
   ingredientId String   @map("ingredient_id")
 
-  quantityText String   @map("quantity_text")
+  quantityText Float   @map("quantity_text")//材料の量カラム
+  unitId String//材料の単位カラム
   isSeasoning  Boolean  @default(false) @map("is_seasoning")
   sortOrder    Int      @map("sort_order")
 
@@ -97,6 +120,7 @@ model RecipeIngredient {
 
   recipe     Recipe     @relation(fields: [recipeId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  unit Unit @relation(fields:[unitId], references:[id])
 
   @@map("recipe_ingredients")
 }
@@ -109,7 +133,62 @@ model RecipeStep {
   sortOrder        Int      @map("sort_order")
   createdAt        DateTime @default(now()) @map("created_at")
 
-  recipe Recipe @relation(fields: [recipeId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id]) 
 
   @@map("recipe_steps")
+}
+
+//材料単位テーブル
+model Unit {
+  id String @id @default(cuid())
+  name String  // 本 個 g ml
+  recipeIngredients RecipeIngredient[]
+}
+
+//お気に入りテーブル
+
+model UserRecipeStatus {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+
+  isFavorite       Boolean @default(false)//お気に入り
+  hasCooked        Boolean @default(false)//作ったことある
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId]) // 1ユーザー1レシピで1行
+  @@map("user_recipe_status")
+}
+
+//その日の献立を渡すテーブル
+model Menu {
+  id        String       @id @default(uuid())//献立自体のid
+  userId    String//この献立が誰のものか
+  date      DateTime     @db.Date//献立の日付→@db.Date を付けると「2026-03-20 14:22:33」が「2026-03-20」だけになる
+  createdAt DateTime     @default(now())//献立がいつ作られたか
+
+  menuRecipes MenuRecipe[]//この献立に属するレシピ一覧（フロントで取得した時、ここに献立レシピが格納されている）
+
+  @@unique([userId, date])//これでユーザー + 日付の献立は 1つだけになります
+}
+
+//献立レシピテーブル（献立に関するレシピ情報）
+model MenuRecipe {//１日の中の1つのレシピ
+  id        String   @id @default(uuid())//MenuRecipe自体のID(MenuRecipeを個別で操作するときに使う)
+  menuId    String//どの献立に属するか（このMenuRecipeが属する献立(Menu)のID）
+  recipeId  String//どのレシピか（実際に登録されたレシピのID（Recipeテーブルのid））
+  mealType  MealType//朝昼晩
+  position  Int?//mealTypeの中での並び順
+  createdAt DateTime @default(now())
+
+  //onDeleateはMenuが削除されたらMenuRecipeも削除
+  menu   Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)//MenuRecipe は Menu に属する
+  recipe Recipe @relation(fields: [recipeId], references: [id])//献立に入ってるレシピ
+
+  @@index([menuId])//検索高速化
 }

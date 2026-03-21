@@ -2,26 +2,13 @@
 //（ファイル保存やAPIを叩くことでサーバー側のコードが再読み込みされるたびに新しいPrismaClientが作られてしまうらしい）
 
 // src/lib/prisma.ts
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '../../generated/prisma/client' //ここでgenerateされた成果物を読み込んでる
 import { PrismaPg } from "@prisma/adapter-pg";
-import pkg from "pg";
 
-const { Pool } = pkg;
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL
+})
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
+export const prisma = new PrismaClient({ adapter })
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // まずはこれでOK（poolerでも動く）
-});
 
-export const prisma =
-  global.prisma ??
-  new PrismaClient({
-    adapter: new PrismaPg(pool),
-    log: ["error", "warn"],
-  });
-
-if (process.env.NODE_ENV !== "production") global.prisma = prisma;
