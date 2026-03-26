@@ -4,6 +4,10 @@ import requireUser from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+interface CoockedRequestBody {
+  hasCooked:boolean
+}
+
 export const PATCH = async(//PATCHは一部だけ更新
   request:NextRequest,
   {params}:{params:{id:string}}
@@ -12,9 +16,9 @@ export const PATCH = async(//PATCHは一部だけ更新
   try{
     const user = await requireUser()
 
-    const body = await request.json()//フロントからきたデータを読む
+    const body:CoockedRequestBody = await request.json()//フロントからきたデータを読む
     const { hasCooked } = body
-    const recipeId = params.id;
+    const recipeId = params.id;//レシピidは引数からやってきたものを使用
 
     const result = await prisma.userRecipeStatus.upsert({ //upsert→存在すればupdate、なければcreate
       where : {

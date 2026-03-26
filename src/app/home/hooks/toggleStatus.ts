@@ -1,16 +1,18 @@
-
 //FavoriteButtonもしくはCookedButtonが走ったあと、ここの関数が実行
-
-'use client'
+//レシピ ID と、どのステータスを更新するか（お気に入り or 作った）を送る関数
 
 import { RecipeData } from "@/app/_components/recipe/_types/RecipeTypes";
 import { KeyedMutator } from "swr/_internal";
 
 
+type CookedAndIsFavoriteRequestBody ={
+  isFavorite?: boolean
+  hasCooked?: boolean
+}
 
 //「この関数に渡せる文字列はこの2つだけですよ」という制約
 type StatusKey =
- "isFavorite" | "hasCooked";
+  "isFavorite" | "hasCooked";
 
 const toggleStatus = async(
   id:string,// ← recipe.id レシピID
@@ -39,18 +41,21 @@ const toggleStatus = async(
         }
       }
       return reciper//APIを再取得しない（SWRキャッシュだけ更新）
-      })
+    })
     },false)
 
     //API更新
     const apiPath = key === "isFavorite" ? "favorite" : "cooked";//（意味）もしkeyがisFavoriteならfavorite、それ以外ならcooked
+
+    //送られてきたお気に入り（true/false）状態を!で反転→PATCHでAPIからDB更新
+    const requestBody : CookedAndIsFavoriteRequestBody = {
+      [key]: !current
+    };
+
     await fetch(`/api/recipes/${id}/${apiPath}`,{
       method:"PATCH",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        [key]:!current,//送られてきたお気に入り（true/false）状態を!で反転→PATCHでAPIからDB更新
-        //APIはhasCookedを期待しているので、ここはhasCooked
-      }),
+      body:JSON.stringify(requestBody),
     });
     mutate();//SWRのデータを再取得する命令（GET /api/recipes）→最新のisFavorite/hasCookedがUIに反映
   };

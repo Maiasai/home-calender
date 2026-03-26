@@ -1,14 +1,34 @@
+//サインアップAPI
 import requireUser from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { AuthProvider } from "generated/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
+interface SignupRequestBody {
+  nickname:string
+  phoneNumber:string
+}
+
 export const POST = async (request: NextRequest) => {
   try {
     const user = await requireUser()
-    const body = await request.json()
+    const body:SignupRequestBody = await request.json()
 
     const { nickname, phoneNumber } = body
+
+    if (!nickname || typeof nickname !== 'string') {
+      return NextResponse.json(
+        { message: 'invalid nickname' }, 
+        { status: 400 }
+      )
+    }
+
+    if (phoneNumber && !/^[0-9]{11}$/.test(phoneNumber)) {
+      return NextResponse.json(
+        { message: 'invalid phone number' }, 
+        { status: 400 }
+      )
+    }
 
     const rawProvider = user.app_metadata?.provider
 
@@ -28,9 +48,9 @@ export const POST = async (request: NextRequest) => {
         phoneNumber : phoneNumber ?? '',
         authProvider: provider
       }
-    })
-
-
+      
+    }
+  )
 
     return NextResponse.json({ ok: true })
     

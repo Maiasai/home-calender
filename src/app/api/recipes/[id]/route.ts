@@ -3,7 +3,7 @@
 
 import requireUser from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { RecipeCategory } from "generated/prisma";
+import { RecipeCategory, RecipeSourceType } from "generated/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -28,6 +28,7 @@ export const GET = async (request:NextRequest,//ここのGETやPOSTでAppRouter�
         recipeSteps : true
       }
     })
+    
     if(!recipe){//なかったら404返す=nullは返らない
       return NextResponse.json( 
         {message:"Recipe not found"},
@@ -47,22 +48,56 @@ export const GET = async (request:NextRequest,//ここのGETやPOSTでAppRouter�
 
 export const DELETE =  async(request:NextRequest,
   {params}:{params:{id:string}})=>{
-    const user = await requireUser();
+    const user = await requireUser();//Supabaseが特定したログインユーザーがここに来る
 
-    await prisma.recipe.delete({
-      where : {id:params.id},
+    const result = await prisma.recipe.deleteMany({
+      where: {//この2つの条件に一致するレコードだけ削除
+        id: params.id,
+        ownerUserId: user.id,//自分のデータだけ取る
+      },//そのデータの持ち主かをチェック
     })
+
+    if(result.count===0)
+      return NextResponse.json(
+      {message:"削除できません"},
+      {status:404}
+    )
     return NextResponse.json({message:"削除しました"})
   }
   
 
   //レシピ編集API
 
+  //schema.prisma見ながらフロントから送られてくるものを型定義(フロントがどういう形で送ってくるかを想定)
+  interface CreatePutRequestBody{
+    thumbnailImageUrl:string,
+    title:string,
+    category:RecipeCategory,
+    sourceType:RecipeSourceType,
+
+    servings:number,
+
+    ingredients:{
+      name:string,
+      amount:number,
+      unitId:string
+    }[],
+    
+    steps:{
+      recipestep:string,
+    }[]
+    memo:string,
+
+  }
+
+  
   export const PUT = async (request:NextRequest,
     {params}:{params:{id:string}})=>{
     try{
       const user = await requireUser();
-      const body = await request.json()
+      const body:CreatePutRequestBody = await request.json()
+
+      console.log("ingredients raw", body.ingredients)
 
       const recipe = await prisma.recipe.update ({
         where : {
@@ -77,22 +112,72 @@ export const DELETE =  async(request:NextRequest,
           thumbnailUrl:body.thumbnailImageUrl ?? null,
           category : body.category  ?? RecipeCategory.UNCLASSIFIED,
           sourceType : body.sourceType,
-
-          recipeIngredients:{
-            deleteMany:{ recipeId: params.id },
-            create:body.recipeIngredients
-          },
-
-          recipeSteps:{
-            deleteMany:{ recipeId: params.id },
-            create:body.recipesteps
-          }
         },
         include:{
           recipeIngredients:true,
           recipeSteps:true
         }
       })
+
+      //材料は一旦全部削除
+      await prisma.recipeIngredient.deleteMany({
+        where: { recipeId: params.id }
+      })
+
+      //再度生成
+      for(let i = 0 ; i < body.ingredients.length; i++){
+        const ing = body.ingredients[i]
+
+        await prisma.recipeIngredient.create({
+          data:{
+            quantityText:Number(ing.amount),
+            sortOrder:i,
+
+            recipe:{
+              connect:{id:params.id}
+            },
+
+            ingredient:{
+              create:{
+                name:ing.name,
+                normalizedName:ing.name
+              }
+            },
+            unit:{
+              connect:{
+                id:ing.unitId
+              }
+            }
+          }
+        })
+      }
+
+
+      //手順も全部削除
+      await prisma.recipeStep.deleteMany({
+        where: { recipeId: params.id }
+      })
+
+      for ( let i=0;i<body.steps.length;i++){
+        const step = body.steps[i]
+        
+        if (!step.recipestep?.trim()) continue
+
+        await prisma.recipeStep.create({
+          data: {
+            instructionText: step.recipestep,
+            sortOrder: i,
+            stepNumber: i + 1,
+            recipe: {
+              connect: { id: params.id }
+            }
+          }
+        })
+
+      }
+
+
+      //再度生成
 
       return NextResponse.json(
         recipe,

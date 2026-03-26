@@ -1,5 +1,5 @@
 //検索絞り込み項目（献立作成モーダル)
-
+'use client'
 
 type Props = {
   inputKeyword : string
@@ -31,10 +31,9 @@ const SearchBarSimple = ({
         className = "w-[114px] h-[34px] rounded-lg border text-[#E4A000] bg-[#FFF8EB]" 
         onClick={()=>setKeyword(inputKeyword)}  
       >
-          検索
+        検索
       </button>
     </div>
-
   )
 }
 

@@ -1,7 +1,5 @@
 //画像箇所　hook
 
-'use client'
-
 import { supabase } from "@/_libs/supabase";
 import { UseFormSetValue } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
@@ -53,7 +51,7 @@ const handleImageChange = async({ event , setValue , setPreviewUrl } : Props )=>
       .from("post_thumbnail")//supabage Storageのpost_thumbnailというパケットにあるdata.pathファイルの外部アクセスURLをくださいと指示
       .getPublicUrl(data.path).data.publicUrl;
 
-  //③formの値を管理
+    //③formの値を管理
     setValue("thumbnailImageUrl", publicUrl);
 
 }

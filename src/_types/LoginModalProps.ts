@@ -1,5 +1,4 @@
 //新規登録・ログイン　モーダルで使用
-"use client"
 
 export interface LoginModalProps {
   open : boolean

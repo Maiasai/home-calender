@@ -1,4 +1,6 @@
 //レシピカード（レシピ一覧にて表示）
+'use client'
+
 
 import Link from "next/link";
 import FavoriteButton from "../../image/FavoriteButton";
@@ -6,6 +8,7 @@ import toggleStatus from "@/app/home/hooks/toggleStatus";
 import CookedButton from "../../image/CookedButton";
 import { KeyedMutator } from "swr";
 import { RecipeData } from "../_types/RecipeTypes";
+import Image from "next/image";
 
 
 type Props = {
@@ -25,16 +28,23 @@ const RecipeCard = ({
 }:Props) => {
 
   //isFav→現在のお気に入り状態
+  //DBから取得済みのデータ が props してくる
   const isFav = !!recipe.userRecipeStatus?.[0]?.isFavorite;//!!→返ってくるものをbooleanに変換できる。undefinedの可能性もあるため、ここでfalseにしてる
-  const isCoo = !!recipe.userRecipeStatus?.[0]?.hasCooked;//DBカラムそのもの
+  const isCoo = !!recipe.userRecipeStatus?.[0]?.hasCooked;
   
+
+  const imageSrc =
+  recipe.thumbnailUrl && recipe.thumbnailUrl.trim() !== ""
+    ? recipe.thumbnailUrl
+    : "/images/noImage.jpg"
+
   return (
     <div className="relative">
 
       {isBulkMode && (
         <input
           type="checkbox"
-          className="absolute top-4 left-4 z-10 scale-150"
+          className="absolute top-4 left-4 z-10 scale-150 rounded-3xl"
           checked={selectedIds.includes(String(recipe.id))}
           onChange={(e)=>{
             e.stopPropagation()
@@ -71,18 +81,16 @@ const RecipeCard = ({
         }`}
       >
 
-        <div className="aspect-[4/3] overflow-hidden rounded-lg">
-          <img
-            src={recipe.thumbnailUrl?? undefined}
-            className="w-full h-full object-cover"
+        <div className="relative aspect-[4/4] overflow-hidden">
+          <Image
+            src={imageSrc}
+            alt="レシピ画像ない場合の画像"
+            width={100}
+            height={100}
+            className="absolute w-full h-full object-cover rounded-2xl"
           />
-        </div>
 
-        <div className="flex justify-between">
-          {recipe.title}
-
-          <div className="flex gap-x-2">
-
+          <div className="absolute flex gap-x-2 top-4 right-4">
             <FavoriteButton
               recipeId={recipe.id}
               isFavorite={isFav}
@@ -95,15 +103,18 @@ const RecipeCard = ({
               recipeId={recipe.id}
               isCooked={isCoo}
               onToggle={() =>
+                //toggleStatusがDB更新を担当
                 toggleStatus(recipe.id,isCoo,"hasCooked",mutate)
               }
             />
-
           </div>
         </div>
 
+        <div className="flex justify-between mt-1 ml-2">
+          {recipe.title}
+        </div>
+        
       </Link>
-
     </div>
   )
 }

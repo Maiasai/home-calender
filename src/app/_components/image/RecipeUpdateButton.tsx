@@ -2,14 +2,18 @@
 
 'use client'
 
+import Image from "next/image";
+
 
 const RecipeUpdateButton = () => {
   return(
-<img
-    src="/images/update.png"
-    alt="更新"
-    width={80}
-  />
+    <Image
+      src="/images/update.png"
+      alt="更新"
+      width={100}
+      height={100}
+
+    />
   )
 }
 

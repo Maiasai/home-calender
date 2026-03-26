@@ -28,8 +28,8 @@ const LoginModal = ({ open , onClose } : LoginModalProps ) => {
 
 	const router =  useRouter()
 
-	const { register , handleSubmit , formState:{errors} } = useForm<EmailFormValues>();
-	const { register:registerOtp, handleSubmit: handleSubmitOtp, formState: { errors: otpErrors } } = useForm<VerifyCodeFormValues>();
+	const { register , handleSubmit , formState:{errors,isValid,isSubmitting} } = useForm<EmailFormValues>();
+	const { register:registerOtp, handleSubmit: handleSubmitOtp, formState: { errors: otpErrors,isSubmitting:otpSubmit } } = useForm<VerifyCodeFormValues>();
 
 	if(!open) return null;
 
@@ -104,98 +104,105 @@ const LoginModal = ({ open , onClose } : LoginModalProps ) => {
 				{/* 中央の箱 */}
 				<div className= "bg-white w-[400px] p-6 rounded-lg text-left">
 
-				<button
-					onClick={onClose}>
-						×
-				</button>
+					<button
+						onClick={onClose}>
+							×
+					</button>
 
-				{step === 'select' &&  (
-				<>
-						<button
-							onClick={()=>setStep('email')}>
-									メールアドレスで続ける
-						</button>
-
-						<button
-							onClick={signInWithGoogle}>
-								Googleでサインイン
-						</button>
-					</>	
-				)}
-
-				{step === 'email' && (
-					<div>
-						<button
-							onClick={()=>setStep('select')}>
-								戻る
-						</button>
-
-						<p>
-							メールアドレス入力フォーム
-						</p>
-
-						<form
-						  onSubmit={handleSubmit(onSubmit)}//バリデーションが通ったらonSubmit(data)を呼ぶ
-						>
-							<input
-								type="email"
-								{...register("email",{//ここがinputの値管理とバリデーションを担当
-									required : "メールアドレスは必須です",
-									pattern:{
-										value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-										message: "正しいメールアドレスを入力してください"
-									}
-								})}
-								placeholder = "exsample@email.com"
-								className="border w-full p-2"
-							/>
-							 {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-
-
+					{step === 'select' &&  (
+						<>
 							<button
-								type="submit"
+								onClick={()=>setStep('email')}
 							>
-								次へ
-							</button>								
-						</form>
-
-					</div>
-				)}
-
-
-				{step === 'verifyCode' && (
-					<div>
-						<p>
-							メールに届いた認証コードを入力してください
-						</p>
-
-						<form
-						  onSubmit={handleSubmitOtp(onSubmitOtp)}
-						>
-
-							<input
-								type="text"
-								{...registerOtp("otp",{
-									required:"認証コードは必須です",
-									pattern : {
-										value : /^[0-9]{8}$/,
-										message : "8桁の数字を入力してください"
-									}
-								})}
-								placeholder="認証コードを入力"
-							/>
-							{otpErrors.otp &&<p className="text-red-500">{otpErrors.otp.message}</p> }
-
-							<button
-								type="submit"
-							>
-									確認する
+								メールアドレスで続ける
 							</button>
 
-						</form>
-					</div>
-				)} 
+							<button
+								onClick={signInWithGoogle}
+							>
+								Googleでサインイン
+							</button>
+						</>	
+					)}
 
+					{/* メールアドレス入力 */}
+					{step === 'email' && (
+						<div>
+							<button
+								onClick={()=>setStep('select')}
+							>
+								戻る
+							</button>
+
+							<p>
+								メールアドレス入力フォーム
+							</p>
+
+							<form
+								onSubmit={handleSubmit(onSubmit)}//バリデーションが通ったらonSubmit(data)を呼ぶ
+							>
+								<input
+									type="email"
+									{...register("email",{//ここがinputの値管理とバリデーションを担当
+										required : "メールアドレスは必須です",
+										pattern:{
+											value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+											message: "正しいメールアドレスを入力してください"
+										}
+									})}
+									placeholder = "exsample@email.com"
+									className="border w-full p-2"
+								/>
+								{errors.email && <p className="text-red-500">{errors.email.message}</p>}
+
+								<button
+									type="submit"
+									disabled={isSubmitting}//送信中は操作不可
+								>
+									次へ
+								</button>								
+							</form>
+						</div>
+					)}
+
+
+					{/* 認証コード確認 */}
+					{step === 'verifyCode' && (
+						<div>
+							<h1>認証コード確認</h1>
+							<p>
+								ご入力いただいたメールアドレス宛に、
+								登録を続けるための確認コードを送信しました。
+
+								メールに記載された確認コードを入力してください。
+							</p>
+
+							<form
+								onSubmit={handleSubmitOtp(onSubmitOtp)}
+							>
+
+								<input
+									type="text"
+									{...registerOtp("otp",{
+										required:"認証コードは必須です",
+										pattern : {
+											value : /^[0-9]{8}$/,
+											message : "8桁の数字を入力してください"
+										}
+									})}
+									placeholder="認証コードを入力"
+								/>
+								{otpErrors.otp &&<p className="text-red-500">{otpErrors.otp.message}</p> }
+
+								<button
+									type="submit"
+									disabled={otpSubmit}
+								>
+									確認する
+								</button>
+							</form>
+						</div>
+					)} 
 				</div>
 		</div>
 

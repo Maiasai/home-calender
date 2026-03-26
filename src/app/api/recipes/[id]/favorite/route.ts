@@ -4,6 +4,10 @@ import requireUser from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+interface FavoriteRequestBody  {
+  isFavorite:boolean
+}
+
 export const PATCH = async(//PATCHは一部だけ更新
   request:NextRequest,
   {params}:{params:{id:string}}//ここでparams.idが「/recipes/123/favorite」の123になる
@@ -12,7 +16,7 @@ export const PATCH = async(//PATCHは一部だけ更新
   try{
     const user = await requireUser()
 
-    const body = await request.json()//フロントからきたデータを読む
+    const body:FavoriteRequestBody = await request.json()//フロントからきたデータを読む
     const { isFavorite } = body
     const recipeId = params.id;
 

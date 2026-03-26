@@ -5,6 +5,9 @@ const nextConfig = {
         // ここを false にすることで Turbopack 無効化
         enabled: false
       }
-    }
+    },
+    images: {
+      domains: ['jvhkdenhnrenjwmgnrpd.supabase.co'],
+    },
   }
 export default nextConfig;

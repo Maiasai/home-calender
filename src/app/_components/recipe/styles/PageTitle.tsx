@@ -7,14 +7,14 @@ type PageTitleProps = {
 }
 
 const PageTitle = ({ children }:PageTitleProps) => {
-return(
-  <h1
-    className="w-full border-b text-xl text-center text-gray-400 my-4"
-  >
-    { children }
-  </h1>
 
-)
+  return(
+    <h1
+      className="w-full border-b text-xl text-center text-gray-400 my-4"
+    >
+      { children }
+    </h1>
+  )
 }
 
 export default PageTitle;

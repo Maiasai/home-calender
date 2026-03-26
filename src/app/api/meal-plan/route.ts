@@ -1,8 +1,8 @@
 //献立API
 
-import { supabase } from "@/_libs/supabase";
 import requireUser from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { MealType } from "generated/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -42,36 +42,57 @@ export const GET = async (request:NextRequest)=>{
         date:'asc',
       }
     })
-      return NextResponse.json(
-        mealdata,
-        {status:200}
-      )
-    }catch(error){
-      return NextResponse.json(
-        {message:'error'},
-        {status:500}
-      )
-    }
+
+    return NextResponse.json(
+      mealdata,
+      {status:200}
+    )
+
+  }catch(error){
+    return NextResponse.json(
+      {message:'error'},
+      {status:500}
+    )
+  }
 }
 
 
 //献立新規作成
+
+type RequestBody = {
+  date:string;// ← JSON では string になるので string
+  recipes:{
+    recipeId:string;
+    mealType:MealType;
+    position?:number;
+  }[]
+}
+
 export const POST = async(request:NextRequest) => {
   try{
     const user = await requireUser()//ここでユーザーを特定している
     console.log('user',user)
     const userId = user.id
 
-    const body = await request.json()
+    const body: RequestBody = await request.json()
     const {date, recipes} = body;
+    const dated = new Date(date);//jsonでstringになってしまった日付をDateに変換
+    console.log("body",body)
 
     const mealplan = await prisma.menu.create ({
       data : {//dataは　CREATE/UPDATE用
         userId,
-        date,
-        
+        date:dated,
         menuRecipes : {
-          create : recipes
+          create:recipes.map((r)=>({
+            mealType:r.mealType,
+            position:r.position,
+            recipe:{
+              connect:{
+                id:r.recipeId
+              }
+            }
+          }))
         }
       }
     })

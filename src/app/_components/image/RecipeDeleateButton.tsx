@@ -2,14 +2,17 @@
 
 'use client'
 
+import Image from "next/image";
+
 
 const RecipeDeleateButton = () => {
   return(
-<img
-    src="/images/deleate.png"
-    alt="削除"
-    width={70}
-  />
+    <Image
+      src="/images/deleate.png"
+      alt="削除"
+      width={70}
+      height={70}
+    />
   )
 }
 

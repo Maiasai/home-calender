@@ -1,12 +1,21 @@
 //献立作成モーダル（UI）　献立作成ボタン押下後に表示されるモーダル
-
 'use client'
 
 import { Dispatch, SetStateAction } from "react";
 import { MealModalStep } from "../_typs/MealModalStep";
 import { SelectedRecipe } from "../_typs/SelectedRecipe";
 import { MealType } from "../_typs/MealType";
+import Image from "next/image";
 
+
+type MealRequestBody = {
+  date: Date,
+  recipes: {
+    recipeId: string,
+    mealType: MealType,
+    position: number
+  }[]
+}
 
 
 type Props = {
@@ -15,6 +24,9 @@ type Props = {
   setSelectedRecipes : Dispatch<SetStateAction<SelectedRecipe[]>>
   onClose: () => void
   selectedDate : Date
+  isDisabled:boolean
+  hasUnassingned:boolean
+  isEmpty:boolean
 }
 
 const MealModal = ({ 
@@ -22,7 +34,10 @@ const MealModal = ({
   selectedRecipes,
   setSelectedRecipes,
   onClose,
-  selectedDate
+  selectedDate,
+  isDisabled,
+  hasUnassingned,
+  isEmpty
 }:Props) => {
   
   //カテゴリアイコン
@@ -41,6 +56,8 @@ const MealModal = ({
     }
   }
 
+
+  
   //カテゴリ分け　外枠
   const categories: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER','UNASSIGNED']
 
@@ -48,7 +65,7 @@ const MealModal = ({
   const onSubmit = async()=> {
     try{
       console.log('payload前', selectedRecipes)
-      const payload = {//API側でユーザーの特定をしているためuser.idはここでは不要
+      const payload:MealRequestBody = {//API側でユーザーの特定をしているためuser.idはここでは不要
         date : selectedDate,
         recipes : selectedRecipes.map((r,index)=>({//フロント側でmapすることで、API側でmap不要
           recipeId : r.id,
@@ -56,7 +73,7 @@ const MealModal = ({
           position: index,
         }))
       }
-      console.log('payload後', selectedRecipes)
+      console.log('payload後', payload)
 
       const res = await fetch ('/api/meal-plan',{
         method : 'POST',
@@ -81,30 +98,58 @@ const MealModal = ({
 
   return(
     <>
-      <div className="flex">
+      <div className="flex flex-col">
 
-        <button onClick={onSubmit}>
-          登録
-        </button>
+        <div className="flex justify-end w-full mb-2">
+          <button 
+            onClick={onSubmit}
+            disabled={isDisabled}
+            className={`transition
+              ${isDisabled?"opacity-50 grayscale cursor-not-allowed" : ""}`
+            }
+          >
+            <Image
+              src="/images/create.png"
+              alt="登録ボタン"
+              width={70}
+              height={70}
+            />
+          </button>
+        </div>
 
         <div className="flex items-center gap-2 ml-auto">
           <button onClick={()=>onSelect('customize')}>
-            <img
+            <Image
               src="/images/customize.png"
               alt="カスタマイズ"
               width={100}
+              height={70}
             />
           </button>
 
 
           <button onClick={()=>onSelect('recipeSelect')}>
-            <img
+            <Image
               src="/images/selectfromrecipe.png"
               alt="レシピから選択"
               width={120}
+              height={70}
             />
           </button>
         </div>
+      </div>
+      {hasUnassingned&&(
+          <p className="text-red-500 text-xs mt-1">
+            ※カテゴリが未選択のレシピがあります。
+            カスタマイズから分類してください。
+          </p>
+        )}
+
+      <div className="flex items-center justify-center w-full mt-10">
+      {/* 献立がない場合の表示 */}
+      {isEmpty&&(
+        <p>まだ献立がありません</p>
+      )}
       </div>
 
 
@@ -115,14 +160,20 @@ const MealModal = ({
           const recipesInCategory = selectedRecipes.filter(r=>r.mealType === category)//この時点でカテゴリごとにレシピが分類される
           if (recipesInCategory.length === 0) return null//そのカテゴリにレシピが1件もなかったら、カテゴリごと表示しない
 
+          const icon = getMealIcon(category)
+
           return ( 
             <div key={category}>
 
-              <img
-                src={getMealIcon(category) ?? undefined}
-                className="w-6 h-6 my-2"
-                width={20}
-              />
+              {icon && (//アイコンある時だけ表示
+                <Image
+                  src={icon}
+                  alt="カテゴリアイコン"
+                  className="w-6 h-6 my-2"
+                  width={20}
+                  height={20}
+                />
+              )}
 
               {/* レシピ画像とタイトル */}
               <div className="flex flex-col gap-4">
@@ -135,8 +186,11 @@ const MealModal = ({
 
                       {/* 画像 */}
                       <div className="w-24 aspect-[4/3] overflow-hidden">
-                        <img
+                        <Image
                           src = {r.thumbnailUrl}
+                          alt = "画像"
+                          width={100}
+                          height={100}
                           className="w-full h-full object-cover rounded-lg"
                         />
                       </div>

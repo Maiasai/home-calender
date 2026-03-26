@@ -2,6 +2,8 @@
 
 'use client'
 
+import Image from "next/image";
+
 type Props = {
   recipeId:string;
   isCooked:boolean;
@@ -16,11 +18,15 @@ return(
       onToggle(recipeId,isCooked);//レシピID,isFav→今の状態
     }}
   >
-    <img
-      src={isCooked ? "/images/bookmark01.png" : "/images/bookmark02.png"}
-      alt="作ったもの"
-      width={20}
-    />
+    <div className="bg-black/10 backdrop-blur-sm rounded-full p-1 shadow-md flex items-center justify-center">
+      <Image
+        src={isCooked ? "/images/bookmark01.png" : "/images/bookmark02.png"}
+        alt="作ったもの"
+        width={20}
+        height={20}
+        className="object-contain"
+      />
+    </div>
   </button>
 )
 }

@@ -12,19 +12,23 @@ import IngredientList from "@/app/_components/recipe/components/IngredientList"
 import MemoForm from "@/app/_components/recipe/components/MemoForm"
 import StepList from "@/app/_components/recipe/components/StepList"
 import TitleForm from "@/app/_components/recipe/components/TitleForm"
-import useSteps from "@/app/_components/recipe/hooks/useSteps"
 import PageTitle from "@/app/_components/recipe/styles/PageTitle"
 import { useSupabaseSession } from "@/app/home/hooks/useSupabaseSession"
-import { RecipeCategory, RecipeStep, Unit } from "generated/prisma"
-import Link from "next/link"
+import { RecipeCategory, Unit } from "generated/prisma"
 import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useFieldArray, useForm } from "react-hook-form"
 import useSWR from "swr"
 import { useRouter } from "next/navigation";
 import RecipeUpdateButton from "@/app/_components/image/RecipeUpdateButton"
 
 type Props = {
   params:{id:string}
+}
+
+type PutRecipeRequest = RecipeFormValues & {
+  id:string
+  category? :RecipeCategory
+  servings : Number
 }
 
 const fetcher = async(url:string) =>{
@@ -35,7 +39,6 @@ const fetcher = async(url:string) =>{
   }
   return res.json()
 }
-
 
 
 //①ユーザーが画面に入ってきたらRecipeEditコンポーネントが実行
@@ -49,36 +52,33 @@ const RecipeEdit = ({params}:Props) =>{
   const [ loading , setLoading ] = useState<boolean>(false)
 
   //編集ロジックまわり②useFormが初期化
-  const { register , setValue ,   handleSubmit  , control ,  formState :{errors,isValid,isDirty} , reset  } = useForm < RecipeFormValues > (//ここにunitは入力フォームではないから不要
+  const { register , setValue ,   handleSubmit  , control ,  formState :{errors,isValid,isDirty,isSubmitting} , reset  } = useForm < RecipeFormValues > (//ここにunitは入力フォームではないから不要
     {
-    mode : "onChange",//inputの値が変わると発火→RHFが値を検証→formState.isValid 更新　※isValidをリアルタイムで使う時だけ必要。
-    defaultValues:{
-      title:"",
-      memo:"",
-      servings: undefined,
-      thumbnailImageUrl:"",
+      mode : "onChange",//inputの値が変わると発火→RHFが値を検証→formState.isValid 更新　※isValidをリアルタイムで使う時だけ必要。
+      defaultValues:{
+        title:"",
+        memo:"",
+        servings: undefined,
+        thumbnailImageUrl:"",
 
-      ingredients : [{ 
-        name : "",
-        amount:undefined,
-        unitId:""//材料入力欄を１つ表示するためのもの
-      }],
+        ingredients : [{ 
+          name : "",
+          amount:undefined,
+          unitId:""//材料入力欄を１つ表示するためのもの
+        }],
+        steps:[
+          { recipestep: "" }
+        ]
 
-    }
+      }
     }
   )  
   
-  // 材料と手順の hooks
-  // const { ingredients ,  setIngredients, addIngredient , removeIngredient  } = useIngredients()
-  const { steps , setSteps ,  addStep , removeStep } = useSteps()
-
-  //onChangeイベント(手順)
-  const recipeStepChange = ( index : number ,  value : string ) => { //onChangeから渡ってきたデータをここの関数で受け取る
-    const newRecipeStep = [...steps]//配列をコピー(ここで新しい配列を作ることでReactに検知させる)
-    newRecipeStep[index].recipestep = value //valueをmapで送られてきた理解した流れindex番号の[field]に代入する
-    setSteps(newRecipeStep)//新しい配列でstateを更新→reactが再レンダリング→入力欄のvalueに反映される
-  }
-
+  //append / remove で配列を増減.fields で現在の数を把握
+  const { fields , append , remove } = useFieldArray({//配列フォームをRHFで管理する仕組み
+    control,
+    name: "steps"//フォームのどの配列か指定
+  })
 
   //③useSWRが発火→画面描画（まだrecipeはundefined）→⑤APIレスポンスが返る
   const{id} = params;
@@ -124,31 +124,27 @@ const RecipeEdit = ({params}:Props) =>{
             amount: ing.quantityText ?? '',
             unitId: String(ing.unit.id ?? "")//単位の初期選択値
           })
-        )
+        ),
+        steps:recipe.recipeSteps.map(
+          (stp:any)=>({
+            recipestep: stp.instructionText
+          })
+        )        
       })
       setPreviewUrl(recipe.thumbnailUrl) // ←ここでsetPreviewURLも更新
       setCategory(recipe.category); // カテゴリも state にセット
-      setSteps(recipe.recipeSteps.map( (s:RecipeStep) => ({ recipestep: s.instructionText })));
     }
-  }, [recipe, reset,setSteps])
+  }, [recipe, reset])
 
   //レシピ更新
   const onSubmit = async ( data : RecipeFormValues ) => {
     setLoading(true)//フォーム送信中
 
     //useStateとuseFormの値をsubmit時にpayloadで合体
-    const payload = {
+    const payload:PutRecipeRequest = {
       id:recipe.id,//編集の場合はどのレシピを更新するのかどうか指定が必要
       ...data, //useFormが管理しているフォームに入力された値
-      category,
-      recipesteps: steps.map((s)=>({
-        instructionText: s.recipestep
-      })),
-      recipeIngredients: data.ingredients.map((ing)=>({
-        ingredientName: ing.name,
-        quantityText: ing.amount,
-        unitId: ing.unitId
-      })),
+      category : category||undefined,
       servings: Number(data.servings) // 念のため明示的に数値化
     }
     const result = await supabase.auth.getSession()
@@ -161,7 +157,7 @@ const RecipeEdit = ({params}:Props) =>{
         headers:{
           'Content-Type':'application/json',
         },
-          body :  JSON.stringify(payload)
+        body : JSON.stringify(payload)
       })
 
       if(!res.ok){//HTTPステータスコードが200-299の時trueになる
@@ -180,7 +176,6 @@ const RecipeEdit = ({params}:Props) =>{
       console.error(err.message);
 
     }finally{
-
       setLoading(false)
     }
   };
@@ -191,7 +186,6 @@ const RecipeEdit = ({params}:Props) =>{
       const ok = confirm("変更が破棄されますがよろしいですか？")
       if (!ok) return
     }
-  
     router.push("/home/recipes")
   }
   
@@ -199,92 +193,95 @@ const RecipeEdit = ({params}:Props) =>{
   if(isLoading) return <p>読み込み中...</p>//API から recipe を取得中の状態
   if (!data) return <p>データが見つかりませんでした</p>;
 
-  return(
+  return (
     <div className="max-w-xl mx-auto px-4 gap-2 pb-24">
 
       {/* ページタイトル */}
       <PageTitle>レシピ編集</PageTitle>
 
-      
-
       <form
         onSubmit={handleSubmit(onSubmit)}
-       >
-      <div className="flex justify-between items-center mb-4">
-        <div className="mb-6">
+      >
+        <div className="flex justify-between items-center mb-4">
+          <div className="mb-6">
+            <button
+              type="button"
+              onClick={handleBack}
+            >
+              <BackIcon />
+            </button>
+          </div>
+
           <button
-            type="button"
-            onClick={handleBack}
+            type="submit" //このボタンが押されたらフォームを送信する
+
+            //|| → どちらかが true ならボタンは disabled
+            disabled={!isValid||isSubmitting}// バリデーションエラーあり or 送信中なら押せない
+            className={`transition${
+              !isValid|| isSubmitting ? "opacity-50 grayscale cursor-not-allowed" : ""
+            }`}//バリデーションエラーあり OR 送信中ならグレーアウト
           >
-            <BackIcon />
+            <RecipeUpdateButton />
           </button>
+      </div>
+
+      <div className="max-w-lg mx-auto">
+        {/* レシピ画像 */}
+        <ImageUpload
+          control={control}
+          setValue={setValue}
+          previewUrl={previewUrl}
+          setPreviewUrl={setPreviewUrl}
+        />
+
+        <div className="mt-8">
+          {/* タイトル */}
+          <TitleForm
+            registerTitle={register}
+            errors={errors}
+          />
         </div>
 
-        <button
-          type="submit" //このボタンが押されたらフォームを送信する
-        >
-          <RecipeUpdateButton />
-        </button>
-    </div>
 
-    <div className="max-w-lg mx-auto">
-      {/* レシピ画像 */}
-      <ImageUpload
-        control={control}
-        setValue={setValue}
-        previewUrl={previewUrl}
-        setPreviewUrl={setPreviewUrl}
-      />
+        {/* カテゴリ */}
+        <div className="flex justify-between mt-8">
+          <CategorySelector
+            category={category}
+            setCategory={setCategory}
+          />
+        </div>
 
-      <div className="mt-8">
-        {/* タイトル */}
-        <TitleForm
-          registerTitle={register}
-          errors={errors}
-        />
+        
+        <div className="flex flex-col space-y-10 mt-10">
+          {/* 人数・材料 (必須)*/}
+          <IngredientList
+            control={control}//{}内が親から渡すもの、左はprops名
+            register={register}
+            registerServings={register}
+            errors={errors}
+            setValue={setValue}
+            units={units}
+          />
+
+          {/* 手順 (必須) */}
+          <StepList
+            fields={fields}
+            append={append}
+            remove={remove}
+            register={register}
+            errors={errors}
+          />
+        </div>
+
+        <div className="mt-8">
+          {/* メモ */}
+          <MemoForm
+            registerMemo={register}
+          />
+        </div>
       </div>
-
-
-      {/* カテゴリ */}
-      <div className="flex justify-between mt-8">
-        <CategorySelector
-          category={category}
-          setCategory={setCategory}
-        />
-      </div>
-
-      
-      <div className="flex flex-col space-y-10 mt-10">
-      {/* 人数・材料 (必須)*/}
-      <IngredientList
-        control={control}//{}内が親から渡すもの、左はprops名
-        register={register}
-        registerServings={register}
-        errors={errors}
-        setValue={setValue}
-        units={units}
-      />
-
-      {/* 手順 (必須) */}
-      <StepList
-        steps={steps}
-        addStep={addStep}
-        removeStep={removeStep}
-        recipeStepChange={recipeStepChange}
-      />
-          
- 
-      </div>
-
-      <div className="mt-8">
-        {/* メモ */}
-        <MemoForm
-          registerMemo={register}
-        />
-      </div>
-     </div>
     </form>
-  </div>    
+    </div>    
 
 
   )

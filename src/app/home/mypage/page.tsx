@@ -1,4 +1,6 @@
-"use client";
+//マイページ
+
+'use client'
 import React from "react";
 
 

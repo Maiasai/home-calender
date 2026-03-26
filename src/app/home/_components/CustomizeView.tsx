@@ -1,73 +1,90 @@
 //献立作成モーダルにてカスタマイズ押下後の画面
-
 'use client'
 
 import { Dispatch, SetStateAction } from "react"
 import { SelectedRecipe } from "../_typs/SelectedRecipe"
 import { MealTypeExtended } from "../_typs/MealTypeExtended"
+import Image from "next/image"
 
 
 type Props = {
   selectedRecipes : SelectedRecipe[]
   setSelectedRecipes : Dispatch<SetStateAction<SelectedRecipe[]>>
   onBack : () => void 
+  isDisabled:boolean
+  hasUnassingned:boolean
+  isEmpty:boolean
 }
 
 const CustomizeView = ({ 
   selectedRecipes,
   setSelectedRecipes,
-  onBack
+  onBack,
+  isDisabled,
+  hasUnassingned,
+  isEmpty
 }:Props) => {
   
-    //レシピ内のカテゴリを変更、２件以上同じカテゴリ登録できないロジック
-    const changeMealType = (id: string, type: MealTypeExtended)=> {//type → 選択されたカテゴリ
-      setSelectedRecipes(prev => {
+  //レシピ内のカテゴリを変更、２件以上同じカテゴリ登録できないロジック
+  const changeMealType = (id: string, type: MealTypeExtended)=> {//type → 選択されたカテゴリ
+    setSelectedRecipes(prev => {
 
-        // 未以外は2件制限
-        if (type !== 'UNASSIGNED') {//選択されたカテゴリが UNASSIGNED でない場合
-          const count = prev.filter(r => r.mealType === type).length//元々の配列にあるtypeと、入ってきたタイプが同じものがいくつか。
-          if (count >= 2) return prev//そのカテゴリにすでに割り当てられているレシピが 2 件以上なら 変更を無視して元の配列を返す
-        }
-
-        //対象のレシピだけmealTypeを変更し、新しい配列をmapで作る
-        return prev.map(r =>//　r　→　元々の配列からレシピを取り出す
-          r.id === id // r.id→元々のレシピid、id→変更したいレシピのID（クリックされたやつ）
-            ? { ...r, mealType: type } // ←　一致するidがあったら　→「...r」で元のレシピをコピーして、mealType: type（クリックされたtype）で上書き
-            : r
-        )
-      })
-    }
-
-    //未分類チェック
-    const hasUnassigned = selectedRecipes.some(r=>
-      r.mealType === 'UNASSIGNED'
-    )
-
-    const handleSave = () =>{
-      if(hasUnassigned ) {
-        alert('未分類のレシピがあります')
-        return
+      // 未以外は2件制限
+      if (type !== 'UNASSIGNED') {//選択されたカテゴリが UNASSIGNED でない場合
+        const count = prev.filter(r => r.mealType === type).length//元々の配列にあるtypeと、入ってきたタイプが同じものがいくつか。
+        if (count >= 2) return prev//そのカテゴリにすでに割り当てられているレシピが 2 件以上なら 変更を無視して元の配列を返す
       }
-      try{
-        onBack()
-      }catch(e){
-        alert('保存に失敗しました')
-      }
+
+      //対象のレシピだけmealTypeを変更し、新しい配列をmapで作る
+      return prev.map(r =>//　r　→　元々の配列からレシピを取り出す
+        r.id === id // r.id→元々のレシピid、id→変更したいレシピのID（クリックされたやつ）
+          ? { ...r, mealType: type } // ←　一致するidがあったら　→「...r」で元のレシピをコピーして、mealType: type（クリックされたtype）で上書き
+          : r
+      )
+    })
+  }
+
+
+  const handleSave = () =>{
+    if(hasUnassingned) {
+      alert('未分類のレシピがあります')
+      return
     }
+    try{
+      onBack()
+    }catch(e){
+      alert('保存に失敗しました')
+    }
+  }
 
   return(
     <>
       <div className="flex flex-col gap-4">
-        <button
-          type='button'
-          onClick={handleSave}
-        >
-          <img
-            src="/images/save.png"
-            alt="保存ボタン"
-            width={70}
-          />
-        </button>
+        <div className="flex flex-row w-full justify-end">
+          <button
+            type='button'
+            onClick={handleSave}
+            disabled={isDisabled}
+            className={`transition
+              ${isDisabled? "opacity-50 grayscale cursor-not-allowed" : ""}`
+            }
+          >
+            <Image
+              src="/images/save.png"
+              alt="保存ボタン"
+              width={70}
+              height={50}
+            />
+          </button>
+        </div>
+
+        
+        <div className="flex items-center justify-center w-full mt-10">
+          {/* 献立がない場合の表示 */}
+          {isEmpty&&(
+            <p>まだ献立がありません</p>
+          )}
+        </div>
 
         {selectedRecipes?.map(recipe=>(
 
@@ -76,13 +93,16 @@ const CustomizeView = ({
             className="flex items-center gap-4"
           >
 
-          {/* 画像 */}
-          <div className="w-24 aspect-[4/3] overflow-hidden">
-            <img
-              src = {recipe.thumbnailUrl}
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
+            {/* 画像 */}
+            <div className="w-24 aspect-[4/3] overflow-hidden">
+              <Image
+                src = {recipe.thumbnailUrl}
+                alt="レシピ画像"
+                className="w-full h-full object-cover rounded-lg"
+                width={100}
+                height={100}
+              />
+            </div>
 
             <div className="flex flex-col w-full">
               <div>
@@ -114,7 +134,6 @@ const CustomizeView = ({
           </div>
         ))}
       </div>
-
     </>
   )
 }

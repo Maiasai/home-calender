@@ -1,6 +1,8 @@
 //コンポーネントヘッダー
 'use client'
 
+import Image from "next/image"
+
 
 type Props = {
   title: string
@@ -10,8 +12,8 @@ type Props = {
 }
 
 const PageHeader = ({
-   title, showBack = true, onBack , onClose 
-  }: Props)=> {
+  title, showBack = true, onBack , onClose 
+}: Props)=> {
 
   return (
     <div className="relative flex justify-center bg-white px-4 py-4 gap-4 top-0 z-10">
@@ -23,11 +25,12 @@ const PageHeader = ({
           className="absolute left-5 mt-1"
           onClick={onBack}
         >
-        <img
-          src="/images/back00.png"
-          alt="戻る"
-          width={18}
-        />
+          <Image
+            src="/images/back00.png"
+            alt="戻る"
+            width={18}
+            height={18}
+          />
       </button>
       )}
 
@@ -39,9 +42,11 @@ const PageHeader = ({
         className="absolute top-1 right-2"
         onClick={onClose}
       >
-        <img
+        <Image
           src="/images/close01.png"
+          alt="閉じるボタン"
           width={18}
+          height={18}
         />
       </button>
     </div>

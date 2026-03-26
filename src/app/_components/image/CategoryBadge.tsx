@@ -1,11 +1,10 @@
 //カテゴリアイコン（共通UI）
-
 'use client'
 
 import type { RecipeCategory } from "generated/prisma"//Prismaschemaから型だけとってきてる
 
 type Props = {
-  category: RecipeCategory
+  category: RecipeCategory | null
   active?: boolean
   onClick?: () => void
   clickable?: boolean
@@ -23,10 +22,10 @@ const CategoryBadge = ({ category, active = true, onClick , clickable }: Props) 
       <button
         type="button"//これをつけることで送信されてしまうのを伏せぐ
         onClick={clickable ? onClick : undefined}
-          className={`${base} ${
-            active
-              ? "border-red-500 bg-red-500 text-white"
-              : "border-red-500 text-red-500"
+        className={`${base} ${
+          active
+            ? "border-red-500 bg-red-500 text-white"
+            : "border-red-500 text-red-500"
         }`}
       >
         主菜

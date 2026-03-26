@@ -1,5 +1,7 @@
 //お気に入りと作ったことある絞り込み
 
+import Image from "next/image"
+
 
 type Props = {
   favoriteFilter : boolean
@@ -34,12 +36,14 @@ const FilterPanel = ({
             </div>
           </label>
         </div>
-        <img 
-          src="/images/Heart01.png"
-          alt="お気に入りアイコン"
-          width={20}
-          height={0}
-        />
+
+          <Image
+            src="/images/Heart01.png"
+            alt="お気に入りアイコン"
+            width={20}
+            height={20}
+          />
+
       </div>
 
       <div
@@ -56,12 +60,14 @@ const FilterPanel = ({
             作ったことがある絞り込み
           </div>
         </label>
-        <img 
+
+        <Image
           src="/images/bookmark01.png"
           alt="作ったことあるアイコン"
           width={20}
           height={20}
         />
+        
       </div>
     </div>
   )

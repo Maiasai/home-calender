@@ -1,12 +1,9 @@
 //手順用カスタムフック
-
-'use client'
-
 import { useState } from "react"
 
 export type Step = { 
   recipestep : string
- }
+}
 
 const useSteps = () => {
   const [ steps , setSteps ] = useState<Step[]>([{recipestep:''}])  //手順

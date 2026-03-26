@@ -1,8 +1,6 @@
 //現在のログイン状態をチェックして、ヘッダーの内容の出し分け
 //ログイン状態をチェックするために作成するカスタムhook
 
-'use client'
-
 import { supabase } from '@/_libs/supabase'
 import { Session } from '@supabase/supabase-js'
 import { usePathname } from 'next/navigation'
@@ -22,11 +20,12 @@ export const useSupabaseSession = () => {
       setSession(session)//取得したログイン情報をStateに保存
       setToken(session?.access_token || null)//ログイン済みならトークン保存。未ログインならnull
     }
+    
 
     fetcher()
   }, [pathname])//ページ遷移時、リロード、URL 変更の度にsessionを再確認するためにセット
 
   return { 
     session, isLoading: session === undefined, token
-   }
+  }
 }

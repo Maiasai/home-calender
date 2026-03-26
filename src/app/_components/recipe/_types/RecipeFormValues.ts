@@ -1,7 +1,7 @@
 //レシピ登録編集で使用（フォーム専用型定義）
 //UI入力用の構造
 
-'use client'
+import { Step } from "../hooks/useSteps"
 
 export interface RecipeFormValues {
 	title : string
@@ -14,7 +14,5 @@ export interface RecipeFormValues {
     unitId : string
   }[]
 
-  steps : {
-    description: string
-  }[]
+  steps: Step[]
 };

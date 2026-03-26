@@ -6,13 +6,15 @@
 "use client";
 import AddRecipeModalBase from "@/app/_components/recipe/AddRecipeModalBase";
 import { useRecipes } from "@/app/_components/recipe/hooks/useRecipes";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CategoryFilter } from "@/app/_components/recipe/_types/CategoryFilter";
 import ConfirmDialog from "@/app/_components/recipe/components/ConfirmDialog";
 import SearchBar from "@/app/_components/recipe/components/SearchBar";
 import CategoryFilterButtons from "@/app/_components/recipe/components/CategoryFilterButtons";
 import RecipeCard from "@/app/_components/recipe/components/RecipeCard";
 import FilterPanel from "@/app/_components/recipe/components/FilterPanel";
+import Image from "next/image";
+import { supabase } from "@/_libs/supabase";
 
 
 const RecipesPage = () => {
@@ -28,6 +30,7 @@ const RecipesPage = () => {
   const [ cookedFilter, setCookedFilter ] = useState(false);//作ったことあるフィルター
 
 
+
   //レシピ情報を取得
   //mutateはもう一度fetch("/api/recipes")する（これによってUIが更新）
   const { recipes , isLoading , isError , mutate } = useRecipes({//レンダリング時に毎回実行されるもの（setStateされ再レンダリング後に実行）
@@ -36,6 +39,16 @@ const RecipesPage = () => {
     favorite:favoriteFilter,//意味）APIパラメータ名 : UIのstate
     cooked:cookedFilter
   });    
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      console.log("ログインチェック", user)
+      console.log(await supabase.auth.getSession())
+    }
+  
+    checkUser()
+  }, [])
 
   //一括削除モード
   const handleBulkDelete = async () => {
@@ -54,6 +67,7 @@ const RecipesPage = () => {
     const data = await res.json();
     console.log("bulk-delete response:", data);
 
+    
     if (!res.ok) {
       alert("削除に失敗しました");
       return;
@@ -110,12 +124,29 @@ const RecipesPage = () => {
 
         {/* 一括操作モード */}
         {isBulkMode && (
-        <div className="flex justify-between items-center mb-1">
-          <div className="text-sm text-gray-600">
+        <div className="flex items-center mb-5 gap-3">
+          <div className="text-sm text-gray200">
             {selectedIds.length}件選択中
           </div>
 
-            <div className="flex items-center gap-x-4">
+            <div className="flex items-center gap-x-4 ml-6">
+
+              <button
+                type="button"
+                onClick={()=>setConfirmOpen(true)}
+                disabled={selectedIds.length === 0}
+                className={`transition${
+                  selectedIds.length === 0 ? "opacity-50 grayscale cursor-not-allowed" : ""
+                }`}
+              >
+                <Image
+                  src="/images/deleate.png"
+                  alt="削除ボタン"
+                  width={70}
+                  height={70}
+                />
+              </button>
+
               <button
                 type="button"
                 onClick={()=>{
@@ -123,18 +154,9 @@ const RecipesPage = () => {
                   setIsBulkMode(false)
                 }}
               >
-                キャンセル
+                <label className="text-sm">キャンセル</label>
               </button>
 
-              <button
-                type="button"
-                onClick={()=>setConfirmOpen(true)}
-              >
-                <img
-                  src="/images/deleate.png"
-                  alt="削除ボタン"
-                />
-              </button>
             </div>
         </div>
         )}  
@@ -143,6 +165,7 @@ const RecipesPage = () => {
         <div className="grid grid-cols-3 gap-6">
           { recipes?.map ( (recipe) => (
             <RecipeCard
+              key={recipe.id}
               recipe={recipe}
               isBulkMode={isBulkMode}
               selectedIds={selectedIds}

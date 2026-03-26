@@ -1,4 +1,6 @@
-"use client";
+//買い物リスト
+
+'use client'
 import React from "react";
 
 

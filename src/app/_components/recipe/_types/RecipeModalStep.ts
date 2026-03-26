@@ -1,4 +1,4 @@
-'use client'
+//レシピモーダルステップ型
 
 import type { RecipeSourceType } from "generated/prisma"//
 

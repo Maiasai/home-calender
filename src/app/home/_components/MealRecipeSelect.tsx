@@ -9,12 +9,11 @@ import SearchBarSimple from "@/app/_components/recipe/components/SearchBarSimple
 import { Dispatch, SetStateAction } from "react"
 import { RecipeData } from "@/app/_components/recipe/_types/RecipeTypes"
 import { SelectedRecipe } from "../_typs/SelectedRecipe"
+import Image from "next/image"
 
 
 type Props = {
   recipes: RecipeData[] | undefined
-
-
   isLoading : boolean 
   isError : boolean
   inputKeyword : string
@@ -49,66 +48,66 @@ const MealRecipeSelect= ({
   setCategory,
   selectedRecipes,
   setSelectedRecipes,
-  onBack,
+  onBack
 }:Props) => {
+  
+  const hasSelectedRecipes = selectedRecipes.length > 0;
+  const isDisabled = !hasSelectedRecipes;//選択なしなら非活性
 
 
-    //レシピ選択関数
-    const toggleSelect = (recipe: RecipeData)=>{//recipeは一件分のデータ（押されるごとにここを通ってくる）
-      setSelectedRecipes(prev => {//prevは今まで選択されてた、レシピオブジェクトの配列
+  //レシピ選択関数
+  const toggleSelect = (recipe: RecipeData)=>{//recipeは一件分のデータ（押されるごとにここを通ってくる）
+    setSelectedRecipes(prev => {//prevは今まで選択されてた、レシピオブジェクトの配列
 
-        const exists = prev.find(r => r.id === recipe.id)//すでに選択されているidかチェック
+      const exists = prev.find(r => r.id === recipe.id)//すでに選択されているidかチェック
 
-        // existsに入ってるid以外だけを残す（　= 選択済みのid削除）
-        if (exists) {
-          return prev.filter(r => r.id !== recipe.id)
+      // existsに入ってるid以外だけを残す（　= 選択済みのid削除）
+      if (exists) {
+        return prev.filter(r => r.id !== recipe.id)
+      }
+  
+      // 上限6件
+      if (prev.length >= 6) {
+        return prev
+      }
+  
+      // 新規追加（
+      return [//これが新しいselectedRecipesになる
+        ...prev,//今までの配列を展開
+        {//入ってきたレシピ→必要なデータだけ取り出す
+          id: recipe.id,
+          title: recipe.title,
+          thumbnailUrl: recipe.thumbnailUrl,
+          mealType: 'UNASSIGNED'//初期値は未分類
         }
-    
-        // 上限6件
-        if (prev.length >= 6) {
-          return prev
-        }
-    
-        // 新規追加（
-        return [//これが新しいselectedRecipesになる
+      ]
 
-          ...prev,//今までの配列を展開
-          {//入ってきたレシピ→必要なデータだけ取り出す
-            id: recipe.id,
-            title: recipe.title,
-            thumbnailUrl: recipe.thumbnailUrl,
-            mealType: 'UNASSIGNED'//初期値は未分類
-          }
-        ]
+    })
+  }
 
-      })
-    }
-    
 
   if(isLoading) return <p>読み込み中</p>
   if(isError) return <p>エラーが発生しました...</p>
 
   return(
-    <>
-    <div className="flex justify-between mb-4"> 
-      <button
-        type='button'
-        onClick={onBack}
-      >
-        戻る
-      </button>
-
-      <button
-        type='button'
-        onClick={onBack}
-      >
-        <img
-          src="/images/save.png"
-          alt="保存ボタン"
-          width={70}
-        />
-      </button>
-    </div>
+    <> 
+      <div className="flex flex-row w-full justify-end mb-4">
+        <button
+          type='button'
+          onClick={onBack}
+          disabled={isDisabled}
+          className={`transition
+            ${isDisabled ?"opacity-50 grayscale cursor-not-allowed" : ""}`
+          }
+        >
+          <Image
+            src="/images/save.png"
+            alt="保存ボタン"
+            width={70}
+            height={70}
+          />
+        </button>
+      </div>
   
 
       {/* 検索・絞り込み項目（レシピ一覧と検索周りに差異があるため、別コンポーネントで管理） */}
@@ -137,7 +136,7 @@ const MealRecipeSelect= ({
 
       {/* 検索結果ない場合 */}
       {!isLoading && recipes?.length === 0 && (
-      <p className="text-center mt-4">該当のレシピがありませんでした</p>
+        <p className="text-center mt-4">該当のレシピがありませんでした</p>
       )}
 
 
@@ -152,7 +151,6 @@ const MealRecipeSelect= ({
           />
         ))}
       </div>
-
     </>
   )
 }

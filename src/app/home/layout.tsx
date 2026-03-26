@@ -2,16 +2,26 @@
 
 'use client'
 
+import { useRouter } from "next/navigation";//App Router
 import Header from "../_components/Header";
 import { useRouteGuard } from "./hooks/useRouteGuard";
 import { useSupabaseSession } from "./hooks/useSupabaseSession";
+import { useEffect } from "react";
 
 
 
 const RootLayout = ({ children }: { children: React.ReactNode }) =>{
   useRouteGuard()
   const { session , isLoading } = useSupabaseSession()
-  
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && !session) {//セッションがない場合、トップ画面に遷移
+      router.push("/")
+    }
+  }, [session, isLoading, router])
+
+
   if ( isLoading ) return <p>読み込み中…</p>
   
   return(

@@ -33,11 +33,8 @@ export default function AuthCallback() {
       }
 
       // users テーブルに存在するかどうかを確認
-      const { data } = await supabase
-        .from("users")
-        .select("id")
-        .eq("id", user.id)
-        .maybeSingle()
+      const res = await fetch('/api/users/me')
+      const data = await res.json()
 
       if (data && data.id) {
         // データがある→既存ユーザー→ホーム画面に飛ばす

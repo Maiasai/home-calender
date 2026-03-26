@@ -1,5 +1,4 @@
 //レシピ登録モーダル（画面切り替え管理）
-
 'use client'
 
 import { useState } from "react"
@@ -57,7 +56,6 @@ return(
       { step === 'select' && (//ボタンが押されたらstep変更を依頼
         <AddRecipeSelect onSelect = {setStep}/> //モーダルにsetStep という関数をonSelectという名前で渡してる
       )}
-
 
       { step === 'URL' && (
         <AddRecipeUrlModal  onBack = {()=>setStep('select')} />

@@ -14,9 +14,9 @@ export const parseFraction = (input: string): number => {//複数関数をどう
 
   if (normalized.includes("/")) {
     const [numerator, denominator] = normalized.split("/").map(Number);
-    if (!isNaN(numerator) && !isNaN(denominator)) {
-      return numerator / denominator;
-    }
+      if (!isNaN(numerator) && !isNaN(denominator)) {
+        return numerator / denominator;
+      }
   }
 
   const result = parseFloat(normalized);

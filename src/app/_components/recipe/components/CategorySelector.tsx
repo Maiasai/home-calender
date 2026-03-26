@@ -1,11 +1,8 @@
 //カテゴリアイコン（選択ロジック）（登録・編集用）
-
-
 'use client'
 
 import { RecipeCategory } from "generated/prisma"
 import CategoryBadge from "../../image/CategoryBadge"
-
 
 type CategoryForm = "" | RecipeCategory
 
@@ -25,7 +22,9 @@ const CategorySelector = ({category,setCategory}:Props) => {
 
   return (
     <div>
-      <label>カテゴリを選択</label>
+      <label>
+        カテゴリを選択
+      </label>
 
       <div className="flex gap-2">
 

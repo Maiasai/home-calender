@@ -11,6 +11,7 @@ import useSWR from "swr";
 import RecipeEditButton from "@/app/_components/image/RecipeEditButton";
 import RecipeDeleateButton from "@/app/_components/image/RecipeDeleateButton";
 import type { RecipeDetail } from "@/app/_components/recipe/_types/Ingredient/RecipeDetail";
+import Image from "next/image";
 //RecipeDetail→typeを自動生成するコンポーネントのため、ここで明示的にtypeとしておく
 
 
@@ -29,7 +30,9 @@ const fetcher = async(url:string)=>{
 
 const RecipeDetail = ({params}:Props) => {
   const {id} = params;
-  const { data:recipe , error , isLoading } = useSWR<RecipeDetail>(`/api/recipes/${id}`,fetcher)
+  const { data:recipe , error , isLoading } = useSWR<RecipeDetail>(
+    `/api/recipes/${id}`,fetcher
+  )
   //ここでdata→fetchで取ったデータ
   //error→エラー情報　isLoading→取得中かどうか
 
@@ -38,6 +41,11 @@ const RecipeDetail = ({params}:Props) => {
   if (!recipe) return <p>データがありません</p>
 
   console.log("fetchで取得されたデータ",recipe)
+
+  const imageSrc =
+  recipe.thumbnailUrl && recipe.thumbnailUrl.trim() !== ""
+    ? recipe.thumbnailUrl
+    : "/images/noImage.jpg"
 
   //レシピ削除
   const router = useRouter()
@@ -52,144 +60,143 @@ const RecipeDetail = ({params}:Props) => {
   }
 
 
-return(
-  <div className="max-w-xl mx-auto pb-24">
+  return(
+    <div className="flex flex-col max-w-xl mx-auto pb-24">
 
-    {/* ページタイトル */}
-    <PageTitle>レシピ詳細</PageTitle>
-    <div>
-      <div className="flex justify-between">
-        <div>
+      {/* ページタイトル */}
+      <PageTitle>レシピ詳細</PageTitle>
+
+      <div className="flex justify-between w-full">
+        <div className="ml-2">
           <Link href="/home/recipes">
-            <BackIcon
-            />
+            <BackIcon/>
           </ Link>
         </div>
 
-          <div className="flex">
-            <button
-              onClick={()=> {
-                if (confirm("本当に削除しますか？")){
-                  deleteRecipe(recipe.id)}
-              }}
-              className="mb-2 mr-2"
-            >
-              <RecipeDeleateButton/>
-            </button>
-
-            <div className="">
-              <button
-                onClick={(e)=>editRecipe(recipe.id)}
-              >
-                <RecipeEditButton/>
-              </button>
-            </div>
-          </div>
-      </div>
-    </div>
-
-    <div className="mx-auto">
-      {/* レシピ画像 */}
-      <img
-        src={recipe.thumbnailUrl??undefined}//
-        className="relative w-full border rounded overflow-hidden flex items-center justify-center bg-gray-100"  
-      />
-
-      {/* タイトル */}
-      <nav
-        className="w-full"
-      >
-        {recipe.title}
-      </nav>
-
-      {/* カテゴリと最終更新日 */}
-      <div className="flex justify-between">
-        <label>
-        <CategoryBadge
-         category={recipe.category}
-         />
-        </label>
-
-        <label>
-          最終更新日： 
-          {new Date(recipe.updatedAt).toLocaleDateString('ja-JP')}
-        </label>
-      </div>
-
-      
-      <div className="flex flex-col space-y-10 mt-10">
-        {/* 材料 */}
-        <div className="mb-4">
-        <div>
-          <h2 className="text-lg font-semibold">
-            材料
-          </h2>
-        </div>
-        
-          <h3 className="text-base font-semibold">
-            {recipe.servings}人分
-          </h3>
-
-          {/* 材料名  ※li使う場合はulで囲う */}
-          <ul>
-          {recipe.recipeIngredients.map((ingredientdata) =>(
-          <li
-            key={ingredientdata.id}
+        <div className="flex gap-2">
+          <button
+            onClick={()=> {
+              if (confirm("本当に削除しますか？")){
+                deleteRecipe(recipe.id)}
+            }}
+            className="mb-2 mr-2"
           >
-          {/* 材料名 */}
-          <div className="flex items-center justify-between py-1 px-2 border-b">
-            <div className="w-1/2">
-              {ingredientdata.ingredient.name} 
+            <RecipeDeleateButton/>
+          </button>
 
-            </div>
-
-          {/* 量と単位 */}
-            <div className="w-1/2">
-              {ingredientdata.quantityText}
-              {ingredientdata.unit.name}
-            </div>
-          </div>
-          </li>
-          ))}
-          </ul>
-        </div>
-
-        {/* 作り方 */}
-        <div>
-          <h2 className="text-lg font-semibold">
-            作り方
-          </h2>
-
-          {/* 作り方内容 */}
-          <ul>
-            {recipe.recipeSteps.map( recipestep =>(
-            <li
-              key={recipestep.id}
+          <div className="mr-2">
+            <button
+              onClick={(e)=>editRecipe(recipe.id)}
             >
-              <div className="flex py-1 px-2 border-b">
-                <div className="mr-2">
-                  {recipestep.stepNumber}
-                  </div>
-                  {recipestep.instructionText}
-              </div>
-            </li>
-          ))}
-          </ul>
+              <RecipeEditButton/>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        {/* レシピ画像 */}
+        <div className="w-full aspect-[4/3] relative">
+          <Image
+            className="object-cover rounded-2xl"
+            alt="レシピ画像"
+            src={imageSrc}
+            fill
+          />
         </div>
 
-        {/* 作り方 */}
-        <div>
-          <h2 className="text-lg font-semibold">
-            メモ
-          </h2>
-          <p className="border-b">
-            {recipe.memo}
-          </p>
+        {/* タイトル */}
+        <nav className="w-full text-xl mt-3 font-semibold">
+          {recipe.title}
+        </nav>
+
+        {/* カテゴリと最終更新日 */}
+        <div className="flex justify-between mt-3">
+          <label>
+            <CategoryBadge
+              category={recipe.category}
+            />
+          </label>
+
+          <label className="flex items-center">
+            最終更新日： 
+            {new Date(recipe.updatedAt).toLocaleDateString('ja-JP')}
+          </label>
+        </div>
+
+        
+        <div className="flex flex-col space-y-10 mt-10">
+          {/* 材料 */}
+          <div className="mb-4">
+            <div>
+              <h2 className="text-lg font-semibold mb-3">
+                材料
+              </h2>
+            </div>
+          
+            <h3 className="text-base font-semibold mb-3">
+              {recipe.servings}人分
+            </h3>
+
+            {/* 材料名  ※li使う場合はulで囲う */}
+            <ul>
+              {recipe.recipeIngredients.map((ingredientdata) =>(
+                <li
+                  key={ingredientdata.id}
+                >
+                  {/* 材料名 */}
+                  <div className="flex items-center py-1 px-2 gap-4">
+                    <div className="border-b w-3/4">
+                      {ingredientdata.ingredient.name} 
+                    </div>
+
+                    {/* 量と単位 */}
+                    <div className="border-b w-1/4">
+                      {ingredientdata.quantityText}
+                      {ingredientdata.unit.name}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 作り方 */}
+          <div>
+            <h2 className="text-lg font-semibold">
+              作り方
+            </h2>
+
+            {/* 作り方内容 */}
+            <ul>
+              {recipe.recipeSteps.map( recipestep =>(
+                <li
+                  key={recipestep.id}
+                >
+                  <div className="flex py-1 px-2 border-b">
+                    <div className="mr-2">
+                      {recipestep.stepNumber}
+                    </div>
+                    {recipestep.instructionText}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 作り方 */}
+          <div>
+            <h2 className="text-lg font-semibold pb-5">
+              メモ
+            </h2>
+            <p className="border-b">
+              {recipe.memo}
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-)
+  )
 }
 
 export default RecipeDetail;

@@ -8,9 +8,7 @@ import { RecipeCategory } from "generated/prisma";
 
 export const runtime = "nodejs"
 
-
 export const GET = async (request:Request) =>{
-
   try{
     const user = await requireUser();
 
@@ -245,14 +243,11 @@ export const POST  = async ( request:Request ) => {
       { status : 200 })
 
   } catch ( error ) {
-     console.error ( "API ERROR:", error );
+    console.error ( "API ERROR:", error );
 
-  return NextResponse.json (
-    {
-      status : 'error' ,
-      message : error instanceof Error ? error.message : String ( error )
-    },
-    { status : 400 }
-  )
+    return NextResponse.json (
+      {status : 'error' ,message : error instanceof Error ? error.message : String ( error )},
+      { status : 400 }
+    )
   }
 }

@@ -12,6 +12,6 @@ export type RecipeDetail = Prisma.RecipeGetPayload<{
         unit: true
       }
     }
-    recipeSteps: true
+      recipeSteps: true
   }
 }>

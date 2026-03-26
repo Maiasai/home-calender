@@ -1,6 +1,6 @@
 //すべて、主菜、副菜、未分類　ボタン（レシピ一覧）
+'use client'
 
-"use client"
 import React from 'react'
 
 interface ClassificationButtonProps {
@@ -13,6 +13,7 @@ const ClassificationButton: React.FC<ClassificationButtonProps> = ({
   children,
   isActive=false,//選択中のボタンだけ色を変えられる
   onClick
+  
 }) =>{
   return(
     <button
@@ -21,7 +22,7 @@ const ClassificationButton: React.FC<ClassificationButtonProps> = ({
       className = {`w-[74px] h-[34px] rounded-lg border  ${
         isActive ? "text-white bg-[#EB8A00]":" text-[#E4A000] bg-[#FFF8EB]"
       }` }
-      >
+    >
       {children}
     </button>
   )

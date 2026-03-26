@@ -1,8 +1,8 @@
 //カテゴリ絞り込みボタン
+'use client'
 
 import ClassificationButton from "../../image/ClassificationButton";
 import { CategoryFilter } from "../_types/CategoryFilter";
-
 
 type Props = {
   category : CategoryFilter

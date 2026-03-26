@@ -13,35 +13,32 @@ import { useForm } from "react-hook-form"
 const SignupPage = () => {
   const router = useRouter()
   const [ loading , setLoading ] = useState(true)
-  const { register , handleSubmit ,formState:{errors} } = useForm<SignupData>();
+  const { register , handleSubmit ,formState:{errors,isValid,isSubmitting} } = useForm<SignupData>();
 
 
   //認証済みかチェック
-  useEffect (()=>{
+  useEffect(() => {
     const checkUser = async () => {
-      const {data:{user}}=await supabase.auth.getUser()
-
-    if (!user){
-      router.push('/')
-      return
+      const { data: { user } } = await supabase.auth.getUser()
+  
+      if (!user) {
+        router.push('/')
+        return
+      }
+  
+      const res = await fetch('/api/users/me')
+      const data = await res.json()
+  
+      if (data.user) {
+        router.push('/home')
+        return
+      }
+  
+      setLoading(false)
     }
   
-
-    const { data: existingUser } = await supabase//既存ユーザーがusersテーブルにいるかチェック
-    .from('users')
-    .select('id')
-    .eq('email', user.email)
-    .maybeSingle()
-
-    if (existingUser) {
-      router.push('/home')
-      return
-    }
-    setLoading(false)
-
-    }
     checkUser()
-  },[router])
+  }, [])
 
   //登録処理
 
@@ -55,7 +52,7 @@ const SignupPage = () => {
       },
       body: JSON.stringify(data)
     })
- 
+
       setLoading(false)
 
     if (!res.ok) {
@@ -89,7 +86,7 @@ const SignupPage = () => {
             })}
               placeholder="ニックネームを入力"
               className="border w-full p-2"
-           />
+          />
             {errors.nickname && (<p className="text-red-500">{errors.nickname.message}</p>
             )}
 
@@ -110,7 +107,10 @@ const SignupPage = () => {
 
           <button
             type = "submit"
-            className="bg-black text-white w-full py-2"
+            disabled={isSubmitting}
+            className={`"bg-black text-white w-full py-2 transition${
+              !isValid|| isSubmitting ? "opacity-50 grayscale cursor-not-allowed" : ""
+            }`}
           >
             登録してはじめる
           

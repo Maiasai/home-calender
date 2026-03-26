@@ -43,10 +43,10 @@ enum MealType {
 
 
 model User {
-  id           String       @id @default(cuid())
+  id           String @id @db.Uuid
   nickname     String
   email        String?      @unique
-  phoneNumber  String?      @map("phone_number")
+  phoneNumber  String       @map("phone_number")
   authProvider AuthProvider @map("auth_provider")
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -62,7 +62,7 @@ model User {
 }
 
 model Ingredient {
-  id             String   @id @default(cuid())
+  id             String @id @default(uuid()) @db.Uuid
   name           String
   normalizedName String   @map("normalized_name")
 
@@ -76,8 +76,8 @@ model Ingredient {
 }
 
 model Recipe {
-  id           String           @id @default(cuid()) //主キーのこと
-  ownerUserId  String           @map("owner_user_id") //@map→Prizma上ではownerUserIdとして扱うが、DBのカラム名はowner_user_idにする。参照している値はuserのid
+  id           String @id @default(uuid()) @db.Uuid //主キーのこと
+  ownerUserId  String @db.Uuid @map("owner_user_id")//@map→Prizma上ではownerUserIdとして扱うが、DBのカラム名はowner_user_idにする。参照している値はuserのid
   title        String
   category     RecipeCategory?  @default(UNCLASSIFIED)//実質カテゴリも任意だが、未分類がデフォルトとなるため？は不要
   sourceType   RecipeSourceType @map("source_type")   //登録方式
@@ -87,8 +87,8 @@ model Recipe {
   memo         String?
   servings     Int  //何人分か
 
-  createdAt DateTime @default(now()) @map("created_at")　//now()→デフォルトがnowってこと。作成時刻を自動で入れる
-  updatedAt DateTime @updatedAt @map("last_updated_at")　//updateAtは更新時に自動更新（自動で今の時刻になる）ってこと
+  createdAt DateTime @default(now()) @map("created_at")//now()→デフォルトがnowってこと。作成時刻を自動で入れる
+  updatedAt DateTime @updatedAt @map("last_updated_at")//updateAtは更新時に自動更新（自動で今の時刻になる）ってこと
 
   ownerUser User @relation(fields: [ownerUserId], references: [id]) 
   //例）Aさんがレシピを保存したら、このリレーションを使用することでuserテーブルのidを引っ張ってきて、DBの「owner_user_id」に保存できるという意味。
@@ -107,12 +107,12 @@ model Recipe {
 
 
 model RecipeIngredient {
-  id           String   @id @default(cuid())
-  recipeId     String   @map("recipe_id")
-  ingredientId String   @map("ingredient_id")
+  id           String   @id @default(uuid())
+  recipeId     String   @db.Uuid
+  ingredientId String   @db.Uuid
 
-  quantityText Float   @map("quantity_text")//材料の量カラム
-  unitId String//材料の単位カラム
+  quantityText Float    @map("quantity_text")//材料の量カラム
+  unitId       String   @db.Uuid//材料の単位カラム
   isSeasoning  Boolean  @default(false) @map("is_seasoning")
   sortOrder    Int      @map("sort_order")
 
@@ -126,8 +126,8 @@ model RecipeIngredient {
 }
 
 model RecipeStep {
-  id              String   @id @default(cuid())
-  recipeId         String   @map("recipe_id")
+  id               String   @id @default(uuid())
+  recipeId         String   @db.Uuid
   stepNumber       Int      @map("step_number")
   instructionText  String   @map("instruction_text")
   sortOrder        Int      @map("sort_order")
@@ -140,7 +140,7 @@ model RecipeStep {
 
 //材料単位テーブル
 model Unit {
-  id String @id @default(cuid())
+  id String @id @default(uuid()) @db.Uuid
   name String  // 本 個 g ml
   recipeIngredients RecipeIngredient[]
 }
@@ -148,9 +148,9 @@ model Unit {
 //お気に入りテーブル
 
 model UserRecipeStatus {
-  id        String   @id @default(cuid())
-  userId    String
-  recipeId  String
+  id        String   @id @default(uuid())
+  userId    String   @db.Uuid
+  recipeId  String   @db.Uuid
 
   isFavorite       Boolean @default(false)//お気に入り
   hasCooked        Boolean @default(false)//作ったことある
@@ -167,8 +167,8 @@ model UserRecipeStatus {
 
 //その日の献立を渡すテーブル
 model Menu {
-  id        String       @id @default(uuid())//献立自体のid
-  userId    String//この献立が誰のものか
+  id        String       @id @default(uuid()) @db.Uuid//献立自体のid
+  userId    String       @db.Uuid//この献立が誰のものか
   date      DateTime     @db.Date//献立の日付→@db.Date を付けると「2026-03-20 14:22:33」が「2026-03-20」だけになる
   createdAt DateTime     @default(now())//献立がいつ作られたか
 
@@ -180,8 +180,8 @@ model Menu {
 //献立レシピテーブル（献立に関するレシピ情報）
 model MenuRecipe {//１日の中の1つのレシピ
   id        String   @id @default(uuid())//MenuRecipe自体のID(MenuRecipeを個別で操作するときに使う)
-  menuId    String//どの献立に属するか（このMenuRecipeが属する献立(Menu)のID）
-  recipeId  String//どのレシピか（実際に登録されたレシピのID（Recipeテーブルのid））
+  menuId    String   @db.Uuid//どの献立に属するか（このMenuRecipeが属する献立(Menu)のID）
+  recipeId  String   @db.Uuid//どのレシピか（実際に登録されたレシピのID（Recipeテーブルのid））
   mealType  MealType//朝昼晩
   position  Int?//mealTypeの中での並び順
   createdAt DateTime @default(now())
