@@ -44,3 +44,6 @@ my-app_old_20260112/
 # local prisma dev db
 prisma/dev.db
 prisma/dev.db.*
+
+
+prisma/migrations/
