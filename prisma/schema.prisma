@@ -43,10 +43,10 @@ enum MealType {
 
 
 model User {
-  id           String @id @db.Uuid
+  id           String @id @default(cuid()) 
   nickname     String
-  email        String?      @unique
-  phoneNumber  String       @map("phone_number")
+  email        String      @unique
+  password     String?//すでに存在するユーザー用に ? をつける
   authProvider AuthProvider @map("auth_provider")
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -79,7 +79,7 @@ model Recipe {
   id           String @id @default(uuid()) @db.Uuid //主キーのこと
   ownerUserId  String @db.Uuid @map("owner_user_id")//@map→Prizma上ではownerUserIdとして扱うが、DBのカラム名はowner_user_idにする。参照している値はuserのid
   title        String
-  category     RecipeCategory?  @default(UNCLASSIFIED)//実質カテゴリも任意だが、未分類がデフォルトとなるため？は不要
+  category     RecipeCategory   @default(UNCLASSIFIED)//実質カテゴリも任意だが、未分類がデフォルトとなるため？は不要
   sourceType   RecipeSourceType @map("source_type")   //登録方式
   sourceUrl    String?          @map("source_url") //URLで登録ならその元のURL
   sourceText   String?          @map("source_text")
