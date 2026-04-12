@@ -50,6 +50,7 @@ return(
         title={titles[step]}//（例）step="URL"　→ url入ってきたらtitlesのurlテキストがヘッダーに設定
         showBack={step !== 'select'}//select画面だけ戻るボタン無し
         onBack={()=>setStep('select')}//戻る押すとselect画面に戻る
+        showClose
         onClose={handleClose}//×ボタン押されるとPageHeaderのonClickが発火→handleClose
       />
 

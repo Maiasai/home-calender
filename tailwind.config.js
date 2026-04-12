@@ -8,6 +8,12 @@ module.exports = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: { extend: {} },
+  theme: {
+    extend: {
+      fontFamily: {
+        hui: ["HuiFontP", "sans-serif"],
+      },
+    },
+  },
   plugins: [],
 }
