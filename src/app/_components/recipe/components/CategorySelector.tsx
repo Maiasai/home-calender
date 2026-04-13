@@ -1,7 +1,7 @@
 //カテゴリアイコン（選択ロジック）（登録・編集用）
 'use client'
 
-import { RecipeCategory } from "generated/prisma"
+import { RecipeCategory } from "@/generated/prisma"
 import CategoryBadge from "../../image/CategoryBadge"
 
 type CategoryForm = "" | RecipeCategory

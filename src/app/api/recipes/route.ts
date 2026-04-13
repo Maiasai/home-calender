@@ -4,7 +4,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import requireUser from "@/lib/auth";
-import { RecipeCategory } from "generated/prisma";
+import { RecipeCategory } from "@/generated/prisma";
 
 export const runtime = "nodejs"
 

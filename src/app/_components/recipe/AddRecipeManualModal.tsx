@@ -13,7 +13,7 @@ import TitleForm from './components/TitleForm';
 import MemoForm from './components/MemoForm';
 import { Unit } from './_types/Unit';
 import CategorySelector from './components/CategorySelector';
-import { RecipeCategory } from 'generated/prisma';
+import { RecipeCategory } from '@/generated/prisma';
 import Image from 'next/image';
 
 type Props = {

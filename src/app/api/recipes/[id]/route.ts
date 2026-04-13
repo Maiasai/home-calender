@@ -3,7 +3,7 @@
 
 import requireUser from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { RecipeCategory, RecipeSourceType } from "generated/prisma";
+import { RecipeCategory, RecipeSourceType } from "@/generated/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 

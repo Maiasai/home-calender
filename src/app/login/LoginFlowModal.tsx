@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/_libs/supabase';
 import { LoginModalProps } from '@/_types/LoginModalProps';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { VerifyCodeFormValues } from '@/_types/VerifyCodeFormValues';
 import { EmailFormValues } from '@/_types/Emailformvalues';
 import LoginSelectModal from './LoginSelectModal';
@@ -32,6 +32,13 @@ const titles = {
   resetPassword: 'パスワード再設定',
 };
 
+
+
+type CheckEmailResult = {
+  exists: boolean;
+  authProvider: 'EMAIL' | 'GOOGLE' | null;
+};
+
 const LoginFlowModal = ({
   open,
   onClose,
@@ -46,6 +53,13 @@ const LoginFlowModal = ({
   const [mode, setMode] = useState<Mode>('normal');
 
   const router = useRouter();
+
+  //モードリセット用
+  useEffect(() => {
+    if (step === 'email') {
+      setMode('normal');
+    }
+  }, [step]);
 
   //Googleで続ける場合チェック用
   useEffect(() => {
@@ -120,67 +134,66 @@ const LoginFlowModal = ({
     setStep('verifyCode');
   };
 
-  //emailに入った値がSupabase に送られる
-  const onSubmit = async (formData: EmailFormValues) => {
-    const inputEmail = formData.email;
-
+  //1.メール入力【フォームの入口】　※emailに入った値がSupabase に送られる
+  const onSubmitEmail: SubmitHandler<EmailFormValues> = async (data) => {
+    const inputEmail = data.email;
+  
     //※ここで渡されるデータ { email: "入力された値" }
     setEmail(inputEmail); //ステップ間で保持される永続的なデータ
 
-    //①まず存在チェック
+      //①まず存在チェック
     const res = await fetch('/api/users/check-email', {
       method: 'POST', //POST→データを渡して、存在するかどうか調べてもらうため（GETを使わないのは、セキュリティ的なところもある）
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: inputEmail }),
     });
-    const result = await res.json(); //これが返る→{ exists: boolean(true/false) , authProvider: ('EMAIL' | 'GOOGLE' | null　いずれか)}
+  
+    const result: CheckEmailResult = await res.json(); //これが返る→{ exists: boolean(true/false) , authProvider: ('EMAIL' | 'GOOGLE' | null　いずれか)}
+    return handleEmailFlow(email, result);
+  }
 
-    console.log('result', result);
-
-    //  モード分岐
+  //分岐する関数
+  const handleEmailFlow = async (
+    email: string,
+    result: CheckEmailResult
+  ) => {
+      // resetモード→パスワード再設定へ
     if (mode === 'reset') {
-      if (!result.exists) {
-        alert('このメールアドレスは登録されていません');
-        return;
-      }
-
-      if (result.authProvider === 'GOOGLE') {
-        alert('Googleでログインしてください');
-        return;
-      }
-
-      //パスワードリセットメール送信
-      await supabase.auth.resetPasswordForEmail(inputEmail, {
-        //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
-        redirectTo: `${window.location.origin}/?reset=1`,
-      });
-
-      alert(
-        'パスワードリセット用のメールを送信しました。\nメール内のリンクをクリックして再設定を行ってください。',
-      );
+      return handleResetEmail(email, result);
+    }
+      // 既存ユーザー→ログインへ
+    if (result.exists) {
+      setStep('login');
       return;
     }
-
-    //②Googleアカウントで登録済みのアドレスが入った場合はここでエラーを出す
-    if (result.exists) {
-      if (result.authProvider === 'GOOGLE') {
-        // Google登録済み → OTP送信を禁止
-        alert(
-          'このメールアドレスは Google アカウントで登録されています。Googleでログインしてください',
-        );
-        return; // ここで return して終了。 sendOtp を呼ばない
-      } else {
-        // 通常メール登録済みならログインステップへ
-        setStep('login');
-        return;
-      }
-    }
-
-    // ③存在しない場合は、新規メールアドレス→ OTP を送信
-    await sendOtp(inputEmail);
+      // 新規 → OTP
+    return sendOtp(email);
   };
+
+  //Reset専用
+  const handleResetEmail = async (
+    email: string,
+    result: CheckEmailResult
+  ) => {
+    if (!result.exists) {
+      alert('未登録です');
+      return;
+    }
+  //Googleアカウントで登録済みのアドレスが入った場合はここでエラーを出す
+    if (result.authProvider === 'GOOGLE') {
+      // Google登録済み → OTP送信を禁止
+      alert('このメールアドレスは Google アカウントで登録されています。Googleでログインしてください');
+      return;
+    }
+  //パスワードリセットメール送信
+    await supabase.auth.resetPasswordForEmail(email, {
+      //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
+      redirectTo: `${window.location.origin}/?reset=1`,
+    });
+  
+    alert('パスワードリセット用のメールを送信しました。\nメール内のリンクをクリックして再設定を行ってください。');
+  };
+  
 
   //認証コード入力箇所
   const onSubmitOtp = async (data: VerifyCodeFormValues) => {
@@ -263,7 +276,7 @@ const LoginFlowModal = ({
                 />
                 <MailInputModal
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={onSubmitEmail}
                   register={register}
                   errors={errors}
                   isSubmitting={isSubmitting}
@@ -372,7 +385,7 @@ const LoginFlowModal = ({
                   register={register}
                   errors={errors}
                   email={email}
-                  onSubmit={onSubmit}
+                  onSubmit={onSubmitEmail}
                   handleSubmit={handleSubmit}
                 />
               </div>

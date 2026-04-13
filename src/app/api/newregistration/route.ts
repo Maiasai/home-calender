@@ -4,7 +4,7 @@ console.log('🔥 API file loaded');
 
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { AuthProvider } from 'generated/prisma';
+import { AuthProvider } from '@/generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface SignupRequestBody {
@@ -31,6 +31,10 @@ export const POST = async (request: NextRequest) => {
     const provider: AuthProvider =
       rawProvider?.toLowerCase() === 'google' ? 'GOOGLE' : 'EMAIL';
 
+      if (!user.email) {
+        throw new Error("email is required");
+      }
+      
     await prisma.user.upsert({
       where: { id: user.id },
       update: {},

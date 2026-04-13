@@ -1,7 +1,7 @@
 //カテゴリアイコン（共通UI）
 'use client'
 
-import type { RecipeCategory } from "generated/prisma"//Prismaschemaから型だけとってきてる
+import type { RecipeCategory } from "@/generated/prisma"//Prismaschemaから型だけとってきてる
 
 type Props = {
   category: RecipeCategory | null
