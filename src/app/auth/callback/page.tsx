@@ -8,7 +8,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthCallback } from '@/app/_components/login/_hooks/useAuthCallback';
+import { useAuthCallback } from '@/app/login/_hooks/useAuthCallback';
 
 const AuthCallbackPage = () => {
   const handleAuthCallback = useAuthCallback();

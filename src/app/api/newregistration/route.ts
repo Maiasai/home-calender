@@ -3,7 +3,7 @@ import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { AuthProvider } from '@/generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { NicknameData } from '@/app/_components/login/_typs/NicknameData';
+import { NicknameData } from '@/app/login/_typs/NicknameData';
 
 export const POST = async (request: NextRequest) => {
   try {

@@ -1,0 +1,54 @@
+//ヘッダー
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import { useUserProfile } from './home/_hooks/useUserProfile';
+
+const Header = () => {
+  const router = useRouter();
+
+  const { profile } = useUserProfile();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace('/');
+  };
+
+  return (
+    <nav className="site-header mt-20 w-full">
+      <div className="flex justify-center flex-col w-[900px] mx-auto">
+        {profile && (
+          <div className="flex justify-end w-full">
+            <div className="flex items-center space-x-10">
+              {/* Reactはデータが揃ってなくても描画してしまうため、データがあるときだけ描画する(クラッシュ対策）*/}
+              {profile && <span>{profile.nickname} さんログイン中</span>}
+              <button onClick={handleLogout}>ログアウト</button>
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-center w-full">
+          <Image
+            src="/images/rogo.png"
+            alt="サイトのロゴ"
+            width={233}
+            height={51}
+          />
+
+          <div className="pt-4 ml-10 space-x-10">
+            <Link href="/home">献立</Link>
+            <Link href="/recipes">レシピ</Link>
+            <Link href="/list">買い物リスト</Link>
+            <Link href="/mypage">マイページ</Link>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Header;

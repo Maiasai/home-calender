@@ -1,7 +1,7 @@
 //LoginFlowModalのメールアドレス入力から入力されたメールアドレスが
 // DBに「存在するか」と「ログイン方法」だけ教えるを教えるAPI
 
-import { InputEmailData } from '@/app/_components/login/_typs/InputEmailData';
+import { InputEmailData } from '@/app/login/_typs/InputEmailData';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 

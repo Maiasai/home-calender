@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import LoginFlowModal from './_components/login/LoginFlowModal';
+import LoginFlowModal from './login/_components/LoginFlowModal';
 
 const Home = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
