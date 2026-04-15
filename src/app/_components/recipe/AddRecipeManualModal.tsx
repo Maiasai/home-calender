@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { RecipeFormValues } from '@/app/_components/recipe/_types/RecipeFormValues';
 import { supabase } from '@/_libs/supabase';
-import { useSupabaseSession } from '@/app/home/hooks/useSupabaseSession';
 import IngredientList from './components/IngredientList';
 import StepList from './components/StepList';
 import ImageUpload from './components/ImageUpload';
@@ -15,6 +14,8 @@ import { Unit } from './_types/Unit';
 import CategorySelector from './components/CategorySelector';
 import { RecipeCategory } from '@/generated/prisma';
 import Image from 'next/image';
+import { GetUnitsResponse } from '@/app/api/_types/GetUnitsResponse';
+import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 
 type Props = {
   onClose: () => void;
@@ -72,9 +73,8 @@ const AddRecipeManualModal = ({ onClose }: Props) => {
   useEffect(() => {
     const fetchUnits = async () => {
       const res = await fetch('/api/units');
-      const data = await res.json();
-      setUnits(data);
-      console.log('dataUI', data);
+      const data: GetUnitsResponse = await res.json();
+      setUnits(data.units);
     };
     fetchUnits();
   }, []); //[]の意味：画面が初回表示された時だけ実行
@@ -89,7 +89,6 @@ const AddRecipeManualModal = ({ onClose }: Props) => {
       servings: Number(data.servings), // 念のため明示的に数値化
     };
     const result = await supabase.auth.getSession();
-    console.log('payload', payload);
 
     try {
       const res = await fetch('/api/recipes', {

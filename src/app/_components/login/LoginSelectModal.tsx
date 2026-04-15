@@ -4,7 +4,7 @@
 
 import Image from 'next/image';
 import { ModalStep } from './_typs/ModalStep';
-import signInWithGoogle from './hooks/SignInWithGoogle';
+import signInWithGoogle from './SignInWithGoogle';
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<ModalStep>>;
@@ -15,7 +15,7 @@ const LoginSelectModal = ({ setStep }: Props) => {
     <div className="flex flex-col">
       <div className="flex justify-center mb-20">
         <Image
-          src="/images/Frame324.png"
+          src="/images/rogo.png"
           alt="サイトのロゴ"
           width={233}
           height={51}

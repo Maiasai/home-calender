@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useSupabaseSession } from './useSupabaseSession';
+import { GetMeResponse } from '@/app/api/_types/ApiResponse';
 
-type UserProfile = {
-  user: { nickname: string | null };
-};
+type UserProfile = { nickname: string | null };
 
 export const useUserProfile = () => {
   const { session, isLoading } = useSupabaseSession();
@@ -16,9 +15,9 @@ export const useUserProfile = () => {
 
     const fetchProfile = async () => {
       const res = await fetch('/api/users/me');
-      const data = await res.json();
+      const data: GetMeResponse = await res.json();
 
-      setProfile(data); // data === { nickname: 'm' }
+      setProfile(data.user ? { nickname: data.user.nickname } : null); // data === { nickname: 'm' }
     };
 
     fetchProfile();

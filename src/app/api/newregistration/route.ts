@@ -1,21 +1,14 @@
 //新規登録API
-
-console.log('🔥 API file loaded');
-
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { AuthProvider } from '@/generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-
-interface SignupRequestBody {
-  nickname: string;
-}
+import { NicknameData } from '@/app/_components/login/_typs/NicknameData';
 
 export const POST = async (request: NextRequest) => {
   try {
     const user = await requireUser();
-    const body: SignupRequestBody = await request.json();
-    console.log('🔥 requireUser start');
+    const body: NicknameData = await request.json();
 
     const { nickname } = body;
 
@@ -31,10 +24,10 @@ export const POST = async (request: NextRequest) => {
     const provider: AuthProvider =
       rawProvider?.toLowerCase() === 'google' ? 'GOOGLE' : 'EMAIL';
 
-      if (!user.email) {
-        throw new Error("email is required");
-      }
-      
+    if (!user.email) {
+      throw new Error('email is required');
+    }
+
     await prisma.user.upsert({
       where: { id: user.id },
       update: {},

@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import signInWithGoogle from './hooks/SignInWithGoogle';
+import signInWithGoogle from './SignInWithGoogle';
 import { EmailFormValues } from '@/_types/Emailformvalues';
 import {
   FieldErrors,
@@ -10,7 +10,7 @@ import {
   UseFormHandleSubmit,
   UseFormRegister,
 } from 'react-hook-form';
-import ErrorMessage from '../_components/recipe/components/ErrorMessage';
+import ErrorMessage from '../recipe/components/ErrorMessage';
 
 type Props = {
   handleSubmit: UseFormHandleSubmit<EmailFormValues>;

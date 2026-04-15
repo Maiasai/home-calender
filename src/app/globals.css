@@ -1,11 +1,10 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;/* 全体背景 */
-  --foreground: #858585;/* 全体テキスト */
+  --background: #ffffff; /* 全体背景 */
+  --foreground: #858585; /* 全体テキスト */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,8 +14,9 @@
   }
 }
 
-.site-header {/* 「class="site-header" が付いた要素に、このスタイルを当てる」 */
-  font-family: "HuiFontP", Arial, Helvetica, sans-serif;
+.site-header {
+  /* 「class="site-header" が付いた要素に、このスタイルを当てる」 */
+  font-family: 'HuiFontP', Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -31,10 +31,11 @@ body {
   }
 }
 
-@font-face { /* 「この名前のフォントがあるよ」をブラウザに登録する宣言 */
-  font-family: "HuiFontP";  /* "HuiFontP" という“ラベル”で登録*/
-  src: url("/fonts/HuiFontP29.ttf") format("truetype");
+@font-face {
+  /* 「この名前のフォントがあるよ」をブラウザに登録する宣言 */
+  font-family: 'HuiFontP'; /* "HuiFontP" という“ラベル”で登録*/
+  src: url('/fonts/HuiFontP29.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }

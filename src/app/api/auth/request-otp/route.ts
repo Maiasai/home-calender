@@ -11,6 +11,7 @@ const supabaseAdmin = createClient(
 export const POST = async (req: NextRequest) => {
   try {
     const { email } = await req.json();
+    console.log('email:', email);
 
     // ① Prismaでユーザー確認
     const user = await prisma.user.findUnique({
@@ -33,14 +34,25 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    console.log('OTP error:', error);
-
     if (error) {
-      return NextResponse.json({ message: error.message }, { status: 400 });
+      let message = error.message;
+
+      if (message.includes('For security purposes')) {
+        const match = message.match(/after (\d+) seconds/);
+
+        if (match) {
+          message = `あと${match[1]}秒後に再度お試しください`;
+        } else {
+          message = '一定時間あけてから再度お試しください';
+        }
+      }
+
+      return NextResponse.json({ message }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    //想定外エラー
     console.error(error);
     return NextResponse.json(
       { message: 'Internal Server Error' },

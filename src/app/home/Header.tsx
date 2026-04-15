@@ -4,9 +4,9 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUserProfile } from '../home/hooks/useUserProfile';
 import { supabase } from '@/_libs/supabase';
 import { useRouter } from 'next/navigation';
+import { useUserProfile } from './_hooks/useUserProfile';
 
 const Header = () => {
   const router = useRouter();
@@ -25,9 +25,7 @@ const Header = () => {
           <div className="flex justify-end w-full">
             <div className="flex items-center space-x-10">
               {/* Reactはデータが揃ってなくても描画してしまうため、データがあるときだけ描画する(クラッシュ対策）*/}
-              {profile?.user && (
-                <span>{profile.user.nickname} さんログイン中</span>
-              )}
+              {profile && <span>{profile.nickname} さんログイン中</span>}
               <button onClick={handleLogout}>ログアウト</button>
             </div>
           </div>
@@ -35,7 +33,7 @@ const Header = () => {
 
         <div className="flex justify-center w-full">
           <Image
-            src="/images/Frame324.png"
+            src="/images/rogo.png"
             alt="サイトのロゴ"
             width={233}
             height={51}

@@ -5,6 +5,7 @@
 'use client';
 
 import { supabase } from '@/_libs/supabase';
+import { GetMeResponse } from '@/app/api/_types/ApiResponse';
 import { useRouter } from 'next/navigation';
 
 type Options = {
@@ -21,9 +22,6 @@ export const useAuthCallback = () => {
     options?.setLoading?.(true);
 
     try {
-      console.log('🔥 Auth callback start');
-      console.log('window.location.href:', window.location.href);
-
       //①GoogleがユーザーOK→一時的なコードを発行
       await supabase.auth.exchangeCodeForSession(window.location.href);
 
@@ -32,8 +30,6 @@ export const useAuthCallback = () => {
         error: userError,
       } = await supabase.auth.getUser();
       //②supabaseがGoogleログインのコードをセッションに変換→これによってログイン状態になる
-
-      console.log('getUser result:', { user, userError });
 
       if (userError || !user) {
         //「エラーがある」または「ユーザーが取得できなかった」とき
@@ -59,13 +55,11 @@ export const useAuthCallback = () => {
       const res = await fetch('/api/users/me', {
         credentials: 'include', //Googleログインしたユーザーのブラウザに保存されているCookie（セッション情報）も一緒に送る
       });
-      const data = await res.json();
+      const data: GetMeResponse = await res.json();
 
       if (data.user) {
-        console.log('redirecting to /home');
         options?.onLoginSuccess?.(); // ⑤ユーザーがいて、onLoginSuccessという関数が渡されていたら、その中の処理（/homeへ遷移）を実行
       } else {
-        console.log('onSingupOpen');
         options?.onSignupOpen?.(); //⑤いなかったら新規登録モーダル
       }
     } finally {

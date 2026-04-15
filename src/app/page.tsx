@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import LoginFlowModal from './login/LoginFlowModal';
+import LoginFlowModal from './_components/login/LoginFlowModal';
 
 const Home = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
@@ -34,7 +34,7 @@ const Home = () => {
           {/* 中身 */}
           <div className="flex justify-center mb-6 mt-16 z-20">
             <Image
-              src="/images/Frame324.png"
+              src="/images/rogo.png"
               alt="サイトのロゴ"
               width={233}
               height={51}
@@ -109,6 +109,6 @@ const Home = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Home;

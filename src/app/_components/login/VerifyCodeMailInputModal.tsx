@@ -8,7 +8,7 @@ import {
   UseFormHandleSubmit,
   UseFormRegister,
 } from 'react-hook-form';
-import ErrorMessage from '../_components/recipe/components/ErrorMessage';
+import ErrorMessage from '../recipe/components/ErrorMessage';
 import { VerifyCodeFormValues } from '@/_types/VerifyCodeFormValues';
 
 type Props = {

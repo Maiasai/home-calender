@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/_libs/supabase';
 import { useState } from 'react';
 import Image from 'next/image';
-import ErrorMessage from '../_components/recipe/components/ErrorMessage';
+import ErrorMessage from '../recipe/components/ErrorMessage';
 import { Mode } from './_typs/mode';
 
 type Props = {

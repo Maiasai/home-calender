@@ -14,7 +14,10 @@ import {
   UseFormWatch,
 } from 'react-hook-form';
 import { ModalStep } from './_typs/ModalStep';
-import ErrorMessage from '../_components/recipe/components/ErrorMessage';
+import ErrorMessage from '../recipe/components/ErrorMessage';
+import { GetMeResponse } from '../../api/_types/ApiResponse';
+import { NicknameData } from './_typs/NicknameData';
+import PasswordInput from './PasswordInput';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -45,18 +48,24 @@ const NewRegistration = ({
 }: Props) => {
   const router = useRouter();
 
-  const [showPassword, setShowPassword] = useState(false); //パスワード入力欄を 表示/非表示 にする boolean
-  const [showConfirm, setShowConfirm] = useState(false);
   const [isGoogleUser, setIsGoogleUser] = useState(false);
-
-  const password = watch('password'); // password の値を常に取得
 
   // Google 連携ユーザーならパスワード欄を非表示
   useEffect(() => {
-    if (googleUserEmail) {
-      setIsGoogleUser(true);
-    }
-  }, [googleUserEmail]);
+    const checkProvider = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user?.app_metadata.provider === 'google') {
+        setIsGoogleUser(true);
+      } else {
+        setIsGoogleUser(false);
+      }
+    };
+
+    checkProvider();
+  }, []);
 
   //認証済みかチェック
   useEffect(() => {
@@ -64,7 +73,6 @@ const NewRegistration = ({
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      console.log('user before update:', user);
 
       if (!user) {
         router.push('/');
@@ -72,7 +80,7 @@ const NewRegistration = ({
       }
 
       const res = await fetch('/api/users/me');
-      const data = await res.json();
+      const data: GetMeResponse = await res.json();
 
       if (data.user) {
         router.push('/home');
@@ -101,7 +109,6 @@ const NewRegistration = ({
       const { error } = await supabase.auth.updateUser({
         password: data.password,
       });
-      console.log('updateUser error:', error);
 
       if (error) {
         alert('パスワード設定に失敗');
@@ -111,7 +118,7 @@ const NewRegistration = ({
     }
 
     //②プリズマにニックネームを登録
-    const payload = {
+    const payload: NicknameData = {
       nickname: data.nickname,
     };
 
@@ -164,7 +171,7 @@ const NewRegistration = ({
             )}
           </div>
           <p className="whitespace-pre-line text-xs mb-16 pl-2">
-            {`※20文字以内にする必要があります
+            {`※10文字以内にする必要があります
             ※プロフィールに表示され、他のユーザーが閲覧できます。`}
           </p>
         </div>
@@ -172,85 +179,11 @@ const NewRegistration = ({
         {/* パスワード */}
         {!isGoogleUser && (
           <div>
-            <div className="flex items-center justify-center mb-2 text-base font-semibold">
-              <label>パスワードを作成</label>
-            </div>
-
-            <div className="relative mb-2">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                {...registersign('password', {
-                  required: 'パスワードは必須です',
-                  minLength: {
-                    value: 8,
-                    message: '8文字以上で入力してください',
-                  },
-                  pattern: {
-                    value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
-                    message: '英字と数字を含めてください',
-                  },
-                })}
-                placeholder="パスワードを入力"
-                className="border px-2 py-1 w-full"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
-                className="absolute right-2 top-1"
-              >
-                <Image
-                  src={
-                    showPassword
-                      ? '/images/eye-solid-full.svg'
-                      : '/images/eye-slash-solid-full.svg'
-                  }
-                  alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={24}
-                  height={24}
-                />
-              </button>
-              <div className="pl-2 mb-2">
-                {errorssign.password && (
-                  <ErrorMessage error={errorssign.password} />
-                )}
-              </div>
-              <p className="whitespace-pre-line text-xs mb-2 pl-2">
-                {`※英数字含めた8文字以上にする必要があります`}
-              </p>
-              <div className="relative mb-10">
-                <input
-                  type={showConfirm ? 'text' : 'password'}
-                  {...registersign('confirmPassword', {
-                    required: '確認用パスワードは必須です',
-                    validate: (value) =>
-                      value === password || 'パスワードが一致しません',
-                  })}
-                  placeholder="パスワードを入力（確認）"
-                  className="border p-2 px-2 py-1 w-full "
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
-                  className="absolute right-2 top-1"
-                >
-                  <Image
-                    src={
-                      showConfirm
-                        ? '/images/eye-solid-full.svg'
-                        : '/images/eye-slash-solid-full.svg'
-                    }
-                    alt={showConfirm ? 'パスワードを隠す' : 'パスワードを表示'}
-                    width={24}
-                    height={24}
-                  />
-                </button>
-                <div className="pl-2 mb-16">
-                  {errorssign.confirmPassword && (
-                    <ErrorMessage error={errorssign.confirmPassword} />
-                  )}
-                </div>
-              </div>
-            </div>
+            <PasswordInput
+              registersign={registersign}
+              watch={watch}
+              errorssign={errorssign}
+            />
           </div>
         )}
 
