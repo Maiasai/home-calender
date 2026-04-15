@@ -3,15 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ffffff; /* 全体背景 */
+  --foreground: #858585; /* 全体テキスト */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #858585;
   }
+}
+
+.site-header {
+  /* 「class="site-header" が付いた要素に、このスタイルを当てる」 */
+  font-family: 'HuiFontP', Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -24,4 +29,13 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+@font-face {
+  /* 「この名前のフォントがあるよ」をブラウザに登録する宣言 */
+  font-family: 'HuiFontP'; /* "HuiFontP" という“ラベル”で登録*/
+  src: url('/fonts/HuiFontP29.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
 }

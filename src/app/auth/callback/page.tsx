@@ -1,52 +1,35 @@
-//Google / OTP 共通のコールバック→認証コードを通過したユーザーがSupabaseAuth上でログイン状態になっているかを見ている
+//Googleで続ける押下→signInWithGoogle.tsxが走る
+// ＞ユーザー処理が完了したら＞supabaseがリダイレクトしてここに飛ぶ。
 
-'use client'
+//コード交換とユーザー取得だけをするページ
+// Supabase OAuth から直接アクセスされる URL
 
-import { useEffect } from "react"
-import { supabase } from "@/_libs/supabase"
-import { useRouter } from "next/navigation"
+'use client';
 
-export default function AuthCallback() {
-  const router = useRouter()
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthCallback } from '@/app/login/_hooks/useAuthCallback';
+
+const AuthCallbackPage = () => {
+  const handleAuthCallback = useAuthCallback();
+  const router = useRouter();
 
   useEffect(() => {
-    console.log("Callback useEffect start");
-    const handle = async () => {
-      const { data: sessionData , error: sessionError } =
-      await supabase.auth.exchangeCodeForSession(window.location.href)
+    //②レンダー終わった後にuseEffect発火
+    //開発環境ではテストのため2回実行される（本番は１回）→URLにcodeがある時だけ実行
+    if (!window.location.href.includes('code=')) return;
+    handleAuthCallback({
+      //③ここの関数が実行
+      setLoading: (v: boolean) => console.log('loading', v),
+      onSignupOpen: () => {
+        // ここで / に戻す + ?signup=1 でモーダル開くフラグを渡す
+        router.push('/?signup=1');
+      },
+      onLoginSuccess: () => router.push('/home'),
+    });
+  }, []); //callbackページは1回しか使わないから依存配列はなし
 
-      console.log("exchange:", sessionData, sessionError)
+  return <p>ログイン処理中...</p>; //①初回レンダー
+};
 
-
-
-      // 今ログイン中のユーザー取得（OTP/Google共通）
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser()
-      console.log("Callback user:", user);
-
-      //未認証（セッションなし）
-      if (userError || !user) {
-        router.push("/")
-        return
-      }
-
-      // users テーブルに存在するかどうかを確認
-      const res = await fetch('/api/users/me')
-      const data = await res.json()
-
-      if (data && data.id) {
-        // データがある→既存ユーザー→ホーム画面に飛ばす
-        router.push("/home")
-      } else {
-        // データがない→初回ログイン（Google / OTP 共通）→サインアップ画面（ニックネームと電話番号登録）
-        router.push("/signup")
-      }
-    }
-
-    handle()
-  }, [router])
-
-  return <p>ログイン処理中...</p>
-}
+export default AuthCallbackPage;
