@@ -75,7 +75,6 @@ const RecipesPage = () => {
     setIsBulkMode(false); // 一括モード解除→チェックボックス自体も消える
   };
 
-  if (isLoading) return <p>読み込み中...</p>;
   if (isError) return <p>エラーが発生しました...</p>;
 
   return (

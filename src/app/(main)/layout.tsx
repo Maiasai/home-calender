@@ -17,12 +17,17 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!isLoading && !session) {
       //セッションがない場合、トップ画面に遷移
-      router.push('/');
+      router.replace('/'); //replace は置き換える
     }
   }, [session, isLoading, router]);
 
-  if (isLoading) return <p>読み込み中…</p>;
-
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>読み込み中…</p>
+      </div>
+    );
+  }
   return (
     <div>
       <nav className="!font-hui">

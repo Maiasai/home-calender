@@ -1,16 +1,14 @@
 //マイページ
 
-'use client'
-import React from "react";
-
+'use client';
+import React from 'react';
 
 const MyPage = () => {
-  return(
-    <nav>
-      マイページ
-    </nav>
-  )
-}
+  return (
+    <div className="max-w-3xl mx-auto">
+      <nav className="flex justify-center border-b-2 max mb-4">マイページ</nav>
+    </div>
+  );
+};
 
 export default MyPage;
-

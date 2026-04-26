@@ -1,6 +1,7 @@
 //コンポーネントヘッダー
 'use client';
 
+import CloseButton from '@/app/components/image/CloseButton';
 import Image from 'next/image';
 
 type Props = {
@@ -23,7 +24,12 @@ const PageHeader = ({
       {/* 戻るボタン（任意） */}
       {showBack && onBack && (
         <button type="button" className="absolute left-2 mt-1" onClick={onBack}>
-          <Image src="/images/back00.png" alt="戻る" width={18} height={18} />
+          <Image
+            src="/images/common/back00.png"
+            alt="戻る"
+            width={18}
+            height={18}
+          />
         </button>
       )}
 
@@ -31,16 +37,7 @@ const PageHeader = ({
       {title && <h1 className="text-lg font-semibold">{title}</h1>}
 
       {/* 閉じるボタン */}
-      {showClose && onClose && (
-        <button className="absolute top-1 right-2" onClick={onClose}>
-          <Image
-            src="/images/close01.png"
-            alt="閉じるボタン"
-            width={18}
-            height={18}
-          />
-        </button>
-      )}
+      {showClose && onClose && <CloseButton onClose={onClose} />}
     </div>
   );
 };

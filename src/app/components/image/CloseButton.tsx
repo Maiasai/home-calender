@@ -1,22 +1,16 @@
 //閉じるボタン
 
-'use client'
+'use client';
 
-import Image from "next/image"
+import Image from 'next/image';
 
 type Props = {
-  onClose : () => void;
-}
+  onClose: () => void;
+};
 
-const CloseButton = ({
-  onClose
-}:Props) => {
-
-  return(
-    <button
-      className="absolute top-6 right-6"
-      onClick={onClose}
-    >
+const CloseButton = ({ onClose }: Props) => {
+  return (
+    <button className="absolute top-3 right-3" onClick={onClose}>
       <Image
         src="/images/close01.png"
         alt="閉じるボタン"
@@ -24,7 +18,7 @@ const CloseButton = ({
         height={18}
       />
     </button>
-  )
-}
+  );
+};
 
 export default CloseButton;

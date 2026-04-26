@@ -21,6 +21,7 @@ import IngredientList from '../../_components/IngredientList';
 import StepList from '../../_components/StepList';
 import MemoForm from '../../_components/MemoForm';
 import { RecipeDetail } from '../../_types/RecipeDetail';
+import { fetcher } from '@/lib/featcher';
 
 type Props = {
   params: { id: string };
@@ -30,15 +31,6 @@ type PutRecipeRequest = RecipeFormValues & {
   id: string;
   category?: RecipeCategory;
   servings: Number;
-};
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`HTTP ${res.status}-${text}`);
-  }
-  return res.json();
 };
 
 //①ユーザーが画面に入ってきたらRecipeEditコンポーネントが実行
