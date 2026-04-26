@@ -124,12 +124,6 @@ const AddRecipeManualModal = ({ onClose }: Props) => {
   return (
     <div className="bg-gray-100 w-[600px] max-h-[80vh] overflow-y-auto">
       <div>
-        {loading && (
-          <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
-            読み込み中...
-          </div>
-        )}
-
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-center h-[250px] gap-6 bg-white m-5 p-4 rounded-lg">
             {/* 画像 */}

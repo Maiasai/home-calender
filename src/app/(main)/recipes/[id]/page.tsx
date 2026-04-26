@@ -12,19 +12,11 @@ import RecipeDeleateButton from '@/app/components/image/RecipeDeleateButton';
 import Image from 'next/image';
 import PageTitle from '../styles/PageTitle';
 import type { RecipeDetail } from '../_types/RecipeDetail';
+import { fetcher } from '@/lib/featcher';
 //RecipeDetail→typeを自動生成するコンポーネントのため、ここで明示的にtypeとしておく
 
 type Props = {
   params: { id: string };
-};
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`HTTP ${res.status}-${text}`);
-  }
-  return res.json();
 };
 
 const RecipeDetail = ({ params }: Props) => {
