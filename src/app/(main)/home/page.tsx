@@ -3,15 +3,30 @@
 
 import { useState } from 'react';
 import MealModalBase from './_components/MealModalBase';
+import { fetcher } from '@/lib/featcher';
+import useSWR from 'swr';
+import { MonthData } from './_typs/Menu';
+import Calender from './_components/Calendar';
+import { CalendarCell } from './_typs/CalendarCell';
+import CalenderSelectedDate from './_components/CalenderSelectedDate';
+import { SelectedRecipe } from './_typs/SelectedRecipe';
+import { Meal } from './_typs/Meal';
+import { MealTypeExtended } from './_typs/MealTypeExtended';
+import Image from 'next/image';
 
 const TopPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [mode, setMode] = useState<'create' | 'edit'>('create');
+
+  //initialRecipesで編集モーダルを開いた瞬間の初期値を管理（編集用）*一切変更しない元データ
+  const [initialRecipes, setInitialRecipes] = useState<SelectedRecipe[]>([]); //selectedRecipesを正しく初期化するために存在
+  const [targetMeal, setTargetMeal] = useState<Meal | null>(null); //今ユーザーが操作してる作業中の献立データを管理（編集用）
 
   const today = new Date(); //今日の日付を取得
 
   //今表示している月を管理(Dateは「日付の箱」)※このstateは、今表示している月
   const [currentMonth, setCurrentMonth] = useState(
-    new Date(today.getFullYear(), today.getMonth(), 1), //年月を取得しこの形になる　→ new Date(2026, 2, 1)
+    new Date(today.getFullYear(), today.getMonth(), 1), //年月を取得しこの形になる　→ new Dateで今の月の1日を作成(2026, 2, 1)
   );
   //ユーザーがクリックした日を管理（上で取得したtodayを入れることで初期値を本日）
   const [selectedDate, setSelectedDate] = useState<Date>(today);
@@ -32,7 +47,7 @@ const TopPage = () => {
   ).getDate(); //月末を取得（例だと31だけがlastDateに入る
 
   //カレンダー1マスずつのデータを入れる配列　※前月、次月を押された時など、毎回作り直される
-  const days = []; //ここにnull,date,dateを入れていく
+  const days: CalendarCell[] = []; //ここにnull,date,dateを入れていく
 
   // 月の最初の空白
   for (let i = 0; i < firstDay; i++) {
@@ -46,15 +61,69 @@ const TopPage = () => {
     days.push(new Date(year, month, i)); //例の場合は[null,null,Date(2026-03-01),〜Date(2026-03-31)]
   }
 
-  //前月に移動（年またぎも自動対応）
-  const prevMonth = () => {
-    setCurrentMonth(new Date(year, month - 1, 1));
+  //献立取得
+  //Date型から文字列に変換（"2026-04-01"）→（"2026-04"）にしてる
+  //slice(0, 7)→0以上7未満の文字の一部を切り取る。slice(開始位置, 終了位置)
+  const monthdata = currentMonth.toLocaleDateString('sv-SE').slice(0, 7);
+
+  //URLが変わると、その範囲の月の献立が自動取得される
+  const { data, mutate } = useSWR<MonthData>(
+    `/api/home?month=${monthdata}`,
+    fetcher,
+  ); //url変えるものではない。APIを叩くための文字列
+
+  //編集ボタン押下時（編集モードでモーダルを開く準備をhandleEditで実施）
+  //ここでMeal型だったものを、mapを使ってrecipe内からid,titie,thumbnailUrlを取り出して平らにしている
+  const handleEdit = (meal: Meal) => {
+    setTargetMeal(meal); // ← 更新対象に初期値セット
+
+    const converted = meal.recipes.map((r) => ({
+      id: r.recipe.id,
+      title: r.recipe.title,
+      thumbnailUrl: r.recipe.thumbnailUrl,
+      mealType: r.mealType as MealTypeExtended,
+    }));
+    setInitialRecipes(converted); //ここでモーダルの初期値をセット（初期表示データ）
+    setMode('edit'); // ← モード切替
+    setModalOpen(true); // ← モーダル開く
   };
 
-  //次月に移動（年またぎも自動対応）
-  const nextMonth = () => {
-    setCurrentMonth(new Date(year, month + 1, 1));
+  //買い物リストへ追加処理
+  const handleAddList = async (meal: Meal) => {
+    try {
+      const res = await fetch('/api/shopping-list', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: meal.id }),
+      });
+
+      if (!res.ok) {
+        throw new Error('追加に失敗しました');
+      }
+
+      const data = await res.json();
+      console.log('成功:', data);
+
+      alert('買い物リストに追加しました');
+    } catch (error) {
+      console.log(error);
+      alert('エラーが発生しました');
+    }
   };
+
+  //閉じるボタン押下時（モーダル内リセット処理）
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setMode('create'); // ←新規作成に戻す
+    setInitialRecipes([]); // ←モーダル内初期値を初期化
+  };
+
+  if (!data)
+    return (
+      <div className="flex items-center justify-center mt-10">loading...</div>
+    );
 
   return (
     <div className="max-w-3xl mx-auto pb-24">
@@ -62,74 +131,42 @@ const TopPage = () => {
         献立カレンダー
       </nav>
 
-      {/* 月切り替え */}
-      <div className="flex justify-between items-center mb-4">
-        <button onClick={prevMonth}>◀</button>
-        <h2 className="text-lg font-bold">
-          {year}年 {month + 1}月
-        </h2>
-        <button onClick={nextMonth}>▶</button>
-      </div>
-
-      {/* 曜日 */}
-      <div className="grid grid-cols-7 text-center text-sm font-semibold mb-2">
-        <div>日</div>
-        <div>月</div>
-        <div>火</div>
-        <div>水</div>
-        <div>木</div>
-        <div>金</div>
-        <div>土</div>
-      </div>
-
       {/* カレンダー(7列、gap-1でマスの間隔) */}
-      <div className="grid grid-cols-7 gap-1 auto-rows-[100px]">
-        {days.map((date, index) => {
-          if (!date) {
-            //nullはここに入ってきて、からの配列を作る
-            return <div key={index}></div>;
-          }
-
-          //選択されている日か判定(クリックされた日付と同じかどうか)
-          const isSelected =
-            selectedDate && selectedDate.toDateString() === date.toDateString(); //"Mon Mar 10 2026"みたな文字列にして比較
-
-          return (
-            //{date.getDate()}→日付だけ取得
-            <button
-              key={index}
-              onClick={() => setSelectedDate(date)}
-              className={`flex flex-cols text-center justify-center p-2 rounded text-sm
-              ${isSelected ? 'bg-orange-50' : 'hover:bg-gray-100'}
-              `}
-            >
-              {date.getDate()}
-            </button>
-          );
-        })}
-      </div>
+      <Calender
+        data={data}
+        days={days}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        year={year}
+        month={month}
+        setCurrentMonth={setCurrentMonth}
+      />
+      <Image
+        src="/images/homeimage.png"
+        alt="ホームの画像"
+        width={1200}
+        height={90}
+      />
 
       {/* 選択日 */}
-
       {selectedDate && (
-        <div className="flex justify-between items-center mt-4 p-3 border rounded">
-          {selectedDate.toLocaleDateString()} の献立
-          <div>
-            <button onClick={() => setModalOpen(true)}>
-              <img
-                src="/images/menucreatebutton.png"
-                alt="献立作成ボタン"
-                width={80}
-              />
-            </button>
-          </div>
-        </div>
+        <CalenderSelectedDate
+          data={data}
+          selectedDate={selectedDate}
+          setModalOpen={setModalOpen}
+          onEdit={handleEdit} //ユーザーが編集押下＞MenuButtonのonClickが感知→onEditにその日の献立がくっついてここにくる。
+          onList={handleAddList}
+        />
       )}
 
       <MealModalBase
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={modalOpen} //modalOpen === true のとき開く
+        onClose={handleCloseModal}
         selectedDate={selectedDate}
+        mutate={mutate}
+        mode={mode}
+        initialRecipes={initialRecipes}
+        targetMeal={targetMeal}
       />
     </div>
   );

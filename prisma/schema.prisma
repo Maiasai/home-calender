@@ -161,7 +161,7 @@ model UserRecipeStatus {
   user   User   @relation(fields: [userId], references: [id])
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, recipeId]) // 1ユーザー1レシピで1行
+  @@unique([userId, recipeId]) // userId と recipeId の組み合わせは1つしか存在しない
   @@map("user_recipe_status")
 }
 
@@ -169,7 +169,7 @@ model UserRecipeStatus {
 model Menu {
   id        String       @id @default(uuid()) @db.Uuid//献立自体のid
   userId    String       @db.Uuid//この献立が誰のものか
-  date      DateTime     @db.Date//献立の日付→@db.Date を付けると「2026-03-20 14:22:33」が「2026-03-20」だけになる
+  date      String//UTCでズレが発生してしまうため、献立は文字列で日付までで管理
   createdAt DateTime     @default(now())//献立がいつ作られたか
 
   menuRecipes MenuRecipe[]//この献立に属するレシピ一覧（フロントで取得した時、ここに献立レシピが格納されている）
@@ -191,4 +191,18 @@ model MenuRecipe {//１日の中の1つのレシピ
   recipe Recipe @relation(fields: [recipeId], references: [id])//献立に入ってるレシピ
 
   @@index([menuId])//検索高速化
+}
+
+//買い物リスト専用テーブル
+model ShoppingItem {
+  id           String   @id @default(uuid())
+  userId       String
+  ingredientId String?
+  name         String
+  quantityText Float?
+  unitName     String?
+  checked      Boolean  @default(false)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

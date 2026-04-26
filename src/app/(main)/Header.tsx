@@ -20,10 +20,10 @@ const Header = () => {
 
   return (
     <nav className="site-header mt-20 w-full">
-      <div className="flex justify-center flex-col w-[900px] mx-auto">
+      <div className="flex justify-center flex-col w-[900px] mx-auto  mb-8">
         {profile && (
           <div className="flex justify-end w-full">
-            <div className="flex items-center space-x-10">
+            <div className="flex items-center space-x-10 mr-8">
               {/* Reactはデータが揃ってなくても描画してしまうため、データがあるときだけ描画する(クラッシュ対策）*/}
               {profile && <span>{profile.nickname} さんログイン中</span>}
               <button onClick={handleLogout}>ログアウト</button>

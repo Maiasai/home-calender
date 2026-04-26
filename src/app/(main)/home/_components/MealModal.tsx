@@ -1,4 +1,6 @@
 //献立作成モーダル（UI）　献立作成ボタン押下後に表示されるモーダル
+//ここに作成と更新処理を記載
+
 'use client';
 
 import { Dispatch, SetStateAction } from 'react';
@@ -6,15 +8,10 @@ import { MealModalStep } from '../_typs/MealModalStep';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
 import { MealType } from '../_typs/MealType';
 import Image from 'next/image';
-
-type MealRequestBody = {
-  date: Date;
-  recipes: {
-    recipeId: string;
-    mealType: MealType;
-    position: number;
-  }[];
-};
+import { KeyedMutator } from 'swr';
+import { MonthData } from '../_typs/Menu';
+import { Meal } from '../_typs/Meal';
+import { MealRequestBody } from '../_typs/MealRequestBody';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
@@ -25,6 +22,9 @@ type Props = {
   isDisabled: boolean;
   hasUnassingned: boolean;
   isEmpty: boolean;
+  mutate: KeyedMutator<MonthData>;
+  mode: 'create' | 'edit';
+  targetMeal: Meal | null;
 };
 
 const MealModal = ({
@@ -36,6 +36,9 @@ const MealModal = ({
   isDisabled,
   hasUnassingned,
   isEmpty,
+  mutate,
+  mode,
+  targetMeal,
 }: Props) => {
   //カテゴリアイコン
   const getMealIcon = (type: MealType) => {
@@ -56,11 +59,17 @@ const MealModal = ({
   //カテゴリ分け　外枠
   const categories: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER', 'UNASSIGNED'];
 
+  const year = selectedDate.getFullYear();
+  const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(selectedDate.getDate()).padStart(2, '0');
+  const date = `${year}-${month}-${day}`;
+
+  //作成と更新処理
   const onSubmit = async () => {
     try {
-      const payload: MealRequestBody = {
+      const basePayload: MealRequestBody = {
         //API側でユーザーの特定をしているためuser.idはここでは不要
-        date: selectedDate,
+        date: date,
         recipes: selectedRecipes.map((r, index) => ({
           //フロント側でmapすることで、API側でmap不要
           recipeId: r.id,
@@ -69,8 +78,12 @@ const MealModal = ({
         })),
       };
 
+      const payload =
+        mode === 'edit' ? { ...basePayload, id: targetMeal!.id } : basePayload;
+      //「!」→targetMeal は null でも undefined でもないと自分が保証するという意味
+
       const res = await fetch('/api/meal-plan', {
-        method: 'POST',
+        method: mode === 'edit' ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -81,6 +94,7 @@ const MealModal = ({
         throw new Error('保存失敗');
       }
 
+      await mutate();
       onClose(); //成功時
     } catch (error) {
       console.error(error);
