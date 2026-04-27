@@ -1,4 +1,4 @@
-//買い物リスト型
+//買い物リスト型（フロント用）
 
 export type Shoppinglist = {
   id: string;

@@ -1,5 +1,6 @@
 //保存されている買い物リストを取得するAPI
 
+import { Shoppinglist } from '@/app/(main)/home/_typs/Shoppinglist';
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,7 +9,7 @@ export const GET = async () => {
   try {
     const user = await requireUser();
 
-    const result = await prisma.shoppingItem.findMany({
+    const result: Shoppinglist[] = await prisma.shoppingItem.findMany({
       where: {
         userId: user.id,
       },

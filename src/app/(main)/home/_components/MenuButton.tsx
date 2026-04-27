@@ -3,7 +3,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 type Props = {
   onEdit: () => void;
@@ -12,61 +12,66 @@ type Props = {
 };
 
 const MenuButton = ({ onEdit, onDelete, onList }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <div className="relative inline-block">
-      {/* ボタン */}
-      <button onClick={() => setIsOpen((prev) => !prev)}>
-        <Image
-          src="/images/menubutton.png"
-          alt="メニューアイコン"
-          width={30}
-          height={30}
-          className="mr-1"
-        />
-      </button>
-      {/* オーバーレイ（外クリック用） */}
-      {isOpen && ( //画面全体に透明な壁を置いて、クリックで閉じる（外クリックの代わり）
-        <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-      )}
+    <DropdownMenu.Root>
+      {/* ↑メニュー全体の管理者 */}
 
-      {/* メニュー */}
-      {isOpen && (
-        <div className="absolute right-0 z-20 w-48 bg-white border rounded shadow">
-          <button
-            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-            onClick={() => {
-              //押されたら、親に押されたことを通知するだけ
-              setIsOpen(false);
-              onEdit();
-            }}
+      {/* 開くボタン（これ押したらメニュー開くボタンですという宣言） */}
+      {/* asChild→子要素(button)をそのままTriggerとして使うという意味 */}
+      <DropdownMenu.Trigger asChild>
+        <button type="button">
+          <Image
+            src="/images/menubutton.png"
+            alt="メニューアイコン"
+            width={30}
+            height={30}
+            className="mr-1"
+          />
+        </button>
+      </DropdownMenu.Trigger>
+
+      {/* ↓メニュー本体。　DropdownMenu.Portal→メニューを画面の上層レイヤーに出す */}
+      <DropdownMenu.Portal>
+        {/* ↓これが実際に開く白い箱 */}
+        <DropdownMenu.Content
+          align="end"
+          sideOffset={8}
+          className="z-50 w-48 rounded border bg-white p-1 shadow-md"
+        >
+          {/* 編集 */}
+          <DropdownMenu.Item
+            onSelect={onEdit}
+            className="cursor-pointer rounded px-4 py-2 outline-none hover:bg-gray-100"
           >
             献立編集
-          </button>
-          <button
-            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-            onClick={() => {
-              onList();
-            }}
+          </DropdownMenu.Item>
+
+          {/* 買い物リスト追加 */}
+          <DropdownMenu.Item
+            onSelect={onList}
+            className="cursor-pointer rounded px-4 py-2 outline-none hover:bg-gray-100"
           >
             買い物リストに追加
-          </button>
-          <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+          </DropdownMenu.Item>
+
+          {/* 栄養バランス */}
+          <DropdownMenu.Item className="cursor-pointer rounded px-4 py-2 outline-none hover:bg-gray-100">
             栄養バランスを見る
-          </button>
-          <button
-            className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
-            onClick={() => {
-              setIsOpen(false);
-              onDelete();
-            }}
+          </DropdownMenu.Item>
+
+          {/* 区切り線 */}
+          <DropdownMenu.Separator className="my-1 h-px bg-gray-200" />
+
+          {/* 削除 */}
+          <DropdownMenu.Item
+            onSelect={onDelete}
+            className="cursor-pointer rounded px-4 py-2 text-red-500 outline-none hover:bg-gray-100"
           >
             献立削除
-          </button>
-        </div>
-      )}
-    </div>
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 };
 

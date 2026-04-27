@@ -7,6 +7,8 @@ import { MonthData } from '../_typs/Menu';
 import MenuButton from './MenuButton';
 import { Meal } from '../_typs/Meal';
 import Link from 'next/link';
+import { useState } from 'react';
+import ConfirmDialog from '../../recipes/_components/ConfirmDialog';
 
 type Props = {
   data: MonthData;
@@ -26,6 +28,8 @@ const CalenderSelectedDate = ({
   //詳細表示用
   const selectedKey = selectedDate.toLocaleDateString('sv-SE'); //選択している日付
   const selectedDayData = data?.[selectedKey]; //右記のような形→{breakfast: Recipe[] lunch: Recipe[] dinner: Recipe[]}
+  const [open, setOpen] = useState(false);
+  const [targetMealId, setTargetMealId] = useState<string | null>(null);
 
   //その日の献立が空の場合
   const isEmpty =
@@ -70,10 +74,6 @@ const CalenderSelectedDate = ({
 
   //献立削除処理
   const deleteMeal = async (mealId: string) => {
-    const ok = window.confirm('この献立を削除しますか？');
-
-    if (!ok) return;
-
     try {
       await fetch('/api/meal-plan', {
         method: 'DELETE',
@@ -111,7 +111,10 @@ const CalenderSelectedDate = ({
               onList={() => {
                 onList(meal);
               }}
-              onDelete={() => deleteMeal(meal.id)}
+              onDelete={() => {
+                setTargetMealId(meal.id);
+                setOpen(true);
+              }}
             />
           )}
         </div>
@@ -120,11 +123,8 @@ const CalenderSelectedDate = ({
 
           {/* 朝 */}
           {selectedDayData?.breakfast.map((item) => (
-            <Link href={`/recipes/${item.id}`}>
-              <div
-                key={item.id}
-                className="flex items-center text-sm gap-x-2 mb-4"
-              >
+            <Link key={item.id} href={`/recipes/${item.id}`}>
+              <div className="flex items-center text-sm gap-x-2 mb-4">
                 <div>
                   <Image
                     src="/images/morningIcon.png"
@@ -149,11 +149,8 @@ const CalenderSelectedDate = ({
 
           {/* 昼 */}
           {selectedDayData?.lunch.map((item) => (
-            <Link href={`/recipes/${item.id}`}>
-              <div
-                key={item.id}
-                className="flex items-center text-sm gap-x-2 mb-4"
-              >
+            <Link key={item.id} href={`/recipes/${item.id}`}>
+              <div className="flex items-center text-sm gap-x-2 mb-4">
                 <Image
                   src="/images/daytimeIcon.png"
                   alt="昼アイコン"
@@ -173,11 +170,8 @@ const CalenderSelectedDate = ({
           ))}
           {/* 夜 */}
           {selectedDayData?.dinner.map((item) => (
-            <Link href={`/recipes/${item.id}`}>
-              <div
-                key={item.id}
-                className="flex items-center text-sm gap-x-2 mb-4"
-              >
+            <Link key={item.id} href={`/recipes/${item.id}`}>
+              <div className="flex items-center text-sm gap-x-2 mb-4">
                 <Image
                   src="/images/nightIcon.png"
                   alt="夜アイコン"
@@ -197,6 +191,19 @@ const CalenderSelectedDate = ({
           ))}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={open}
+        title="確認"
+        message="この献立を削除しますか？"
+        onCancel={() => setOpen(false)}
+        onConfirm={async () => {
+          if (!targetMealId) return;
+
+          await deleteMeal(targetMealId);
+          setOpen(false);
+        }}
+      />
     </div>
   );
 };
