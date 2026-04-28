@@ -141,10 +141,6 @@ const NewRegistration = ({
     router.push('main');
   };
 
-  if (loading) {
-    return <p className="p-6">読み込み中...</p>;
-  }
-
   return (
     <div>
       <form onSubmit={handleSubmitsign(onSubmit)}>

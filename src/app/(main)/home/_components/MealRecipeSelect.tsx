@@ -13,8 +13,6 @@ import { CategoryFilter } from '../../recipes/_types/category/CategoryFilter';
 
 type Props = {
   recipes: RecipeData[] | undefined;
-  isLoading: boolean;
-  isError: boolean;
   inputKeyword: string;
 
   //意味）　Dispatch　<T>　→　Tを引数にする関数
@@ -34,8 +32,7 @@ type Props = {
 
 const MealRecipeSelect = ({
   recipes,
-  isLoading,
-  isError,
+
   inputKeyword,
   setInputKeyword,
   setKeyword,
@@ -85,9 +82,6 @@ const MealRecipeSelect = ({
     });
   };
 
-  if (isLoading) return <p>読み込み中</p>;
-  if (isError) return <p>エラーが発生しました...</p>;
-
   return (
     <>
       <div className="flex flex-row w-full justify-end mb-4">
@@ -127,7 +121,7 @@ const MealRecipeSelect = ({
       <div>{selectedRecipes.length}/6件選択</div>
 
       {/* 検索結果ない場合 */}
-      {!isLoading && recipes?.length === 0 && (
+      {recipes?.length === 0 && (
         <p className="text-center mt-4">該当のレシピがありませんでした</p>
       )}
 
