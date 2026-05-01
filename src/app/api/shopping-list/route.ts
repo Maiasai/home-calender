@@ -200,7 +200,7 @@ export const DELETE = async (request: NextRequest) => {
 
   try {
     const result = await prisma.shoppingItem.delete({
-      where: { id: body.id },
+      where: { id: body.id, userId: user.id },
     });
   } catch (error) {
     console.log(error);
