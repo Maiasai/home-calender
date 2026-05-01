@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { RecipeData } from '../../recipes/_types/RecipeTypes';
 import SearchBarSimple from '../../recipes/_components/SearchBarSimple';
 import FilterPanel from '../../recipes/_components/FilterPanel';
-import RecipeCardSimple from '../../recipes/_components/RecipeCardSimple';
+import RecipeCardSimple from './RecipeCardSimple';
 import CategoryFilterButtons from '../../recipes/_components/CategoryFilterButtons';
 import { CategoryFilter } from '../../recipes/_types/category/CategoryFilter';
 
@@ -75,7 +75,7 @@ const MealRecipeSelect = ({
           //入ってきたレシピ→必要なデータだけ取り出す
           id: recipe.id,
           title: recipe.title,
-          thumbnailUrl: recipe.thumbnailUrl,
+          thumbnailUrl: recipe.thumbnailUrl ?? '/images/noImage.jpg',
           mealType: 'UNASSIGNED', //初期値は未分類
         },
       ];

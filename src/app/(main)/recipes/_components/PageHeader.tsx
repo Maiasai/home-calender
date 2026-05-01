@@ -1,6 +1,7 @@
 //コンポーネントヘッダー
 'use client';
 
+import BackIcon from '@/app/components/image/backicon';
 import CloseButton from '@/app/components/image/CloseButton';
 import Image from 'next/image';
 
@@ -24,12 +25,7 @@ const PageHeader = ({
       {/* 戻るボタン（任意） */}
       {showBack && onBack && (
         <button type="button" className="absolute left-2 mt-1" onClick={onBack}>
-          <Image
-            src="/images/common/back00.png"
-            alt="戻る"
-            width={18}
-            height={18}
-          />
+          <BackIcon />
         </button>
       )}
 

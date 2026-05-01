@@ -12,6 +12,7 @@ import { KeyedMutator } from 'swr';
 import { MonthData } from '../_typs/Menu';
 import { Meal } from '../_typs/Meal';
 import { MealRequestBody } from '../_typs/MealRequestBody';
+import { truncateRecipeTitle } from '@/utils/format';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
@@ -67,10 +68,19 @@ const MealModal = ({
   //作成と更新処理
   const onSubmit = async () => {
     try {
+      //重複除去
+      const uniqueRecipes = selectedRecipes.filter(
+        //条件がtrueのものだけ残す
+        //recipe→今見てる1件、index→今何番目か、self→元の配列全部
+        (recipe, index, self) =>
+          //findIndex(条件)→条件に最初に一致した番号を返す
+          index === self.findIndex((r) => r.id === recipe.id),
+      );
+
       const basePayload: MealRequestBody = {
         //API側でユーザーの特定をしているためuser.idはここでは不要
         date: date,
-        recipes: selectedRecipes.map((r, index) => ({
+        recipes: uniqueRecipes.map((r, index) => ({
           //フロント側でmapすることで、API側でmap不要
           recipeId: r.id,
           mealType: r.mealType,
@@ -180,18 +190,17 @@ const MealModal = ({
                 {recipesInCategory?.map((r) => (
                   <div key={r.id} className="flex items-center gap-6">
                     {/* 画像 */}
-                    <div className="w-24 aspect-[4/3] overflow-hidden">
+                    <div className="w-24 h-16 overflow-hidden relative">
                       <Image
-                        src={r.thumbnailUrl}
+                        src={r.thumbnailUrl ?? '/images/noImage.jpg'}
                         alt="画像"
-                        width={100}
-                        height={100}
-                        className="w-full h-full object-cover rounded-lg"
+                        fill
+                        className="object-cover rounded-lg"
                       />
                     </div>
 
                     {/* タイトル*/}
-                    <div>{r.title}</div>
+                    <div>{truncateRecipeTitle(r.title)}</div>
                   </div>
                 ))}
               </div>

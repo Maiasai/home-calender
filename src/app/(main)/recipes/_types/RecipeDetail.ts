@@ -5,7 +5,11 @@ import { RecipeCategory } from '@/generated/prisma';
 export type RecipeDetail = {
   id: string;
   title: string;
-  memo: string;
+  memo: string | null;
+
+  sourceType: 'URL' | 'MANUAL' | 'TEXT';
+  sourceUrl: string | null;
+
   servings: number;
   thumbnailUrl: string | null;
   category: RecipeCategory;

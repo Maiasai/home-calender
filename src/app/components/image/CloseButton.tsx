@@ -10,14 +10,16 @@ type Props = {
 
 const CloseButton = ({ onClose }: Props) => {
   return (
-    <button className="absolute top-3 right-3" onClick={onClose}>
-      <Image
-        src="/images/close01.png"
-        alt="閉じるボタン"
-        width={18}
-        height={18}
-      />
-    </button>
+    <div className="mb-8">
+      <button className="absolute top-2 right-3" onClick={onClose}>
+        <Image
+          src="/images/close01.png"
+          alt="閉じるボタン"
+          width={30}
+          height={30}
+        />
+      </button>
+    </div>
   );
 };
 

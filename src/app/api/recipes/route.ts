@@ -119,15 +119,15 @@ interface CreatePostRequestBody {
   //bodyの形
   title: string;
   memo?: string;
-  servings: number;
-  thumbnailImageUrl: string;
-  ingredients: {
-    name: string;
-    amount: number;
-    unitId: string;
+  servings?: number;
+  thumbnailImageUrl?: string;
+  ingredients?: {
+    name?: string;
+    amount?: number;
+    unitId?: string;
   }[];
 
-  steps: { recipestep: string }[];
+  steps?: { recipestep: string }[];
   category?: RecipeCategory; //　?　= undefinedが追加される（プリズマの型を追加）
 }
 
@@ -154,28 +154,6 @@ export const POST = async (request: Request) => {
       );
     }
 
-    if (!body.servings) {
-      return NextResponse.json(
-        { message: ' 人数は必須です ' },
-        { status: 400 },
-      );
-    }
-
-    if (!body.ingredients || ingredients.length === 0) {
-      //材料が存在しない または　材料が空配列ならtrue
-      return NextResponse.json(
-        { message: ' 材料は必須です ' },
-        { status: 400 },
-      );
-    }
-
-    if (!body.steps || steps.length === 0) {
-      return NextResponse.json(
-        { message: ' 手順は必須です ' },
-        { status: 400 },
-      );
-    }
-
     const recipedata = await prisma.recipe.create({
       //テーブル操作。データベースに保存する処理
       data: {
@@ -193,55 +171,61 @@ export const POST = async (request: Request) => {
 
     //材料を作成
     //①index を 0 から始めて、ingredients.length 未満の間、1ずつ増やす（材料を1つずつDBに保存するため）
-    for (let index = 0; index < ingredients.length; index++) {
-      const ingre = ingredients[index]; //②ingredients の中の 1つを取り出してingre という名前の箱にindexごとに入れる　*ingreの中に全ての材料が入るわけではない。
+    if (ingredients?.length) {
+      for (let index = 0; index < ingredients.length; index++) {
+        const ingre = ingredients[index]; //②ingredients の中の 1つを取り出してingre という名前の箱にindexごとに入れる　*ingreの中に全ての材料が入るわけではない。
 
-      await prisma.recipeIngredient.create({
-        //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
-        data: {
-          quantityText: ingre.amount,
-          sortOrder: index,
+        if (!ingre.name || !ingre.unitId) continue;
 
-          recipe: {
-            //recipeIngredientのrecipe(本来はrecipeIdをrecipe.idと接続したいが、connectが書けるのはリレーションのみだからrecipeと書く。)
-            connect: {
-              //　内部的には「recipeId = recipedata.id」となっている
-              id: recipedata.id,
-            }, //recipedata.id→前にcreateしたrecipeの戻り値からきてる。※　新しく作ったrecipeのid　→　recipedata = {id: "ckabc123",title: "カレー",...}
-          },
+        await prisma.recipeIngredient.create({
+          //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
+          data: {
+            quantityText: ingre.amount ?? 0,
+            sortOrder: index,
 
-          ingredient: {
-            //ingredientテーブルに新しい材料を作って、 同時にその ingredientId を RecipeIngredient に入れる
-            create: {
-              name: ingre.name,
-              normalizedName: ingre.name,
+            recipe: {
+              //recipeIngredientのrecipe(本来はrecipeIdをrecipe.idと接続したいが、connectが書けるのはリレーションのみだからrecipeと書く。)
+              connect: {
+                //　内部的には「recipeId = recipedata.id」となっている
+                id: recipedata.id,
+              }, //recipedata.id→前にcreateしたrecipeの戻り値からきてる。※　新しく作ったrecipeのid　→　recipedata = {id: "ckabc123",title: "カレー",...}
             },
-          },
-          unit: {
-            //unitはすでにDBに存在しているためconnect
-            connect: {
-              id: ingre.unitId, //フロントでユーザーが選択した単位は、idでやり取りされる
+
+            ingredient: {
+              //ingredientテーブルに新しい材料を作って、 同時にその ingredientId を RecipeIngredient に入れる
+              create: {
+                name: ingre.name,
+                normalizedName: ingre.name,
+              },
             },
+            unit: {
+              //unitはすでにDBに存在しているためconnect
+              connect: {
+                id: ingre.unitId, //フロントでユーザーが選択した単位は、idでやり取りされる
+              },
+            },
+            //既に存在するもの→connect、新しく作るもの→create
           },
-          //既に存在するもの→connect、新しく作るもの→create
-        },
-      });
+        });
+      }
     }
 
     //手順を作成
-    for (let index = 0; index < steps.length; index++) {
-      const step = steps[index];
-      await prisma.recipeStep.create({
-        data: {
-          instructionText: step.recipestep,
+    if (steps?.length) {
+      for (let index = 0; index < steps.length; index++) {
+        const step = steps[index];
+        await prisma.recipeStep.create({
+          data: {
+            instructionText: step.recipestep,
 
-          sortOrder: index,
-          stepNumber: index + 1,
-          recipe: {
-            connect: { id: recipedata.id }, //connect→既存のレコードと紐づけるという意味
+            sortOrder: index,
+            stepNumber: index + 1,
+            recipe: {
+              connect: { id: recipedata.id }, //connect→既存のレコードと紐づけるという意味
+            },
           },
-        },
-      });
+        });
+      }
     }
 
     return NextResponse.json({ recipeId: recipedata.id }, { status: 200 });

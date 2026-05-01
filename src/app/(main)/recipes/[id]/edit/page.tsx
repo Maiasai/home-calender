@@ -92,7 +92,7 @@ const RecipeEdit = ({ params }: Props) => {
     const fetchUnits = async () => {
       const res = await fetch('/api/units');
       const data = await res.json();
-      setUnits(data);
+      setUnits(data.units);
     };
     fetchUnits();
   }, []); //[]の意味：画面が初回表示された時だけ実行
@@ -109,17 +109,23 @@ const RecipeEdit = ({ params }: Props) => {
     if (recipe) {
       reset({
         title: recipe.title,
-        memo: recipe.memo,
-        servings: recipe.servings,
+        memo: recipe.memo ?? '',
+        servings: recipe.servings ?? undefined,
         thumbnailImageUrl: recipe.thumbnailUrl ?? undefined,
-        ingredients: recipe.recipeIngredients.map((ing) => ({
-          name: ing.ingredient.name,
-          amount: ing.quantityText ?? '',
-          unitId: String(ing.unit.id ?? ''), //単位の初期選択値
-        })),
-        steps: recipe.recipeSteps.map((stp: any) => ({
-          recipestep: stp.instructionText,
-        })),
+
+        ingredients: recipe.recipeIngredients?.length
+          ? recipe.recipeIngredients.map((ing) => ({
+              name: ing.ingredient.name ?? '',
+              amount: ing.quantityText ? Number(ing.quantityText) : undefined, //条件 ? 条件がtrueのとき : falseのとき
+              unitId: String(ing.unit?.id ?? ''), //単位の初期選択値
+            }))
+          : [{ name: '', amount: undefined, unitId: '' }],
+
+        steps: recipe.recipeSteps?.length
+          ? recipe.recipeSteps.map((stp: any) => ({
+              recipestep: stp.instructionText ?? '',
+            }))
+          : [{ recipestep: '' }],
       });
       setPreviewUrl(recipe.thumbnailUrl); // ←ここでsetPreviewURLも更新
       setCategory(recipe.category); // カテゴリも state にセット

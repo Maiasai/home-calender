@@ -11,6 +11,7 @@ export const POST = async (request: NextRequest) => {
     const body: NicknameData = await request.json();
 
     const { nickname } = body;
+    console.log(user.id);
 
     if (!nickname || typeof nickname !== 'string') {
       return NextResponse.json(
@@ -30,7 +31,7 @@ export const POST = async (request: NextRequest) => {
 
     await prisma.user.upsert({
       where: { id: user.id },
-      update: {},
+      update: { nickname },
       create: {
         id: user.id,
         email: user.email,

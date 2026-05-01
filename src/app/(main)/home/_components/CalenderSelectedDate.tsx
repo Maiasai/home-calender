@@ -49,6 +49,7 @@ const CalenderSelectedDate = ({
               id: r.id,
               title: r.title,
               thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
+              ingredients: r.ingredients ?? [],
             },
             mealType: 'BREAKFAST' as const,
           })),
@@ -57,6 +58,7 @@ const CalenderSelectedDate = ({
               id: r.id,
               title: r.title,
               thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
+              ingredients: r.ingredients ?? [],
             },
             mealType: 'LUNCH' as const,
           })),
@@ -65,6 +67,7 @@ const CalenderSelectedDate = ({
               id: r.id,
               title: r.title,
               thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
+              ingredients: r.ingredients ?? [],
             },
             mealType: 'DINNER' as const,
           })),
@@ -134,12 +137,12 @@ const CalenderSelectedDate = ({
                     className="mr-1"
                   />{' '}
                 </div>
-                <div>
+                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
                   <Image
                     src={item.thumbnailUrl ?? '/images/noImage.jpg'}
                     alt={item.title}
-                    width={100}
-                    height={100}
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 {item.title}
@@ -158,12 +161,14 @@ const CalenderSelectedDate = ({
                   height={20}
                   className="mr-1"
                 />{' '}
-                <Image
-                  src={item.thumbnailUrl ?? '/images/noImage.jpg'}
-                  alt={item.title}
-                  width={100}
-                  height={100}
-                />
+                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
+                  <Image
+                    src={item.thumbnailUrl ?? '/images/noImage.jpg'}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 {item.title}
               </div>
             </Link>
@@ -179,12 +184,14 @@ const CalenderSelectedDate = ({
                   height={20}
                   className="mr-1"
                 />{' '}
-                <Image
-                  src={item.thumbnailUrl ?? '/images/noImage.jpg'}
-                  alt={item.title}
-                  width={100}
-                  height={100}
-                />
+                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
+                  <Image
+                    src={item.thumbnailUrl ?? '/images/noImage.jpg'}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 {item.title}
               </div>
             </Link>

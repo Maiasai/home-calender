@@ -16,9 +16,11 @@ import Image from 'next/image';
 import { GetUnitsResponse } from '@/app/api/_types/GetUnitsResponse';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
+import { RecipeModalStep } from '../_types/RecipeModalStep';
 
 type Props = {
   onClose: () => void;
+  step: RecipeModalStep;
 };
 
 type CreateRecipeRequest = RecipeFormValues & {
@@ -26,7 +28,7 @@ type CreateRecipeRequest = RecipeFormValues & {
   category?: RecipeCategory;
 };
 
-const AddRecipeManualModal = ({ onClose }: Props) => {
+const AddRecipeManualModal = ({ onClose, step }: Props) => {
   const { token } = useSupabaseSession();
 
   const [category, setCategory] = useState<RecipeCategory | ''>('');
@@ -39,7 +41,7 @@ const AddRecipeManualModal = ({ onClose }: Props) => {
     setValue,
     handleSubmit,
     control,
-    formState: { errors, isValid, dirtyFields, isSubmitting },
+    formState: { errors, isValid, isSubmitting },
     reset,
   } = useForm<RecipeFormValues>({
     //ここにunitは入力フォームではないから不要
@@ -135,7 +137,7 @@ const AddRecipeManualModal = ({ onClose }: Props) => {
             />
 
             {/* タイトル (必須)*/}
-            <TitleForm registerTitle={register} errors={errors} />
+            <TitleForm registerTitle={register} errors={errors} step={step} />
           </div>
 
           {/* カテゴリ */}

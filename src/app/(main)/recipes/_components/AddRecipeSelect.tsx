@@ -23,7 +23,7 @@ const AddRecipeSelect = ({ onSelect }: Props) => {
         />
 
         {/* URLから追加する */}
-        <div className="flex flex-col h-[90px] bg-white  mx-4 mt-4 mb-2 p-4 rounded-lg">
+        <div className="flex flex-col bg-white  mx-4 mt-4 mb-2 p-4 rounded-lg">
           <button
             type="button"
             onClick={() => onSelect('URL')} //baseコンポーネントに次はURL画面にしてと依頼
@@ -41,43 +41,16 @@ const AddRecipeSelect = ({ onSelect }: Props) => {
 
             {/* 右テキスト */}
             <div className="flex flex-col">
-              <div>URLから追加する</div>
+              <div>レシピURLを登録</div>
               <div className="text-sm">
-                WebサイトのレシピURLを貼るだけで、自動で内容を取り込みます。
-              </div>
-            </div>
-          </button>
-        </div>
-
-        {/* テキストからレシピを登録する */}
-        <div className="flex flex-col h-[90px] bg-white  mx-4 mb-2 p-4 rounded-lg">
-          <button
-            type="button"
-            onClick={() => onSelect('TEXT')}
-            className="flex items-center gap-4 text-left"
-          >
-            {/* 左アイコン */}
-            <div>
-              <Image
-                src="/images/text.png"
-                alt="テキストからレシピを登録するアイコン"
-                width={40}
-                height={40}
-              />
-            </div>
-
-            {/* 右テキスト */}
-            <div className="flex flex-col">
-              <div>テキストからレシピを登録する</div>
-              <div className="text-sm">
-                材料や作り方をテキストで貼り付けると、自動でレシピとして整理されます。
+                レシピ名とURLを入力して保存できます。
               </div>
             </div>
           </button>
         </div>
 
         {/* オリジナルレシピを登録する */}
-        <div className="flex flex-col h-[80px] gap-6 bg-white mx-4 mb-4 p-4 rounded-lg">
+        <div className="flex flex-col gap-6 bg-white mx-4 mb-4 p-4 rounded-lg">
           <button
             type="button"
             onClick={() => onSelect('MANUAL')}

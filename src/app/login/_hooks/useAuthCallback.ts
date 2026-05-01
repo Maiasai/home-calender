@@ -56,9 +56,21 @@ export const useAuthCallback = () => {
         credentials: 'include', //Googleログインしたユーザーのブラウザに保存されているCookie（セッション情報）も一緒に送る
       });
       const data: GetMeResponse = await res.json();
+      console.log('ME RESPONSE:', data.user);
+      console.log('NICKNAME:', data.user?.nickname);
 
+      const needsNickname =
+        data.user && (!data.user.nickname || data.user.nickname.trim() === '');
+
+      console.log('NEEDS:', needsNickname);
       if (data.user) {
-        options?.onLoginSuccess?.(); // ⑤ユーザーがいて、onLoginSuccessという関数が渡されていたら、その中の処理（mainへ遷移）を実行
+        if (needsNickname) {
+          options?.onSignupOpen?.(); // ⑤ユーザーがいて、onLoginSuccessという関数が渡されていたら、その中の処理（mainへ遷移）を実行
+          return;
+        } else {
+          options?.onLoginSuccess?.(); // ← ホームへ
+          return;
+        }
       } else {
         options?.onSignupOpen?.(); //⑤いなかったら新規登録モーダル
       }
