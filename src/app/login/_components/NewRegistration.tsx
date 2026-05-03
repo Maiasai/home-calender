@@ -81,8 +81,16 @@ const NewRegistration = ({
 
       const res = await fetch('/api/users/me');
       const data: GetMeResponse = await res.json();
-
       if (data.user) {
+        const needsNickname =
+          !data.user.nickname || data.user.nickname.trim() === '';
+
+        if (needsNickname) {
+          // モーダル開くフラグ or signup画面へ
+          router.push('/?signup=1');
+          return;
+        }
+
         router.push('/home');
         return;
       }
@@ -138,7 +146,7 @@ const NewRegistration = ({
       return;
     }
 
-    router.push('main');
+    router.push('/home');
   };
 
   return (

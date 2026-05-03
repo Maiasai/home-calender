@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import AddRecipeSelect from './AddRecipeSelect';
 import AddRecipeUrlModal from './AddRecipeUrlModal';
-import AddRecipeTextModal from './AddRecipeTextModal';
 import AddRecipeManualModal from './AddRecipeManualModal';
 import PageHeader from './PageHeader';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
@@ -17,7 +16,6 @@ type Props = {
 const titles = {
   select: 'レシピ登録',
   URL: 'URLから追加する',
-  TEXT: 'テキストからレシピを登録する',
   MANUAL: 'オリジナルでレシピ登録する',
 };
 
@@ -25,6 +23,15 @@ const AddRecipeModalBase = ({ open, onClose }: Props) => {
   const [step, setStep] = useState<RecipeModalStep>('select');
   //→ここでstep管理。header管理、モーダル切り替えをする
   //モーダル内の画面遷移はモーダルの責務になるのでここにstepのstateは書く
+
+  const [parsed, setParsed] = useState<any>(null);
+
+  //テキストからレシピ登録箇所　入力データ保持用
+  const [textFormData, setTextFormData] = useState({
+    sourceText: '',
+    memo: '',
+    category: '',
+  });
 
   const handleClose = () => {
     setStep('select'); //stepを初期化
@@ -49,15 +56,11 @@ const AddRecipeModalBase = ({ open, onClose }: Props) => {
           <AddRecipeSelect onSelect={setStep} /> //モーダルにsetStep という関数をonSelectという名前で渡してる
         )}
 
-        {step === 'URL' && (
-          <AddRecipeUrlModal onBack={() => setStep('select')} />
-        )}
+        {step === 'URL' && <AddRecipeUrlModal onClose={onClose} step={step} />}
 
-        {step === 'TEXT' && (
-          <AddRecipeTextModal onBack={() => setStep('select')} />
+        {step === 'MANUAL' && (
+          <AddRecipeManualModal onClose={onClose} step={step} />
         )}
-
-        {step === 'MANUAL' && <AddRecipeManualModal onClose={onClose} />}
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
 //レシピカード（献立作成モーダルにて表示）
 'use client';
 
-import { SelectedRecipe } from '../../home/_typs/SelectedRecipe';
-import { RecipeData } from '../_types/RecipeTypes';
+import { SelectedRecipe } from '../_typs/SelectedRecipe';
+import { RecipeData } from '../../recipes/_types/RecipeTypes';
 import Image from 'next/image';
+import { truncateRecipeListTitle } from '@/utils/format';
 
 type Props = {
   recipe: RecipeData;
@@ -13,6 +14,11 @@ type Props = {
 
 const RecipeCardSimple = ({ recipe, selectedRecipes, toggleSelect }: Props) => {
   const isSelected = selectedRecipes.some((r) => r.id === recipe.id);
+
+  const imageSrc =
+    recipe.thumbnailUrl && recipe.thumbnailUrl.trim() !== ''
+      ? recipe.thumbnailUrl
+      : '/images/noImage.jpg';
 
   return (
     <div
@@ -25,17 +31,18 @@ const RecipeCardSimple = ({ recipe, selectedRecipes, toggleSelect }: Props) => {
         className="relative"
         onClick={() => toggleSelect(recipe)} //選択されたレシピが、オブジェクトで関数に渡される
       >
-        <div className="aspect-[4/3] overflow-hidden rounded-lg">
+        <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded-2xl">
           <Image
-            src={recipe.thumbnailUrl ?? undefined}
+            src={imageSrc}
             alt="レシピ画像"
-            className="w-full h-full object-cover rounded-lg"
-            width={100}
-            height={100}
+            fill
+            className="object-cover"
           />
         </div>
 
-        <div className="flex justify-between">{recipe.title}</div>
+        <div className="flex justify-between">
+          {truncateRecipeListTitle(recipe.title)}
+        </div>
       </div>
     </div>
   );

@@ -1,18 +1,18 @@
 //レシピデータと検索関連の型定義
 
-import { RecipeCategory } from "generated/prisma";
-
+import { RecipeCategory } from 'generated/prisma';
 
 //useSWRで使っている型
-export interface RecipeData {//APIのクエリパラメーター名
+export interface RecipeData {
+  //APIのクエリパラメーター名
   id: string;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   title: string;
   userRecipeStatus?: {
     isFavorite: boolean;
     hasCooked: boolean;
   }[];
-  category : RecipeCategory
+  category: RecipeCategory;
 }
 
 export type Filters = {

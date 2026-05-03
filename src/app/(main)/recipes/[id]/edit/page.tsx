@@ -5,7 +5,7 @@
 import { supabase } from '@/lib/supabase';
 import BackIcon from '@/app/components/image/backicon';
 
-import { RecipeCategory, RecipeIngredient, Unit } from '@/generated/prisma';
+import { RecipeCategory } from '@/generated/prisma';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import useSWR from 'swr';
@@ -22,6 +22,7 @@ import StepList from '../../_components/StepList';
 import MemoForm from '../../_components/MemoForm';
 import { RecipeDetail } from '../../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
+import { GetUnitsResponse, UnitData } from '@/shared/types/unit';
 
 type Props = {
   params: { id: string };
@@ -40,7 +41,7 @@ const RecipeEdit = ({ params }: Props) => {
 
   const [category, setCategory] = useState<'' | RecipeCategory>(''); //表示で""（未選択）必要なためユニオン型で記載
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [units, setUnits] = useState<Unit[]>([]); //ここで選択肢を管理
+  const [units, setUnits] = useState<UnitData[]>([]); //ここで選択肢を管理
   const [loading, setLoading] = useState<boolean>(false);
 
   //編集ロジックまわり②useFormが初期化
@@ -91,8 +92,8 @@ const RecipeEdit = ({ params }: Props) => {
   useEffect(() => {
     const fetchUnits = async () => {
       const res = await fetch('/api/units');
-      const data = await res.json();
-      setUnits(data);
+      const data: GetUnitsResponse = await res.json();
+      setUnits(data.units);
     };
     fetchUnits();
   }, []); //[]の意味：画面が初回表示された時だけ実行
@@ -109,17 +110,23 @@ const RecipeEdit = ({ params }: Props) => {
     if (recipe) {
       reset({
         title: recipe.title,
-        memo: recipe.memo,
-        servings: recipe.servings,
+        memo: recipe.memo ?? '',
+        servings: recipe.servings ?? undefined,
         thumbnailImageUrl: recipe.thumbnailUrl ?? undefined,
-        ingredients: recipe.recipeIngredients.map((ing) => ({
-          name: ing.ingredient.name,
-          amount: ing.quantityText ?? '',
-          unitId: String(ing.unit.id ?? ''), //単位の初期選択値
-        })),
-        steps: recipe.recipeSteps.map((stp: any) => ({
-          recipestep: stp.instructionText,
-        })),
+
+        ingredients: recipe.recipeIngredients?.length
+          ? recipe.recipeIngredients.map((ing) => ({
+              name: ing.ingredient.name ?? '',
+              amount: ing.quantityText ? Number(ing.quantityText) : undefined, //条件 ? 条件がtrueのとき : falseのとき
+              unitId: String(ing.unit?.id ?? ''), //単位の初期選択値
+            }))
+          : [{ name: '', amount: undefined, unitId: '' }],
+
+        steps: recipe.recipeSteps?.length
+          ? recipe.recipeSteps.map((stp: any) => ({
+              recipestep: stp.instructionText ?? '',
+            }))
+          : [{ recipestep: '' }],
       });
       setPreviewUrl(recipe.thumbnailUrl); // ←ここでsetPreviewURLも更新
       setCategory(recipe.category); // カテゴリも state にセット

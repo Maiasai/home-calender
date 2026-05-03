@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Dispatch, SetStateAction } from 'react';
 import { MonthData } from '../_typs/Menu';
 import { CalendarCell } from '../_typs/CalendarCell';
+import { truncateCalendarTitle } from '@/utils/format';
 
 type Props = {
   data: MonthData;
@@ -26,11 +27,6 @@ const Calender = ({
   month,
   setCurrentMonth,
 }: Props) => {
-  //カレンダー献立（6文字以上カット）
-  const truncate = (text: string, length = 5) => {
-    return text.length > length ? text.slice(0, length) + '...' : text;
-  };
-
   //前月に移動（年またぎも自動対応）
   const prevMonth = () => {
     setCurrentMonth(new Date(year, month - 1, 1));
@@ -104,7 +100,7 @@ const Calender = ({
                           height={15}
                           className="mr-1"
                         />
-                        {truncate(databreak.title)}
+                        {truncateCalendarTitle(databreak.title)}
                       </div>
                     ))}
                   </div>
@@ -123,7 +119,7 @@ const Calender = ({
                           height={15}
                           className="mr-1"
                         />
-                        {truncate(datalunch.title)}
+                        {truncateCalendarTitle(datalunch.title)}
                       </div>
                     ))}
                   </div>
@@ -142,7 +138,7 @@ const Calender = ({
                           height={15}
                           className="mr-1"
                         />
-                        {truncate(datadinner.title)}
+                        {truncateCalendarTitle(datadinner.title)}
                       </div>
                     ))}
                   </div>

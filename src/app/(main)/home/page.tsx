@@ -11,7 +11,6 @@ import { CalendarCell } from './_typs/CalendarCell';
 import CalenderSelectedDate from './_components/CalenderSelectedDate';
 import { SelectedRecipe } from './_typs/SelectedRecipe';
 import { Meal } from './_typs/Meal';
-import { MealTypeExtended } from './_typs/MealTypeExtended';
 import Image from 'next/image';
 
 const TopPage = () => {
@@ -77,12 +76,17 @@ const TopPage = () => {
   const handleEdit = (meal: Meal) => {
     setTargetMeal(meal); // ← 更新対象に初期値セット
 
-    const converted = meal.recipes.map((r) => ({
-      id: r.recipe.id,
-      title: r.recipe.title,
-      thumbnailUrl: r.recipe.thumbnailUrl,
-      mealType: r.mealType as MealTypeExtended,
-    }));
+    const converted = meal.recipes
+      .filter(
+        (r, index, self) =>
+          index === self.findIndex((x) => x.recipe.id === r.recipe.id),
+      )
+      .map((r) => ({
+        id: r.recipe.id,
+        title: r.recipe.title,
+        thumbnailUrl: r.recipe.thumbnailUrl,
+        mealType: r.mealType,
+      }));
     setInitialRecipes(converted); //ここでモーダルの初期値をセット（初期表示データ）
     setMode('edit'); // ← モード切替
     setModalOpen(true); // ← モーダル開く
@@ -90,6 +94,14 @@ const TopPage = () => {
 
   //買い物リストへ追加処理
   const handleAddList = async (meal: Meal) => {
+    const hasIngredients = meal.recipes.some(
+      (r) => r.recipe.ingredients && r.recipe.ingredients.length > 0,
+    );
+    if (!hasIngredients) {
+      alert('材料が登録されていません。編集画面から追加してください');
+      return;
+    }
+
     try {
       const res = await fetch('/api/shopping-list', {
         method: 'POST',
@@ -104,7 +116,6 @@ const TopPage = () => {
       }
 
       const data = await res.json();
-      console.log('成功:', data);
 
       alert('買い物リストに追加しました');
     } catch (error) {

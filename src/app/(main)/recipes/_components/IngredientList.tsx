@@ -11,10 +11,10 @@ import {
 } from 'react-hook-form';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { parseFraction } from './parseFraction';
-import { Unit } from '../_types/unit/Unit';
 import ErrorMessage from './ErrorMessage';
 import Image from 'next/image';
 import DeleteIcon from '@/app/components/image/deleteicon';
+import { UnitData } from '@/shared/types/unit';
 
 type Props = {
   //このコンポーネントが親から受け取る「データと関数の一覧」
@@ -23,7 +23,7 @@ type Props = {
   control: Control<RecipeFormValues>;
   register: UseFormRegister<RecipeFormValues>;
   setValue: UseFormSetValue<RecipeFormValues>;
-  units: Unit[];
+  units: UnitData[];
 };
 
 const IngredientList = ({
@@ -52,8 +52,7 @@ const IngredientList = ({
             className="w-20 px-2  py-1 border-b"
             //数字に変換してから、ここで親のRHFのservingsを更新している
             {...registerServings('servings', {
-              required: '人数は必須です',
-              min: { value: 1, message: '1人以上で入力してください' },
+              min: { value: 0, message: '0人以上で入力してください' },
               max: { value: 10, message: '10人以下で入力してください' },
               valueAsNumber: true, //ユーザーの入力した数字は文字列になってしまうため、"3"ここで数字に変換
             })}
@@ -84,7 +83,6 @@ const IngredientList = ({
                 <input
                   className="w-[180px] px-2 py-1 border-b"
                   {...register(`ingredients.${index}.name`, {
-                    required: '材料名は必須です',
                     maxLength: {
                       value: 20,
                       message: ' 材料名は20文字以内で入力してください ',
@@ -103,8 +101,7 @@ const IngredientList = ({
                   type="text" // 1/2 入力できるようにするため
                   className="w-[150px] px-2 py-1 border-b"
                   {...register(`ingredients.${index}.amount`, {
-                    required: '量は必須です',
-                    min: { value: 1, message: '1以上で入力してください' },
+                    min: { value: 0, message: '0以上で入力してください' },
                     max: { value: 500, message: '500以下で入力してください' },
                     pattern: /^(\d+(\.\d+)?|\d+\/\d+)$/,
 
@@ -128,13 +125,7 @@ const IngredientList = ({
 
               {/* 単位 */}
               <div className="flex flex-col w-[120px]">
-                <select
-                  className="px-2 py-1 border-b"
-                  {...register(`ingredients.${index}.unitId`, {
-                    //unitIdはカラム名
-                    required: '単位は必須です',
-                  })}
-                >
+                <select className="px-2 py-1 border-b">
                   <option value="" disabled>
                     {/* defaultValue="" で初期値を空に見せる　&　disabledで選べないようにする */}
                     単位を選択
@@ -146,9 +137,6 @@ const IngredientList = ({
                     </option>
                   ))}
                 </select>
-                <div className="pl-2">
-                  <ErrorMessage error={errors.ingredients?.[index]?.unitId} />
-                </div>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-//マイページ
+//マイページ(chirdren部分)
 
 'use client';
 import React from 'react';

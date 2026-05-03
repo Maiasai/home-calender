@@ -6,12 +6,12 @@ import { Step } from '../_hooks/useSteps';
 export interface RecipeFormValues {
   title: string;
   memo?: string;
-  servings: number;
+  servings?: number;
   thumbnailImageUrl?: string;
   ingredients: {
-    name: string;
+    name?: string;
     amount?: number; //DB では小数で保存されるが、TS では number として扱うだけでOK
-    unitId: string;
+    unitId?: string;
   }[];
 
   steps: Step[];

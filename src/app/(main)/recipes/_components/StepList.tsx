@@ -47,7 +47,6 @@ const StepList = ({ fields, append, remove, register, errors }: Props) => {
               <input
                 className="w-3/4 px-2 py-1 border-b"
                 {...register(`steps.${index}.recipestep`, {
-                  required: '手順は必須です',
                   maxLength: {
                     value: 50,
                     message: ' 手順は50文字以内で入力してください ',
