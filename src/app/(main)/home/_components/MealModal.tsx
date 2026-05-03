@@ -6,13 +6,13 @@
 import { Dispatch, SetStateAction } from 'react';
 import { MealModalStep } from '../_typs/MealModalStep';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
-import { MealType } from '../_typs/MealType';
 import Image from 'next/image';
 import { KeyedMutator } from 'swr';
 import { MonthData } from '../_typs/Menu';
 import { Meal } from '../_typs/Meal';
 import { MealRequestBody } from '../_typs/MealRequestBody';
 import { truncateRecipeTitle } from '@/utils/format';
+import { MealType } from '@/generated/prisma';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
@@ -21,7 +21,7 @@ type Props = {
   onClose: () => void;
   selectedDate: Date;
   isDisabled: boolean;
-  hasUnassingned: boolean;
+  hasUnselected: boolean;
   isEmpty: boolean;
   mutate: KeyedMutator<MonthData>;
   mode: 'create' | 'edit';
@@ -35,7 +35,7 @@ const MealModal = ({
   onClose,
   selectedDate,
   isDisabled,
-  hasUnassingned,
+  hasUnselected,
   isEmpty,
   mutate,
   mode,
@@ -50,7 +50,7 @@ const MealModal = ({
         return '/images/daytimeIcon.png';
       case 'DINNER':
         return '/images/nightIcon.png';
-      case 'UNASSIGNED':
+      case null:
         return '/images/nullIcon.png';
       default:
         return null;
@@ -58,7 +58,7 @@ const MealModal = ({
   };
 
   //カテゴリ分け　外枠
-  const categories: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER', 'UNASSIGNED'];
+  const categories: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
 
   const year = selectedDate.getFullYear();
   const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
@@ -80,12 +80,20 @@ const MealModal = ({
       const basePayload: MealRequestBody = {
         //API側でユーザーの特定をしているためuser.idはここでは不要
         date: date,
-        recipes: uniqueRecipes.map((r, index) => ({
-          //フロント側でmapすることで、API側でmap不要
-          recipeId: r.id,
-          mealType: r.mealType,
-          position: index,
-        })),
+        recipes: uniqueRecipes.map((r, index) => {
+          if (r.mealType === null) {
+            //DB保存時、null想定なしのためフロントであらかじめ弾いておく
+            throw new Error('mealType未選択');
+          }
+
+          return {
+            //フロント側でmapすることで、API側でmap不要
+
+            recipeId: r.id,
+            mealType: r.mealType,
+            position: index,
+          };
+        }),
       };
 
       const payload =
@@ -150,7 +158,7 @@ const MealModal = ({
           </button>
         </div>
       </div>
-      {hasUnassingned && (
+      {hasUnselected && (
         <p className="text-red-500 text-xs mt-1">
           ※カテゴリが未選択のレシピがあります。
           カスタマイズから分類してください。

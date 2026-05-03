@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import requireUser from '@/lib/auth';
 import { RecipeCategory } from '@/generated/prisma';
+import { CreatePostRequestBody } from './_types/CreatePostRequestBody';
 
 export const runtime = 'nodejs';
 
@@ -115,21 +116,6 @@ export const GET = async (request: Request) => {
 };
 
 //レシピ新規作成
-interface CreatePostRequestBody {
-  //bodyの形
-  title: string;
-  memo?: string;
-  servings?: number;
-  thumbnailImageUrl?: string;
-  ingredients?: {
-    name?: string;
-    amount?: number;
-    unitId?: string;
-  }[];
-
-  steps?: { recipestep: string }[];
-  category?: RecipeCategory; //　?　= undefinedが追加される（プリズマの型を追加）
-}
 
 export const POST = async (request: Request) => {
   try {

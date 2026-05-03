@@ -6,11 +6,13 @@ import React, { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { Shoppinglist } from '../home/_typs/Shoppinglist';
 import Image from 'next/image';
+import { GetUnitsResponse, UnitData } from '@/shared/types/unit';
+import { UpdateShoppingData } from '@/app/api/shopping-list/_types/UpdateShoppingData';
 
 const List = () => {
   //チェック状態を保存
   const [checkedMap, setCheckedMap] = useState<Record<string, boolean>>({});
-  const [units, setUnits] = useState<{ id: string; name: string }[]>([]);
+  const [units, setUnits] = useState<UnitData[]>([]);
 
   const { data, mutate, isLoading } = useSWR<Shoppinglist[]>(
     '/api/shopping-list',
@@ -20,7 +22,7 @@ const List = () => {
   useEffect(() => {
     const fetchUnits = async () => {
       const res = await fetch('/api/units');
-      const data = await res.json();
+      const data: GetUnitsResponse = await res.json();
       setUnits(data.units);
     };
 
@@ -97,7 +99,10 @@ const List = () => {
   };
 
   //update関数
-  const updateItem = async (id: string, body: any) => {
+  const updateItem = async (
+    id: string,
+    body: Omit<UpdateShoppingData, 'id'>,
+  ) => {
     await fetch('/api/shopping-list', {
       method: 'PUT',
       headers: {

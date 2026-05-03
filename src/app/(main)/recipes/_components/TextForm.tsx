@@ -22,7 +22,7 @@ const TextForm = ({ registerText, errors }: Props) => {
           },
         })}
         placeholder="材料と作り方のテキストをそのまま貼り付けてください"
-        className={'xsw-full px-2 py-1 min-h-[120px] resize-none'}
+        className={'w-full px-2 py-1 min-h-[120px] resize-none'}
       />
 
       <ErrorMessage error={errors.sourceText} />

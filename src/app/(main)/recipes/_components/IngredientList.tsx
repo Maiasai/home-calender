@@ -11,10 +11,10 @@ import {
 } from 'react-hook-form';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { parseFraction } from './parseFraction';
-import { Unit } from '../_types/unit/Unit';
 import ErrorMessage from './ErrorMessage';
 import Image from 'next/image';
 import DeleteIcon from '@/app/components/image/deleteicon';
+import { UnitData } from '@/shared/types/unit';
 
 type Props = {
   //このコンポーネントが親から受け取る「データと関数の一覧」
@@ -23,7 +23,7 @@ type Props = {
   control: Control<RecipeFormValues>;
   register: UseFormRegister<RecipeFormValues>;
   setValue: UseFormSetValue<RecipeFormValues>;
-  units: Unit[];
+  units: UnitData[];
 };
 
 const IngredientList = ({

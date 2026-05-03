@@ -1,5 +1,7 @@
 // src/types/menu.ts
 
+import { MealId } from './MealId';
+
 export type ItemType = {
   id: string;
   title: string;
@@ -8,7 +10,7 @@ export type ItemType = {
 };
 
 export type DayData = {
-  id: string;
+  id: MealId;
   breakfast: ItemType[];
   lunch: ItemType[];
   dinner: ItemType[];

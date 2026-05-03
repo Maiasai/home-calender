@@ -3,16 +3,9 @@
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { ShoppingItemResponse } from './_types/ShoppingItemResponse';
+import { UpdateShoppingData } from './_types/UpdateShoppingData';
 
-export type ShoppingItemResponse = {
-  id: string;
-  name: string;
-  quantityText: number;
-  unitName: string;
-  checked: boolean;
-  sortOrder: number;
-  memo?: string;
-};
 export const GET = async () => {
   try {
     const user = await requireUser();
@@ -134,14 +127,6 @@ export const POST = async (request: NextRequest) => {
 
 //買い物リスト更新
 
-type UpdateShoppingData = {
-  id: string;
-  name?: string;
-  quantityText?: number;
-  unitName?: string;
-  memo?: string;
-};
-
 export const PUT = async (request: NextRequest) => {
   try {
     const user = await requireUser();
@@ -149,21 +134,6 @@ export const PUT = async (request: NextRequest) => {
 
     if (!body.id) {
       return NextResponse.json({ message: 'idが必要です' }, { status: 400 });
-    }
-
-    // 自分の買い物リストか確認
-    const target = await prisma.shoppingItem.findFirst({
-      where: {
-        id: body.id,
-        userId: user.id,
-      },
-    });
-
-    if (!target) {
-      return NextResponse.json(
-        { message: 'データが見つかりません' },
-        { status: 404 },
-      );
     }
 
     const updateData = {
@@ -182,6 +152,7 @@ export const PUT = async (request: NextRequest) => {
     const result = await prisma.shoppingItem.update({
       where: {
         id: body.id,
+        userId: user.id,
       },
       data: updateData,
     });
@@ -202,6 +173,7 @@ export const DELETE = async (request: NextRequest) => {
     const result = await prisma.shoppingItem.delete({
       where: { id: body.id, userId: user.id },
     });
+    return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.log(error);
   }

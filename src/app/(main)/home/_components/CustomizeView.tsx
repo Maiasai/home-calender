@@ -3,16 +3,16 @@
 
 import { Dispatch, SetStateAction } from 'react';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
-import { MealTypeExtended } from '../_typs/MealTypeExtended';
 import Image from 'next/image';
 import { truncateRecipeTitle } from '@/utils/format';
+import { MealType } from '@/generated/prisma';
 
 type Props = {
   selectedRecipes: SelectedRecipe[];
   setSelectedRecipes: Dispatch<SetStateAction<SelectedRecipe[]>>;
   onBack: () => void;
   isDisabled: boolean;
-  hasUnassingned: boolean;
+  hasUnselected: boolean;
   isEmpty: boolean;
 };
 
@@ -21,16 +21,18 @@ const CustomizeView = ({
   setSelectedRecipes,
   onBack,
   isDisabled,
-  hasUnassingned,
+  hasUnselected,
   isEmpty,
 }: Props) => {
+  const mealTypes: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
+
   //レシピ内のカテゴリを変更、２件以上同じカテゴリ登録できないロジック
-  const changeMealType = (id: string, type: MealTypeExtended) => {
+  const changeMealType = (id: string, type: MealType | null) => {
     //type → 選択されたカテゴリ
     setSelectedRecipes((prev) => {
       // 未以外は2件制限
-      if (type !== 'UNASSIGNED') {
-        //選択されたカテゴリが UNASSIGNED でない場合
+      if (type !== null) {
+        //選択されたカテゴリが null でない場合
         const count = prev.filter((r) => r.mealType === type).length; //元々の配列にあるtypeと、入ってきたタイプが同じものがいくつか。
         if (count >= 2) return prev; //そのカテゴリにすでに割り当てられているレシピが 2 件以上なら 変更を無視して元の配列を返す
       }
@@ -48,7 +50,7 @@ const CustomizeView = ({
   };
 
   const handleSave = () => {
-    if (hasUnassingned) {
+    if (hasUnselected) {
       alert('未分類のレシピがあります');
       return;
     }
@@ -96,22 +98,21 @@ const CustomizeView = ({
               />
             </div>
 
+            {recipe.mealType === null && <div className="text-xs">未選択</div>}
+
             <div className="flex flex-col w-full">
               <div>{truncateRecipeTitle(recipe.title)}</div>
 
               {/* ラジオボタン */}
               <div className="flex gap-4">
-                {['UNASSIGNED', 'BREAKFAST', 'LUNCH', 'DINNER'].map((type) => (
+                {mealTypes.map((type) => (
                   <label key={type} className="flex gap-1">
                     <input
                       type="radio"
                       name={`meal-${recipe.id}`} //レシピごとに独立したラジオボタンにしている
                       checked={recipe.mealType === type} //今何が選ばれているか（recipe.mealTypeは親の selectedRecipes 配列から受け取っている）
-                      onChange={() =>
-                        changeMealType(recipe.id, type as MealTypeExtended)
-                      } //クリックされたレシピidと選択肢をchangeMealType に渡す
+                      onChange={() => changeMealType(recipe.id, type)} //クリックされたレシピidと選択肢をchangeMealType に渡す
                     />
-                    {type === 'UNASSIGNED' && '未'}
                     {type === 'BREAKFAST' && '朝'}
                     {type === 'LUNCH' && '昼'}
                     {type === 'DINNER' && '晩'}

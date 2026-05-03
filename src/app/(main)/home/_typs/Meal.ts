@@ -1,10 +1,11 @@
 //カレンダーの献立の型
 
-import { MealType } from './MealType';
+import { MealType } from '@/generated/prisma';
+import { MealId } from './MealId';
 import { ItemIngredient } from './Menu';
 
 export type Meal = {
-  id: string;
+  id: MealId;
   date: string;
   recipes: {
     recipe: {

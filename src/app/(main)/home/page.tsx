@@ -11,7 +11,6 @@ import { CalendarCell } from './_typs/CalendarCell';
 import CalenderSelectedDate from './_components/CalenderSelectedDate';
 import { SelectedRecipe } from './_typs/SelectedRecipe';
 import { Meal } from './_typs/Meal';
-import { MealTypeExtended } from './_typs/MealTypeExtended';
 import Image from 'next/image';
 
 const TopPage = () => {
@@ -86,7 +85,7 @@ const TopPage = () => {
         id: r.recipe.id,
         title: r.recipe.title,
         thumbnailUrl: r.recipe.thumbnailUrl,
-        mealType: r.mealType as MealTypeExtended,
+        mealType: r.mealType,
       }));
     setInitialRecipes(converted); //ここでモーダルの初期値をセット（初期表示データ）
     setMode('edit'); // ← モード切替
@@ -98,9 +97,6 @@ const TopPage = () => {
     const hasIngredients = meal.recipes.some(
       (r) => r.recipe.ingredients && r.recipe.ingredients.length > 0,
     );
-
-    console.log('meal', meal);
-    console.log('hasIngredients', hasIngredients);
     if (!hasIngredients) {
       alert('材料が登録されていません。編集画面から追加してください');
       return;

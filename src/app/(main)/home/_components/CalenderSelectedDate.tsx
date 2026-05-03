@@ -9,6 +9,7 @@ import { Meal } from '../_typs/Meal';
 import Link from 'next/link';
 import { useState } from 'react';
 import ConfirmDialog from '../../recipes/_components/ConfirmDialog';
+import { MealId } from '../_typs/MealId';
 
 type Props = {
   data: MonthData;
@@ -29,7 +30,7 @@ const CalenderSelectedDate = ({
   const selectedKey = selectedDate.toLocaleDateString('sv-SE'); //選択している日付
   const selectedDayData = data?.[selectedKey]; //右記のような形→{breakfast: Recipe[] lunch: Recipe[] dinner: Recipe[]}
   const [open, setOpen] = useState(false);
-  const [targetMealId, setTargetMealId] = useState<string | null>(null);
+  const [targetMealId, setTargetMealId] = useState<MealId | null>(null);
 
   //その日の献立が空の場合
   const isEmpty =
@@ -76,7 +77,7 @@ const CalenderSelectedDate = ({
     : null;
 
   //献立削除処理
-  const deleteMeal = async (mealId: string) => {
+  const deleteMeal = async (mealId: MealId) => {
     try {
       await fetch('/api/meal-plan', {
         method: 'DELETE',
