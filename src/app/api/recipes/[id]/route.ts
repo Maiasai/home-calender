@@ -3,7 +3,7 @@
 
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { Recipe, RecipeCategory, RecipeSourceType } from '@/generated/prisma';
+import { RecipeCategory, RecipeSourceType } from '@/generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
 //左辺→分割代入、右辺→型指定（idはstrigですと言ってるだけ）　　{params} : { params : {id:string}}

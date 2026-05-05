@@ -36,7 +36,16 @@ export const GET = async (request: NextRequest) => {
       include: {
         menuRecipes: {
           include: {
-            recipe: true,
+            recipe: {
+              include: {
+                recipeIngredients: {
+                  include: {
+                    ingredient: true,
+                    unit: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -78,6 +87,12 @@ export const GET = async (request: NextRequest) => {
           id: item.recipe.id,
           title: item.recipe.title,
           thumbnailUrl: item.recipe.thumbnailUrl,
+          ingredients: item.recipe.recipeIngredients.map((ri) => ({
+            id: ri.ingredient.id,
+            name: ri.ingredient.name,
+            amount: ri.quantityText,
+            unit: ri.unit.name,
+          })),
         };
 
         if (item.mealType === 'BREAKFAST') {

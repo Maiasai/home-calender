@@ -2,9 +2,10 @@
 
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { MealType } from '@/generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { MealRequestBodyEdit } from '@/app/(main)/home/_typs/MealRequestBodyEdit';
+import { MealId } from '@/app/(main)/home/_typs/MealId';
+import { MealRequestBody } from '@/app/(main)/home/_typs/MealRequestBody';
 
 //献立取得
 export const GET = async (request: NextRequest) => {
@@ -51,21 +52,12 @@ export const GET = async (request: NextRequest) => {
 
 //献立新規作成
 
-type RequestBody = {
-  date: string; // ← JSON では string になるので string
-  recipes: {
-    recipeId: string;
-    mealType: MealType;
-    position?: number;
-  }[];
-};
-
 export const POST = async (request: NextRequest) => {
   try {
     const user = await requireUser(); //ここでユーザーを特定している
     const userId = user.id;
 
-    const body: RequestBody = await request.json();
+    const body: MealRequestBody = await request.json();
     const { date, recipes } = body;
 
     const mealplan = await prisma.menu.create({
@@ -140,7 +132,7 @@ export const PUT = async (request: NextRequest) => {
 export const DELETE = async (request: NextRequest) => {
   try {
     const user = await requireUser();
-    const body = await request.json();
+    const body: MealId = await request.json();
 
     const result = await prisma.menu.deleteMany({
       where: {

@@ -9,6 +9,7 @@ import { Meal } from '../_typs/Meal';
 import Link from 'next/link';
 import { useState } from 'react';
 import ConfirmDialog from '../../recipes/_components/ConfirmDialog';
+import { MealId } from '../_typs/MealId';
 
 type Props = {
   data: MonthData;
@@ -29,7 +30,7 @@ const CalenderSelectedDate = ({
   const selectedKey = selectedDate.toLocaleDateString('sv-SE'); //選択している日付
   const selectedDayData = data?.[selectedKey]; //右記のような形→{breakfast: Recipe[] lunch: Recipe[] dinner: Recipe[]}
   const [open, setOpen] = useState(false);
-  const [targetMealId, setTargetMealId] = useState<string | null>(null);
+  const [targetMealId, setTargetMealId] = useState<MealId | null>(null);
 
   //その日の献立が空の場合
   const isEmpty =
@@ -49,6 +50,7 @@ const CalenderSelectedDate = ({
               id: r.id,
               title: r.title,
               thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
+              ingredients: r.ingredients ?? [],
             },
             mealType: 'BREAKFAST' as const,
           })),
@@ -57,6 +59,7 @@ const CalenderSelectedDate = ({
               id: r.id,
               title: r.title,
               thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
+              ingredients: r.ingredients ?? [],
             },
             mealType: 'LUNCH' as const,
           })),
@@ -65,6 +68,7 @@ const CalenderSelectedDate = ({
               id: r.id,
               title: r.title,
               thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
+              ingredients: r.ingredients ?? [],
             },
             mealType: 'DINNER' as const,
           })),
@@ -73,7 +77,7 @@ const CalenderSelectedDate = ({
     : null;
 
   //献立削除処理
-  const deleteMeal = async (mealId: string) => {
+  const deleteMeal = async (mealId: MealId) => {
     try {
       await fetch('/api/meal-plan', {
         method: 'DELETE',
@@ -134,12 +138,12 @@ const CalenderSelectedDate = ({
                     className="mr-1"
                   />{' '}
                 </div>
-                <div>
+                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
                   <Image
                     src={item.thumbnailUrl ?? '/images/noImage.jpg'}
                     alt={item.title}
-                    width={100}
-                    height={100}
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 {item.title}
@@ -158,12 +162,14 @@ const CalenderSelectedDate = ({
                   height={20}
                   className="mr-1"
                 />{' '}
-                <Image
-                  src={item.thumbnailUrl ?? '/images/noImage.jpg'}
-                  alt={item.title}
-                  width={100}
-                  height={100}
-                />
+                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
+                  <Image
+                    src={item.thumbnailUrl ?? '/images/noImage.jpg'}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 {item.title}
               </div>
             </Link>
@@ -179,12 +185,14 @@ const CalenderSelectedDate = ({
                   height={20}
                   className="mr-1"
                 />{' '}
-                <Image
-                  src={item.thumbnailUrl ?? '/images/noImage.jpg'}
-                  alt={item.title}
-                  width={100}
-                  height={100}
-                />
+                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
+                  <Image
+                    src={item.thumbnailUrl ?? '/images/noImage.jpg'}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 {item.title}
               </div>
             </Link>

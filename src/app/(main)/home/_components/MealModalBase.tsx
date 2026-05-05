@@ -49,12 +49,10 @@ const MealModalBase = ({
   } = useForm();
 
   //未カテゴリ
-  const hasUnassingned = selectedRecipes.some(
-    (r) => r.mealType === 'UNASSIGNED',
-  );
+  const hasUnselected = selectedRecipes.some((r) => r.mealType === null);
   // 未カテゴリがある場合はボタンを無効化
   const isDisabled =
-    isSubmitting || hasUnassingned || selectedRecipes.length === 0;
+    isSubmitting || hasUnselected || selectedRecipes.length === 0;
   const isEmpty = selectedRecipes.length === 0;
 
   //レシピ情報を取得
@@ -116,7 +114,7 @@ const MealModalBase = ({
               onClose={onClose}
               selectedDate={selectedDate}
               isDisabled={isDisabled}
-              hasUnassingned={hasUnassingned}
+              hasUnselected={hasUnselected}
               isEmpty={isEmpty}
               mutate={mutate}
               mode={mode}
@@ -147,7 +145,7 @@ const MealModalBase = ({
               selectedRecipes={selectedRecipes}
               setSelectedRecipes={setSelectedRecipes}
               isDisabled={isDisabled}
-              hasUnassingned={hasUnassingned}
+              hasUnselected={hasUnselected}
               onBack={() => setStep('select')}
               isEmpty={isEmpty}
             />

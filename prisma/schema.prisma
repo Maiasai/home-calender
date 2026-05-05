@@ -30,7 +30,6 @@ enum RecipeCategory {
 
 enum RecipeSourceType {
   MANUAL  // 手入力
-  TEXT    // テキスト（例：誰かにもらった文章、メモから）
   URL     // URLから
 }
 
@@ -45,7 +44,7 @@ enum MealType {
 
 model User {
   id           String @id @db.Uuid//Supabase のUUIDを使用するため @default(uuid()) 削除
-  nickname     String
+  nickname     String?
   email        String      @unique
   authProvider AuthProvider @map("auth_provider")
 
@@ -82,10 +81,9 @@ model Recipe {
   category     RecipeCategory   @default(UNCLASSIFIED)//実質カテゴリも任意だが、未分類がデフォルトとなるため？は不要
   sourceType   RecipeSourceType @map("source_type")   //登録方式
   sourceUrl    String?          @map("source_url") //URLで登録ならその元のURL
-  sourceText   String?          @map("source_text")
   thumbnailUrl String?          @map("thumbnail_url")
   memo         String?
-  servings     Int  //何人分か
+  servings     Int?  //何人分か
 
   createdAt DateTime @default(now()) @map("created_at")//now()→デフォルトがnowってこと。作成時刻を自動で入れる
   updatedAt DateTime @updatedAt @map("last_updated_at")//updateAtは更新時に自動更新（自動で今の時刻になる）ってこと
@@ -202,7 +200,9 @@ model ShoppingItem {
   quantityText Float?
   unitName     String?
   checked      Boolean  @default(false)
+  memo String?
 
+  sortOrder Int @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

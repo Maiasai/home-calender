@@ -9,16 +9,17 @@ import StepList from './StepList';
 import ImageUpload from './ImageUpload';
 import TitleForm from './TitleForm';
 import MemoForm from './MemoForm';
-import { Unit } from '../_types/unit/Unit';
 import CategorySelector from './CategorySelector';
 import { RecipeCategory } from '@/generated/prisma';
 import Image from 'next/image';
-import { GetUnitsResponse } from '@/app/api/_types/GetUnitsResponse';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
+import { RecipeModalStep } from '../_types/RecipeModalStep';
+import { GetUnitsResponse, UnitData } from '@/shared/types/unit';
 
 type Props = {
   onClose: () => void;
+  step: RecipeModalStep;
 };
 
 type CreateRecipeRequest = RecipeFormValues & {
@@ -26,12 +27,12 @@ type CreateRecipeRequest = RecipeFormValues & {
   category?: RecipeCategory;
 };
 
-const AddRecipeManualModal = ({ onClose }: Props) => {
+const AddRecipeManualModal = ({ onClose, step }: Props) => {
   const { token } = useSupabaseSession();
 
   const [category, setCategory] = useState<RecipeCategory | ''>('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [units, setUnits] = useState<Unit[]>([]); //ここで選択肢を管理
+  const [units, setUnits] = useState<UnitData[]>([]); //ここで選択肢を管理
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -39,7 +40,7 @@ const AddRecipeManualModal = ({ onClose }: Props) => {
     setValue,
     handleSubmit,
     control,
-    formState: { errors, isValid, dirtyFields, isSubmitting },
+    formState: { errors, isValid, isSubmitting },
     reset,
   } = useForm<RecipeFormValues>({
     //ここにunitは入力フォームではないから不要
@@ -135,7 +136,7 @@ const AddRecipeManualModal = ({ onClose }: Props) => {
             />
 
             {/* タイトル (必須)*/}
-            <TitleForm registerTitle={register} errors={errors} />
+            <TitleForm registerTitle={register} errors={errors} step={step} />
           </div>
 
           {/* カテゴリ */}

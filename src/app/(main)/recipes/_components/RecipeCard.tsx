@@ -36,7 +36,7 @@ const RecipeCard = ({
       : '/images/noImage.jpg';
 
   return (
-    <div className="relative">
+    <div className="relative mb-8">
       {isBulkMode && (
         <input
           type="checkbox"
@@ -74,13 +74,12 @@ const RecipeCard = ({
           selectedIds.includes(String(recipe.id)) ? 'opacity-60' : ''
         }`}
       >
-        <div className="relative aspect-[4/4] overflow-hidden">
+        <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl">
           <Image
             src={imageSrc}
             alt="レシピ画像ない場合の画像"
-            width={100}
-            height={100}
-            className="absolute w-full h-full object-cover rounded-2xl"
+            fill //Image が親の箱いっぱいに広がる
+            className="object-cover"
           />
 
           <div className="absolute flex gap-x-2 top-4 right-4">

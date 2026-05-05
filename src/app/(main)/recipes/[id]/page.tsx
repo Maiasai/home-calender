@@ -21,6 +21,8 @@ type Props = {
 
 const RecipeDetail = ({ params }: Props) => {
   const { id } = params;
+  const router = useRouter();
+
   const {
     data: recipe,
     error,
@@ -39,7 +41,6 @@ const RecipeDetail = ({ params }: Props) => {
       : '/images/noImage.jpg';
 
   //レシピ削除
-  const router = useRouter();
   const deleteRecipe = async (id: string) => {
     await fetch(`/api/recipes/${id}`, { method: 'DELETE' });
     router.push('/recipes');
@@ -108,7 +109,7 @@ const RecipeDetail = ({ params }: Props) => {
           </label>
         </div>
 
-        <div className="flex flex-col space-y-10 mt-10">
+        <div className="flex flex-col space-y-10 mt-10 mb-10">
           {/* 材料 */}
           <div className="mb-4">
             <div>
@@ -157,11 +158,25 @@ const RecipeDetail = ({ params }: Props) => {
             </ul>
           </div>
 
-          {/* 作り方 */}
+          {/* メモ */}
           <div>
             <h2 className="text-lg font-semibold pb-5">メモ</h2>
             <p className="border-b">{recipe.memo}</p>
           </div>
+        </div>
+
+        {/* hrefは→ string | undefinedしか許さないため、return前でreturn nullを実施*/}
+        <div className="flex justify-center">
+          {recipe.sourceType === 'URL' && recipe.sourceUrl && (
+            <a href={recipe.sourceUrl} target="_blank">
+              <Image
+                src="/images/recipesiteopen.png"
+                alt="レシピサイトを開く"
+                width={159}
+                height={34}
+              />
+            </a>
+          )}
         </div>
       </div>
     </div>

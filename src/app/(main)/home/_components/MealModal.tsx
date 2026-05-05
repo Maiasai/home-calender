@@ -6,12 +6,13 @@
 import { Dispatch, SetStateAction } from 'react';
 import { MealModalStep } from '../_typs/MealModalStep';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
-import { MealType } from '../_typs/MealType';
 import Image from 'next/image';
 import { KeyedMutator } from 'swr';
 import { MonthData } from '../_typs/Menu';
 import { Meal } from '../_typs/Meal';
 import { MealRequestBody } from '../_typs/MealRequestBody';
+import { truncateRecipeTitle } from '@/utils/format';
+import { MealType } from '@/generated/prisma';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
@@ -20,7 +21,7 @@ type Props = {
   onClose: () => void;
   selectedDate: Date;
   isDisabled: boolean;
-  hasUnassingned: boolean;
+  hasUnselected: boolean;
   isEmpty: boolean;
   mutate: KeyedMutator<MonthData>;
   mode: 'create' | 'edit';
@@ -34,7 +35,7 @@ const MealModal = ({
   onClose,
   selectedDate,
   isDisabled,
-  hasUnassingned,
+  hasUnselected,
   isEmpty,
   mutate,
   mode,
@@ -49,7 +50,7 @@ const MealModal = ({
         return '/images/daytimeIcon.png';
       case 'DINNER':
         return '/images/nightIcon.png';
-      case 'UNASSIGNED':
+      case null:
         return '/images/nullIcon.png';
       default:
         return null;
@@ -57,7 +58,7 @@ const MealModal = ({
   };
 
   //カテゴリ分け　外枠
-  const categories: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER', 'UNASSIGNED'];
+  const categories: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
 
   const year = selectedDate.getFullYear();
   const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
@@ -67,15 +68,32 @@ const MealModal = ({
   //作成と更新処理
   const onSubmit = async () => {
     try {
+      //重複除去
+      const uniqueRecipes = selectedRecipes.filter(
+        //条件がtrueのものだけ残す
+        //recipe→今見てる1件、index→今何番目か、self→元の配列全部
+        (recipe, index, self) =>
+          //findIndex(条件)→条件に最初に一致した番号を返す
+          index === self.findIndex((r) => r.id === recipe.id),
+      );
+
       const basePayload: MealRequestBody = {
         //API側でユーザーの特定をしているためuser.idはここでは不要
         date: date,
-        recipes: selectedRecipes.map((r, index) => ({
-          //フロント側でmapすることで、API側でmap不要
-          recipeId: r.id,
-          mealType: r.mealType,
-          position: index,
-        })),
+        recipes: uniqueRecipes.map((r, index) => {
+          if (r.mealType === null) {
+            //DB保存時、null想定なしのためフロントであらかじめ弾いておく
+            throw new Error('mealType未選択');
+          }
+
+          return {
+            //フロント側でmapすることで、API側でmap不要
+
+            recipeId: r.id,
+            mealType: r.mealType,
+            position: index,
+          };
+        }),
       };
 
       const payload =
@@ -140,7 +158,7 @@ const MealModal = ({
           </button>
         </div>
       </div>
-      {hasUnassingned && (
+      {hasUnselected && (
         <p className="text-red-500 text-xs mt-1">
           ※カテゴリが未選択のレシピがあります。
           カスタマイズから分類してください。
@@ -180,18 +198,17 @@ const MealModal = ({
                 {recipesInCategory?.map((r) => (
                   <div key={r.id} className="flex items-center gap-6">
                     {/* 画像 */}
-                    <div className="w-24 aspect-[4/3] overflow-hidden">
+                    <div className="w-24 h-16 overflow-hidden relative">
                       <Image
-                        src={r.thumbnailUrl}
+                        src={r.thumbnailUrl ?? '/images/noImage.jpg'}
                         alt="画像"
-                        width={100}
-                        height={100}
-                        className="w-full h-full object-cover rounded-lg"
+                        fill
+                        className="object-cover rounded-lg"
                       />
                     </div>
 
                     {/* タイトル*/}
-                    <div>{r.title}</div>
+                    <div>{truncateRecipeTitle(r.title)}</div>
                   </div>
                 ))}
               </div>
