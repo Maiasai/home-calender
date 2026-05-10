@@ -11,7 +11,6 @@ const supabaseAdmin = createClient(
 export const POST = async (req: NextRequest) => {
   try {
     const { email } = await req.json();
-    console.log('email:', email);
 
     // ① Prismaでユーザー確認
     const user = await prisma.user.findUnique({

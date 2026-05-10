@@ -1,4 +1,4 @@
-//新規登録API
+//アカウント新規登録API
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { AuthProvider } from '@/generated/prisma';
@@ -29,6 +29,12 @@ export const POST = async (request: NextRequest) => {
       throw new Error('email is required');
     }
 
+    const family = await prisma.family.create({
+      data: {
+        name: 'My Family',
+      },
+    });
+
     await prisma.user.upsert({
       where: { id: user.id },
       update: { nickname },
@@ -37,6 +43,7 @@ export const POST = async (request: NextRequest) => {
         email: user.email,
         nickname,
         authProvider: provider,
+        activeFamilyId: family.id,
       },
     });
 

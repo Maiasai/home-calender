@@ -4,8 +4,12 @@ export type ShoppingItemResponse = {
   id: string;
   name: string;
   quantityText: number;
-  unitName: string;
+  unitId: string | null;
   checked: boolean;
   sortOrder: number;
-  memo?: string;
+  memo: string | null;
+  unit: {
+    id: string;
+    name: string;
+  } | null;
 };

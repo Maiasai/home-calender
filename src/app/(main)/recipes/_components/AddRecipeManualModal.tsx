@@ -15,11 +15,14 @@ import Image from 'next/image';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
-import { GetUnitsResponse, UnitData } from '@/shared/types/unit';
+import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
+import { RecipeData } from '../_types/RecipeTypes';
+import { KeyedMutator } from 'swr';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
+  mutate: KeyedMutator<RecipeData[]>;
 };
 
 type CreateRecipeRequest = RecipeFormValues & {
@@ -27,7 +30,7 @@ type CreateRecipeRequest = RecipeFormValues & {
   category?: RecipeCategory;
 };
 
-const AddRecipeManualModal = ({ onClose, step }: Props) => {
+const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
   const { token } = useSupabaseSession();
 
   const [category, setCategory] = useState<RecipeCategory | ''>('');
@@ -112,6 +115,7 @@ const AddRecipeManualModal = ({ onClose, step }: Props) => {
       alert('レシピを登録しました！');
       reset(); //成功したら入力欄をクリア
 
+      await mutate();
       setPreviewUrl('');
       setCategory('');
       onClose();

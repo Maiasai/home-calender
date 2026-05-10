@@ -10,6 +10,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 import ConfirmDialog from '../../recipes/_components/ConfirmDialog';
 import { MealId } from '../_typs/MealId';
+import { NutritionResult } from '@/lib/nutrition/typs';
+import calculateNutrition from '@/lib/nutrition/calculateNutrition';
+import NutritionResultView from './NutritionResultView';
 
 type Props = {
   data: MonthData;
@@ -31,6 +34,9 @@ const CalenderSelectedDate = ({
   const selectedDayData = data?.[selectedKey]; //右記のような形→{breakfast: Recipe[] lunch: Recipe[] dinner: Recipe[]}
   const [open, setOpen] = useState(false);
   const [targetMealId, setTargetMealId] = useState<MealId | null>(null);
+  const [nutritionResult, setNutritionResult] =
+    useState<NutritionResult | null>(null); //栄養チェック結果管理用
+  const [nutritionOpen, setNutritionOpen] = useState(false); //栄養チェックモーダル管理用
 
   //その日の献立が空の場合
   const isEmpty =
@@ -118,6 +124,10 @@ const CalenderSelectedDate = ({
               onDelete={() => {
                 setTargetMealId(meal.id);
                 setOpen(true);
+              }}
+              onNutrition={() => {
+                setNutritionResult(calculateNutrition(meal));
+                setNutritionOpen(true);
               }}
             />
           )}
@@ -212,6 +222,15 @@ const CalenderSelectedDate = ({
           setOpen(false);
         }}
       />
+
+      {nutritionOpen && nutritionResult && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <NutritionResultView
+            result={nutritionResult}
+            onClose={() => setNutritionOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -40,17 +40,26 @@ enum MealType {
   DINNER
 }
 
+//栄養
+enum NutritionCategory {
+  PROTEIN
+  VEGETABLE
+}
+
 
 
 model User {
-  id           String @id @db.Uuid//Supabase のUUIDを使用するため @default(uuid()) 削除
-  nickname     String?
-  email        String      @unique
+  id            String @id @db.Uuid//Supabase のUUIDを使用するため @default(uuid()) 削除
+  nickname      String?
+  email         String      @unique
   authProvider AuthProvider @map("auth_provider")
+  activeFamilyId String? @db.Uuid//今どの家族を見ているか
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now())
 
+  activeFamily Family? @relation("ActiveFamily", fields: [activeFamilyId], references: [id])
+  members FamilyMember[]
   // relations
   recipes Recipe[]
 
@@ -60,10 +69,13 @@ model User {
   @@map("users")
 }
 
+
 model Ingredient {
   id             String @id @default(uuid()) @db.Uuid
-  name           String
+  name           String @unique
   normalizedName String   @map("normalized_name")
+
+  nutritionCategory NutritionCategory?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -76,7 +88,8 @@ model Ingredient {
 
 model Recipe {
   id           String @id @default(uuid()) @db.Uuid //主キーのこと
-  ownerUserId  String @db.Uuid @map("owner_user_id")//@map→Prizma上ではownerUserIdとして扱うが、DBのカラム名はowner_user_idにする。参照している値はuserのid
+  ownerUserId  String @db.Uuid @map("owner_user_id")//誰が作成したレシピか。@map→Prizma上ではownerUserIdとして扱うが、DBのカラム名はowner_user_idにする。参照している値はuserのid
+  familyId     String @db.Uuid @map("family_id")//レシピがどの家族のものか
   title        String
   category     RecipeCategory   @default(UNCLASSIFIED)//実質カテゴリも任意だが、未分類がデフォルトとなるため？は不要
   sourceType   RecipeSourceType @map("source_type")   //登録方式
@@ -84,10 +97,12 @@ model Recipe {
   thumbnailUrl String?          @map("thumbnail_url")
   memo         String?
   servings     Int?  //何人分か
+  updatedByUserId String? @db.Uuid @map("updated_by_user_id")
 
   createdAt DateTime @default(now()) @map("created_at")//now()→デフォルトがnowってこと。作成時刻を自動で入れる
   updatedAt DateTime @updatedAt @map("last_updated_at")//updateAtは更新時に自動更新（自動で今の時刻になる）ってこと
 
+  family Family @relation(fields: [familyId], references: [id])
   ownerUser User @relation(fields: [ownerUserId], references: [id]) 
   //例）Aさんがレシピを保存したら、このリレーションを使用することでuserテーブルのidを引っ張ってきて、DBの「owner_user_id」に保存できるという意味。
 
@@ -110,7 +125,7 @@ model RecipeIngredient {
   ingredientId String   @db.Uuid
 
   quantityText Float    @map("quantity_text")//材料の量カラム
-  unitId       String   @db.Uuid//材料の単位カラム
+  unitId       String?   @db.Uuid//材料の単位カラム
   isSeasoning  Boolean  @default(false) @map("is_seasoning")
   sortOrder    Int      @map("sort_order")
 
@@ -118,7 +133,7 @@ model RecipeIngredient {
 
   recipe     Recipe     @relation(fields: [recipeId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
-  unit Unit @relation(fields:[unitId], references:[id])
+  unit Unit? @relation(fields:[unitId], references:[id])
 
   @@map("recipe_ingredients")
 }
@@ -141,6 +156,7 @@ model Unit {
   id String @id @default(uuid()) @db.Uuid
   name String  // 本 個 g ml
   recipeIngredients RecipeIngredient[]
+  shoppingItem ShoppingItem[]
 }
 
 //お気に入りテーブル
@@ -167,12 +183,15 @@ model UserRecipeStatus {
 model Menu {
   id        String       @id @default(uuid()) @db.Uuid//献立自体のid
   userId    String       @db.Uuid//この献立が誰のものか
+  familyId  String @db.Uuid @map("family_id")
   date      String//UTCでズレが発生してしまうため、献立は文字列で日付までで管理
   createdAt DateTime     @default(now())//献立がいつ作られたか
 
+  
+family Family @relation(fields: [familyId], references: [id])
   menuRecipes MenuRecipe[]//この献立に属するレシピ一覧（フロントで取得した時、ここに献立レシピが格納されている）
 
-  @@unique([userId, date])//これでユーザー + 日付の献立は 1つだけになります
+  @@unique([familyId, date])//家族ごとに1日の献立が1つ
 }
 
 //献立レシピテーブル（献立に関するレシピ情報）
@@ -193,16 +212,44 @@ model MenuRecipe {//１日の中の1つのレシピ
 
 //買い物リスト専用テーブル
 model ShoppingItem {
-  id           String   @id @default(uuid())
-  userId       String
+  id           String   @id @default(uuid()) 
+  userId       String   
+  familyId     String   @db.Uuid @map("family_id")
   ingredientId String?
   name         String
   quantityText Float?
-  unitName     String?
+  unitId       String?   @db.Uuid//材料の単位カラム
   checked      Boolean  @default(false)
   memo String?
 
   sortOrder Int @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id])
+  unit Unit? @relation(fields:[unitId], references:[id])
+}
+
+//共有まわり
+model Family {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  createdAt DateTime @default(now())
+
+  members FamilyMember[]
+  activeUsers User[] @relation("ActiveFamily")
+  recipes Recipe[]
+  menus Menu[]
+  shoppingItems ShoppingItem[]
+}
+
+model FamilyMember {
+  id       String @id @default(uuid()) @db.Uuid
+  userId   String @db.Uuid
+  familyId String @db.Uuid @map("family_id")
+
+  user User @relation(fields: [userId], references: [id])
+  family Family @relation(fields: [familyId], references: [id])
+
+  @@unique([userId, familyId])
 }

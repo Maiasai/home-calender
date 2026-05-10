@@ -9,23 +9,29 @@ import { UpdateShoppingData } from './_types/UpdateShoppingData';
 export const GET = async () => {
   try {
     const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 400 },
+      );
+    }
 
     const result = await prisma.shoppingItem.findMany({
       where: {
-        userId: user.id,
+        familyId: dbUser.activeFamilyId,
       },
-      select: {
-        id: true,
-        name: true,
-        quantityText: true,
-        unitName: true,
-        checked: true,
-        sortOrder: true,
-        memo: true,
+      include: {
+        unit: true,
       },
       orderBy: [
         { checked: 'asc' }, //未チェック優先
-        { updatedAt: 'asc' },
+        { sortOrder: 'asc' },
       ],
     });
 
@@ -33,10 +39,11 @@ export const GET = async () => {
       id: item.id,
       name: item.name,
       quantityText: item.quantityText ?? 0,
-      unitName: item.unitName ?? '',
+      unitId: item.unitId ?? null,
       checked: item.checked,
       sortOrder: item.sortOrder,
-      memo: item.memo ?? undefined,
+      memo: item.memo ?? null,
+      unit: item.unit ?? null,
     }));
 
     return NextResponse.json(formatted, { status: 200 });
@@ -55,11 +62,23 @@ type shoppingData = {
 export const POST = async (request: NextRequest) => {
   try {
     const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
     const body: shoppingData = await request.json();
+
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 400 },
+      );
+    }
 
     const mealData = await prisma.menu.findFirst({
       where: {
-        userId: user.id,
+        familyId: dbUser.activeFamilyId,
         id: body.id,
       },
       include: {
@@ -72,6 +91,7 @@ export const POST = async (request: NextRequest) => {
                     quantityText: true,
                     unit: {
                       select: {
+                        id: true,
                         name: true,
                       },
                     },
@@ -95,30 +115,55 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    const result = []; //箱を用意
+    let globalIndex = 0;
 
-    for (const item of mealData.menuRecipes) {
-      for (const ing of item.recipe.recipeIngredients) {
-        result.push({
-          quantityText: ing.quantityText,
-          ingredientName: ing.ingredient.name,
-          unit: ing.unit.name,
+    console.dir(mealData, { depth: null });
+    const data = mealData.menuRecipes.flatMap((item) =>
+      item.recipe.recipeIngredients
+        .filter((ing) => ing.ingredient?.name?.trim())
+        .map((ing) => ({
+          userId: user.id,
+          name: ing.ingredient?.name ?? null,
+          quantityText: ing.quantityText ?? 0,
+          unitId: ing.unit?.id ?? null,
+          sortOrder: globalIndex++,
+        })),
+    );
+
+    for (const item of data) {
+      const existing = await prisma.shoppingItem.findFirst({
+        where: {
+          userId: user.id,
+          name: item.name.trim(),
+          unitId: item.unitId,
+        },
+      });
+
+      if (existing) {
+        await prisma.shoppingItem.update({
+          where: {
+            id: existing.id,
+          },
+
+          data: {
+            quantityText:
+              (existing.quantityText ?? 0) + (item.quantityText ?? 0),
+          },
+        });
+      } else {
+        await prisma.shoppingItem.create({
+          data: {
+            ...item,
+            familyId: dbUser.activeFamilyId,
+          },
         });
       }
     }
 
-    const data = result.map((item) => ({
-      userId: user.id,
-      name: item.ingredientName,
-      quantityText: item.quantityText,
-      unitName: item.unit,
-    }));
-
-    const dataresult = await prisma.shoppingItem.createMany({
-      data,
-    });
-
-    return NextResponse.json(dataresult, { status: 200 });
+    return NextResponse.json(
+      { message: '買い物リスト追加完了' },
+      { status: 200 },
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
@@ -130,29 +175,46 @@ export const POST = async (request: NextRequest) => {
 export const PUT = async (request: NextRequest) => {
   try {
     const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
     const body: UpdateShoppingData = await request.json();
 
+    console.log('body', body);
     if (!body.id) {
       return NextResponse.json({ message: 'idが必要です' }, { status: 400 });
     }
 
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 400 },
+      );
+    }
+
+    //送られた項目だけを更新
     const updateData = {
       ...(body.name !== undefined && { name: body.name }),
       ...(body.quantityText !== undefined && {
         quantityText: body.quantityText,
       }),
-      ...(body.unitName !== undefined && {
-        unitName: body.unitName,
+      ...(body.unitId !== undefined && {
+        unitId: body.unitId,
       }),
       ...(body.memo !== undefined && {
         memo: body.memo,
       }),
+      ...(body.checked !== undefined && {
+        checked: body.checked,
+      }),
     };
 
-    const result = await prisma.shoppingItem.update({
+    const result = await prisma.shoppingItem.updateMany({
       where: {
         id: body.id,
-        userId: user.id,
+        familyId: dbUser.activeFamilyId,
       },
       data: updateData,
     });
@@ -167,11 +229,20 @@ export const PUT = async (request: NextRequest) => {
 //削除
 export const DELETE = async (request: NextRequest) => {
   const user = await requireUser();
+  const dbUser = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
   const body = await request.json();
 
+  if (!dbUser?.activeFamilyId) {
+    return NextResponse.json({ message: 'family not found' }, { status: 400 });
+  }
+
   try {
-    const result = await prisma.shoppingItem.delete({
-      where: { id: body.id, userId: user.id },
+    const result = await prisma.shoppingItem.deleteMany({
+      where: { id: body.id, familyId: dbUser.activeFamilyId },
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {

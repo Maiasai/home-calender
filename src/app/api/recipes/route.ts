@@ -11,6 +11,12 @@ export const runtime = 'nodejs';
 export const GET = async (request: Request) => {
   try {
     const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      //アプリ用情報
+      where: {
+        id: user.id,
+      },
+    });
 
     //ここでURLオブジェクトに変換
     const { searchParams } = new URL(request.url); //request.url中身は「http://localhost:3000/api/recipes?category=MAIN」のような形式
@@ -20,10 +26,17 @@ export const GET = async (request: Request) => {
     const isFavorite = searchParams.get('favorite');
     const isCooked = searchParams.get('cooked');
 
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 400 },
+      );
+    }
+
     const recipeget = await prisma.recipe.findMany({
       //レシピテーブル全件を取得
       where: {
-        ownerUserId: user.id, //ここでログインしているユーザーのレシピだけ取得する※初期ユーザー作成時「id:user.id」を入れているため。
+        familyId: dbUser.activeFamilyId, //ここでログインしているユーザーのレシピだけ取得する※初期ユーザー作成時familyIdを入れているため。
 
         //条件があるときだけ以下追加
         //レシピ名検索
@@ -120,6 +133,11 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
     const userId = user.id;
 
     const body: CreatePostRequestBody = await request.json();
@@ -140,6 +158,13 @@ export const POST = async (request: Request) => {
       );
     }
 
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 400 },
+      );
+    }
+
     const recipedata = await prisma.recipe.create({
       //テーブル操作。データベースに保存する処理
       data: {
@@ -149,8 +174,14 @@ export const POST = async (request: Request) => {
         thumbnailUrl: thumbnailImageUrl,
         category: category ?? RecipeCategory.UNCLASSIFIED, //enumの場合はそのまま記載
         sourceType: 'MANUAL',
+        updatedByUserId: user.id,
         ownerUser: {
-          connect: { id: userId }, //ownerUser を createに渡す※Recipe.ownerUserId = userId
+          connect: { id: userId }, //誰が作ったか。ownerUser を createに渡す※Recipe.ownerUserId = userId
+        },
+        family: {
+          connect: {
+            id: dbUser.activeFamilyId, //所属family
+          },
         },
       },
     });
@@ -178,10 +209,15 @@ export const POST = async (request: Request) => {
             },
 
             ingredient: {
-              //ingredientテーブルに新しい材料を作って、 同時にその ingredientId を RecipeIngredient に入れる
-              create: {
-                name: ingre.name,
-                normalizedName: ingre.name,
+              connectOrCreate: {
+                where: {
+                  name: ingre.name,
+                },
+                //ingredientテーブルに新しい材料を作って、 同時にその ingredientId を RecipeIngredient に入れる
+                create: {
+                  name: ingre.name,
+                  normalizedName: ingre.name,
+                },
               },
             },
             unit: {

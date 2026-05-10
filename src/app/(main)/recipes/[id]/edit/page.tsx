@@ -22,7 +22,7 @@ import StepList from '../../_components/StepList';
 import MemoForm from '../../_components/MemoForm';
 import { RecipeDetail } from '../../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
-import { GetUnitsResponse, UnitData } from '@/shared/types/unit';
+import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 
 type Props = {
   params: { id: string };
@@ -118,7 +118,7 @@ const RecipeEdit = ({ params }: Props) => {
           ? recipe.recipeIngredients.map((ing) => ({
               name: ing.ingredient.name ?? '',
               amount: ing.quantityText ? Number(ing.quantityText) : undefined, //条件 ? 条件がtrueのとき : falseのとき
-              unitId: String(ing.unit?.id ?? ''), //単位の初期選択値
+              unitId: ing.unit?.id ?? undefined, //単位の初期選択値
             }))
           : [{ name: '', amount: undefined, unitId: '' }],
 
@@ -148,6 +148,7 @@ const RecipeEdit = ({ params }: Props) => {
     };
     const result = await supabase.auth.getSession();
 
+    console.log('payload前', payload);
     try {
       const res = await fetch(`/api/recipes/${recipe.id}`, {
         method: 'PUT',
@@ -158,6 +159,7 @@ const RecipeEdit = ({ params }: Props) => {
         body: JSON.stringify(payload),
       });
 
+      console.log('payload後', payload);
       if (!res.ok) {
         //HTTPステータスコードが200-299の時trueになる
         const text = await res.text();

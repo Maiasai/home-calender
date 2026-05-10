@@ -23,6 +23,7 @@ export const GET = async () => {
             id: dbUser.id,
             email: dbUser.email,
             nickname: dbUser.nickname,
+            activeFamilyId: dbUser.activeFamilyId,
           }
         : null,
     });

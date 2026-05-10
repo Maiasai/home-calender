@@ -82,6 +82,7 @@ const RecipesPage = () => {
       <AddRecipeModalBase
         open={RecipeModalOpen} //RecipeModalOpenをopenという名前で渡している（モーダル開いているかどうかを子コンポーネントに伝えている）
         onClose={() => setRecipeModalOpen(false)}
+        mutate={mutate}
       />
 
       <div className="max-w-3xl mx-auto">

@@ -14,7 +14,7 @@ import { parseFraction } from './parseFraction';
 import ErrorMessage from './ErrorMessage';
 import Image from 'next/image';
 import DeleteIcon from '@/app/components/image/deleteicon';
-import { UnitData } from '@/shared/types/unit';
+import { UnitData } from '@/app/api/units/route';
 
 type Props = {
   //このコンポーネントが親から受け取る「データと関数の一覧」
@@ -83,9 +83,17 @@ const IngredientList = ({
                 <input
                   className="w-[180px] px-2 py-1 border-b"
                   {...register(`ingredients.${index}.name`, {
-                    maxLength: {
-                      value: 20,
-                      message: ' 材料名は20文字以内で入力してください ',
+                    validate: (value, formValues) => {
+                      const row = formValues.ingredients[index];
+
+                      // 何か入力されてるなら必須
+                      if (row.amount || row.unitId) {
+                        return value?.trim()
+                          ? true
+                          : '材料名を入力してください';
+                      }
+
+                      return true; // 空行はOK
                     },
                   })}
                   placeholder="材料名"
@@ -125,11 +133,11 @@ const IngredientList = ({
 
               {/* 単位 */}
               <div className="flex flex-col w-[120px]">
-                <select className="px-2 py-1 border-b">
-                  <option value="" disabled>
-                    {/* defaultValue="" で初期値を空に見せる　&　disabledで選べないようにする */}
-                    単位を選択
-                  </option>
+                <select
+                  className="w-[150px] px-2 py-1 border-b mb-3"
+                  {...register(`ingredients.${index}.unitId`)}
+                >
+                  <option value="">未選択</option>
 
                   {units.map((unit) => (
                     <option key={unit.id} value={unit.id}>
