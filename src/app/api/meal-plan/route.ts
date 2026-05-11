@@ -32,7 +32,7 @@ export const GET = async (request: NextRequest) => {
       return NextResponse.json(
         { message: 'family not found' },
 
-        { status: 400 },
+        { status: 404 },
       );
     }
 
@@ -81,7 +81,7 @@ export const POST = async (request: NextRequest) => {
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
         { message: 'family not found' },
-        { status: 400 },
+        { status: 404 },
       );
     }
 
@@ -130,7 +130,7 @@ export const PUT = async (request: NextRequest) => {
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
         { message: 'family not found' },
-        { status: 400 },
+        { status: 404 },
       );
     }
 

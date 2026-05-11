@@ -23,7 +23,7 @@ export const GET = async (
     return NextResponse.json(
       { message: 'family not found' },
 
-      { status: 400 },
+      { status: 404 },
     );
   }
 
@@ -69,7 +69,7 @@ export const DELETE = async (
   });
 
   if (!dbUser?.activeFamilyId) {
-    return NextResponse.json({ message: 'family not found' }, { status: 400 });
+    return NextResponse.json({ message: 'family not found' }, { status: 404 });
   }
 
   const result = await prisma.recipe.deleteMany({
@@ -122,8 +122,7 @@ export const PUT = async (
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
         { message: 'family not found' },
-
-        { status: 400 },
+        { status: 404 },
       );
     }
     const targetRecipe = await prisma.recipe.findFirst({

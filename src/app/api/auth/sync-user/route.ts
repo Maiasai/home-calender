@@ -29,23 +29,24 @@ export const POST = async (req: NextRequest) => {
         });
 
         // ② user作成
-        await tx.user.create({
-          data: {
-            id: userId,
-            email,
-            authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
-            activeFamilyId: family.id,
-          },
-        });
+        await Promise.all([
+          tx.user.create({
+            data: {
+              id: userId,
+              email,
+              authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
+              activeFamilyId: family.id,
+            },
+          }),
 
-        // ③ family member作成
-        await tx.familyMember.create({
-          data: {
-            userId,
-
-            familyId: family.id,
-          },
-        });
+          // ③ family member作成
+          tx.familyMember.create({
+            data: {
+              userId,
+              familyId: family.id,
+            },
+          }),
+        ]);
       });
     }
     return NextResponse.json({ ok: true }, { status: 200 });

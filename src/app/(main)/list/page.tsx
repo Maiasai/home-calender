@@ -21,6 +21,7 @@ import { GroupedItem } from './_typs/GroupedItem';
 
 const List = () => {
   const [units, setUnits] = useState<UnitData[]>([]);
+  const [groupedItems, setGroupedItems] = useState<GroupedItem[]>([]);
 
   //メモ）mutate→最新データを再取得（サーバーと再同期）
   //メモ）onBlur→入力欄からフォーカスが外れた瞬間に発火するイベント
@@ -41,7 +42,10 @@ const List = () => {
   }, []);
 
   //nameごとにここでグループ化
-  const groupedItems = createGroupedItems(data ?? [], {});
+  useEffect(() => {
+    if (!data) return;
+    setGroupedItems(createGroupedItems(data, {}));
+  }, [data]);
 
   //ドラッグイベント追加
   const handleDragEnd = (event: DragEndEvent) => {
@@ -60,6 +64,8 @@ const List = () => {
       sortOrder: index,
     }));
 
+    //UI更新
+    setGroupedItems(updated);
     // API保存
     saveSortOrder(updated);
   };

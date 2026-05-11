@@ -3,6 +3,7 @@
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { SortItems } from './_types/SortItems';
 
 export const PUT = async (request: NextRequest) => {
   try {
@@ -12,35 +13,37 @@ export const PUT = async (request: NextRequest) => {
         id: user.id,
       },
     });
-    const body = await request.json();
+    const body: SortItems = await request.json();
 
     const updates = body.items;
 
     if (!dbUser) {
-      return NextResponse.json({ message: 'user not found' }, { status: 400 });
+      return NextResponse.json({ message: 'user not found' }, { status: 404 });
     }
 
     const familyId = dbUser.activeFamilyId;
     if (!familyId) {
       return NextResponse.json(
         { message: 'family not found' },
-        { status: 400 },
+        { status: 404 },
       );
     }
 
     const result = await prisma.$transaction(async (tx) => {
       //まだDBに送ってないクエリ（複数操作）をまとめる
-      for (const item of updates) {
-        await tx.shoppingItem.updateMany({
-          where: {
-            id: item.id,
-            familyId: familyId,
-          },
-          data: {
-            sortOrder: item.sortOrder,
-          },
-        });
-      }
+      await Promise.all(
+        updates.map((item) =>
+          tx.shoppingItem.updateMany({
+            where: {
+              id: item.id,
+              familyId: familyId,
+            },
+            data: {
+              sortOrder: item.sortOrder,
+            },
+          }),
+        ),
+      );
       return true;
     });
     return NextResponse.json(result, { status: 200 });
