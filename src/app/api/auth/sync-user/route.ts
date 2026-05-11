@@ -7,23 +7,54 @@ export const POST = async (req: NextRequest) => {
   try {
     const { id: userId, email, provider } = await req.json();
 
-    await prisma.user.upsert({
-      //id探してあれば→update、なければ→create
+    const existingUser = await prisma.user.findUnique({
       where: { email },
-      update: {
-        id: userId,
-        authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
-      },
-      create: {
-        //なければ新規ユーザー作成
-        id: userId, //← Supabaseのidをそのまま使うことでprismaとidの差異が出ないようにする
-        email,
-        authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
-      },
     });
-    return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error('SYNC USER ERROR:', e);
-    throw e;
+
+    if (existingUser) {
+      await prisma.user.update({
+        where: { email },
+        data: {
+          id: userId,
+          authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
+        },
+      });
+    } else {
+      await prisma.$transaction(async (tx) => {
+        // ① family作成
+        const family = await tx.family.create({
+          data: {
+            name: 'My Family',
+          },
+        });
+
+        // ② user作成
+        await Promise.all([
+          tx.user.create({
+            data: {
+              id: userId,
+              email,
+              authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
+              activeFamilyId: family.id,
+            },
+          }),
+
+          // ③ family member作成
+          tx.familyMember.create({
+            data: {
+              userId,
+              familyId: family.id,
+            },
+          }),
+        ]);
+      });
+    }
+    return NextResponse.json({ ok: true }, { status: 200 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };

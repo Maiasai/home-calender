@@ -11,7 +11,12 @@ import { MealRequestBody } from '@/app/(main)/home/_typs/MealRequestBody';
 export const GET = async (request: NextRequest) => {
   try {
     const user = await requireUser();
-    const userId = user.id;
+    const dbUser = await prisma.user.findUnique({
+      //アプリ用情報
+      where: {
+        id: user.id,
+      },
+    });
 
     const { searchParams } = new URL(request.url);
     const start = searchParams.get('start');
@@ -23,10 +28,17 @@ export const GET = async (request: NextRequest) => {
         { status: 400 },
       );
     }
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+
+        { status: 404 },
+      );
+    }
 
     const mealdata = await prisma.menu.findMany({
       where: {
-        userId,
+        familyId: dbUser.activeFamilyId,
         date: {
           gte: start,
           lte: end,
@@ -55,15 +67,29 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
   try {
     const user = await requireUser(); //ここでユーザーを特定している
+    const dbUser = await prisma.user.findUnique({
+      //アプリ用情報
+      where: {
+        id: user.id,
+      },
+    });
     const userId = user.id;
 
     const body: MealRequestBody = await request.json();
     const { date, recipes } = body;
 
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
+
     const mealplan = await prisma.menu.create({
       data: {
         //dataは　CREATE/UPDATE用
         userId,
+        familyId: dbUser.activeFamilyId,
         date: date,
         menuRecipes: {
           create: recipes.map((r) => ({
@@ -93,12 +119,26 @@ export const POST = async (request: NextRequest) => {
 export const PUT = async (request: NextRequest) => {
   try {
     const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      //アプリ用情報
+      where: {
+        id: user.id,
+      },
+    });
     const body: MealRequestBodyEdit = await request.json();
+
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
 
     const exists = await prisma.menu.findFirst({
       where: {
         id: body.id,
         userId: user.id,
+        familyId: dbUser.activeFamilyId,
       },
     });
 

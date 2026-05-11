@@ -8,9 +8,14 @@ import { NextRequest, NextResponse } from 'next/server';
 export const GET = async (request: NextRequest) => {
   try {
     const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+
     const { searchParams } = new URL(request.url); //URLを分解
     const month = searchParams.get('month'); //クエリから値を取り出す
-
     if (!month) {
       //nullを排除
       return NextResponse.json({ message: 'monthが必要です' }, { status: 400 });
@@ -25,9 +30,16 @@ export const GET = async (request: NextRequest) => {
         ? `${year + 1}-01-01`
         : `${year}-${String(monthNum + 1).padStart(2, '0')}-01`;
 
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
+
     const menus = await prisma.menu.findMany({
       where: {
-        userId: user.id,
+        familyId: dbUser.activeFamilyId,
         date: {
           gte: start, //以上
           lt: end, //未満(月末日を直接計算しないため)
@@ -91,7 +103,8 @@ export const GET = async (request: NextRequest) => {
             id: ri.ingredient.id,
             name: ri.ingredient.name,
             amount: ri.quantityText,
-            unit: ri.unit.name,
+            unit: ri.unit ?? null,
+            nutritionCategory: ri.ingredient.nutritionCategory ?? null,
           })),
         };
 

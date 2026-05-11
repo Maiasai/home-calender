@@ -7,10 +7,13 @@ import AddRecipeUrlModal from './AddRecipeUrlModal';
 import AddRecipeManualModal from './AddRecipeManualModal';
 import PageHeader from './PageHeader';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
+import { RecipeData } from '../_types/RecipeTypes';
+import { KeyedMutator } from 'swr';
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  mutate: KeyedMutator<RecipeData[]>;
 };
 
 const titles = {
@@ -19,7 +22,7 @@ const titles = {
   MANUAL: 'オリジナルでレシピ登録する',
 };
 
-const AddRecipeModalBase = ({ open, onClose }: Props) => {
+const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
   const [step, setStep] = useState<RecipeModalStep>('select');
   //→ここでstep管理。header管理、モーダル切り替えをする
   //モーダル内の画面遷移はモーダルの責務になるのでここにstepのstateは書く
@@ -59,7 +62,7 @@ const AddRecipeModalBase = ({ open, onClose }: Props) => {
         {step === 'URL' && <AddRecipeUrlModal onClose={onClose} step={step} />}
 
         {step === 'MANUAL' && (
-          <AddRecipeManualModal onClose={onClose} step={step} />
+          <AddRecipeManualModal onClose={onClose} step={step} mutate={mutate} />
         )}
       </div>
     </div>

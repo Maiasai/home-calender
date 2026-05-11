@@ -8,4 +8,8 @@ export type Shoppinglist = {
   checked: boolean;
   memo?: string;
   sortOrder: number;
+  unit: {
+    id: string;
+    name: string;
+  } | null;
 };

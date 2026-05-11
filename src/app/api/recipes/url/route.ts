@@ -8,6 +8,11 @@ import { NextRequest, NextResponse } from 'next/server';
 export const POST = async (request: NextRequest) => {
   try {
     const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
     const body: CreateRecipeByUrlRequest = await request.json();
 
     //タイトル必須チェック
@@ -22,9 +27,17 @@ export const POST = async (request: NextRequest) => {
       return NextResponse.json({ message: 'URLは必須です' }, { status: 400 });
     }
 
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
+
     const recipe = await prisma.recipe.create({
       data: {
-        ownerUserId: user.id,
+        ownerUserId: user.id, // 作成者
+        familyId: dbUser.activeFamilyId!, // 所属グループ
 
         title: body.title || 'URLレシピ',
         sourceType: 'URL',
@@ -32,6 +45,7 @@ export const POST = async (request: NextRequest) => {
         category: body.category || 'UNCLASSIFIED',
         memo: body.memo || null,
         servings: 1,
+        updatedByUserId: user.id, // 最終更新者
       },
     });
     return NextResponse.json(recipe, { status: 200 });

@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import MealModalBase from './_components/MealModalBase';
 import { fetcher } from '@/lib/featcher';
-import useSWR from 'swr';
+import useSWR, { mutate as globalMutate } from 'swr';
 import { MonthData } from './_typs/Menu';
 import Calender from './_components/Calendar';
 import { CalendarCell } from './_typs/CalendarCell';
@@ -116,6 +116,7 @@ const TopPage = () => {
       }
 
       const data = await res.json();
+      await globalMutate('/api/shopping-list');
 
       alert('買い物リストに追加しました');
     } catch (error) {

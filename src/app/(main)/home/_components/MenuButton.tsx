@@ -9,9 +9,10 @@ type Props = {
   onEdit: () => void;
   onDelete: () => void;
   onList: () => void;
+  onNutrition: () => void;
 };
 
-const MenuButton = ({ onEdit, onDelete, onList }: Props) => {
+const MenuButton = ({ onEdit, onDelete, onList, onNutrition }: Props) => {
   return (
     <DropdownMenu.Root>
       {/* ↑メニュー全体の管理者 */}
@@ -55,7 +56,10 @@ const MenuButton = ({ onEdit, onDelete, onList }: Props) => {
           </DropdownMenu.Item>
 
           {/* 栄養バランス */}
-          <DropdownMenu.Item className="cursor-pointer rounded px-4 py-2 outline-none hover:bg-gray-100">
+          <DropdownMenu.Item
+            onSelect={onNutrition}
+            className="cursor-pointer rounded px-4 py-2 outline-none hover:bg-gray-100"
+          >
             栄養バランスを見る
           </DropdownMenu.Item>
 

@@ -42,7 +42,9 @@ const TitleForm = <T extends FieldValues>({
           })}
           placeholder="レシピ名を入力"
           className={
-            step === 'MANUAL' ? 'w-full px-2 py-1 border-b' : 'w-full px-2'
+            step === 'MANUAL'
+              ? 'w-full px-2 py-1 border-b'
+              : 'w-full px-2 border-b'
           }
         />
         {step === 'MANUAL' && (

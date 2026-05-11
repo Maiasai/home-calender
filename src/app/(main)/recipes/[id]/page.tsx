@@ -133,7 +133,7 @@ const RecipeDetail = ({ params }: Props) => {
                     {/* 量と単位 */}
                     <div className="border-b w-1/4">
                       {ingredientdata.quantityText}
-                      {ingredientdata.unit.name}
+                      {ingredientdata.unit?.name}
                     </div>
                   </div>
                 </li>

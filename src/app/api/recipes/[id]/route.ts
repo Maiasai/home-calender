@@ -15,12 +15,24 @@ export const GET = async (
   //DBから一件だけ取得する
 
   const user = await requireUser(); //認証チェック（関数コンポーネント）
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+  });
+
+  if (!dbUser?.activeFamilyId) {
+    return NextResponse.json(
+      { message: 'family not found' },
+
+      { status: 404 },
+    );
+  }
 
   const recipe = await prisma.recipe.findUnique({
     //DBから一意なキーで一件だけ取得（ここでの型はRecipe | null）
     where: {
       //URLで渡されたidのレシピを探して（ここで条件を渡してる）
       id: params.id, //ここでidを指定
+      familyId: dbUser.activeFamilyId,
     },
     include: {
       //紐づく材料と手順もくっつけて
@@ -50,12 +62,21 @@ export const DELETE = async (
   { params }: { params: { id: string } },
 ) => {
   const user = await requireUser(); //Supabaseが特定したログインユーザーがここに来る
+  const dbUser = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+
+  if (!dbUser?.activeFamilyId) {
+    return NextResponse.json({ message: 'family not found' }, { status: 404 });
+  }
 
   const result = await prisma.recipe.deleteMany({
     where: {
       //この2つの条件に一致するレコードだけ削除
       id: params.id,
-      ownerUserId: user.id, //自分のデータだけ取る
+      familyId: dbUser.activeFamilyId, //家族共有データだけ取る
     }, //そのデータの持ち主かをチェック
   });
 
@@ -94,11 +115,43 @@ export const PUT = async (
   try {
     const user = await requireUser();
     const body: CreatePutRequestBody = await request.json();
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
+    const targetRecipe = await prisma.recipe.findFirst({
+      where: {
+        id: params.id,
+        familyId: dbUser.activeFamilyId,
+      },
+    });
+
+    if (!targetRecipe) {
+      return NextResponse.json(
+        { message: 'recipe not found' },
+        { status: 404 },
+      );
+    }
+    const target = await prisma.recipe.findFirst({
+      where: {
+        id: params.id,
+        familyId: dbUser.activeFamilyId,
+      },
+    });
+
+    if (!target) {
+      return NextResponse.json({ message: 'not found' }, { status: 404 });
+    }
 
     const recipe = await prisma.recipe.update({
       where: {
         id: params.id, //URLから取得したレシピのID
-        ownerUserId: user.id, // ← 自分のレシピだけで絞る
       },
 
       data: {
@@ -108,6 +161,7 @@ export const PUT = async (
         thumbnailUrl: body.thumbnailImageUrl ?? null,
         category: body.category ?? RecipeCategory.UNCLASSIFIED,
         sourceType: body.sourceType,
+        updatedByUserId: user.id,
       },
       include: {
         recipeIngredients: true,
@@ -122,11 +176,16 @@ export const PUT = async (
 
     //再度生成
     for (let i = 0; i < body.ingredients.length; i++) {
+      //配列のi番目を取り出す
       const ing = body.ingredients[i];
+      //空の行は個々にSKIP
+      const isEmpty = !ing.name && !ing.amount && !ing.unitId;
+
+      if (isEmpty) continue;
 
       await prisma.recipeIngredient.create({
         data: {
-          quantityText: Number(ing.amount),
+          quantityText: ing.amount ?? null,
           sortOrder: i,
 
           recipe: {
@@ -134,19 +193,25 @@ export const PUT = async (
           },
 
           ingredient: {
-            create: {
-              name: ing.name,
-              normalizedName: ing.name,
+            connectOrCreate: {
+              where: {
+                name: ing.name,
+              },
+              create: {
+                name: ing.name,
+                normalizedName: ing.name,
+              },
             },
           },
-          unit: {
-            connect: {
-              id: ing.unitId,
-            },
-          },
+          unit: ing.unitId
+            ? {
+                connect: { id: ing.unitId },
+              }
+            : undefined,
         },
       });
     }
+    console.log('BEFORE CREATE ING');
 
     //手順も全部削除
     await prisma.recipeStep.deleteMany({
@@ -155,6 +220,8 @@ export const PUT = async (
 
     for (let i = 0; i < body.steps.length; i++) {
       const step = body.steps[i];
+      console.log('ingredients', body.ingredients);
+      console.log('steps', body.steps);
 
       if (!step.recipestep?.trim()) continue;
 
@@ -170,12 +237,11 @@ export const PUT = async (
       });
     }
 
-    //再度生成
-
     return NextResponse.json(recipe, { status: 200 });
   } catch (error) {
+    console.error('PUT ERROR:', error);
     return NextResponse.json(
-      { message: '更新に失敗しました' },
+      { message: '更新に失敗しました', error: String(error) },
       { status: 500 },
     );
   }

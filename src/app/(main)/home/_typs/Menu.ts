@@ -1,5 +1,6 @@
 // src/types/menu.ts
 
+import { NutritionCategory } from '@/lib/nutrition/typs';
 import { MealId } from './MealId';
 
 export type ItemType = {
@@ -23,6 +24,10 @@ export type MonthData = {
 export type ItemIngredient = {
   id: string;
   name: string;
-  amount?: number;
-  unit?: string;
+  amount: number;
+  unit: {
+    id: string;
+    name: string;
+  } | null;
+  nutritionCategory: NutritionCategory | null;
 };

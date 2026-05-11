@@ -5,6 +5,7 @@ export type GetMeResponse = {
   user: {
     id: string;
     email: string;
-    nickname: string;
+    nickname: string | null;
+    activeFamilyId: string | null;
   } | null;
 };
