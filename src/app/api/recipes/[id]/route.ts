@@ -106,6 +106,7 @@ interface CreatePutRequestBody {
     recipestep: string;
   }[];
   memo: string;
+  sourceUrl: string;
 }
 
 export const PUT = async (
@@ -162,6 +163,7 @@ export const PUT = async (
         category: body.category ?? RecipeCategory.UNCLASSIFIED,
         sourceType: body.sourceType,
         updatedByUserId: user.id,
+        sourceUrl: body.sourceUrl,
       },
       include: {
         recipeIngredients: true,

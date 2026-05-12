@@ -15,4 +15,5 @@ export interface RecipeFormValues {
   }[];
 
   steps: Step[];
+  sourceUrl?: string;
 }

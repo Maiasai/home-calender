@@ -3,7 +3,6 @@
 'use client';
 
 import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
-import { RecipeFormValues } from '../_types/RecipeFormValues';
 
 type Props<T extends FieldValues> = {
   registerMemo: UseFormRegister<T>;
