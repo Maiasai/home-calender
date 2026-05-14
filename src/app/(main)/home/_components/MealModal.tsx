@@ -12,7 +12,7 @@ import { MonthData } from '../_typs/Menu';
 import { Meal } from '../_typs/Meal';
 import { MealRequestBody } from '../_typs/MealRequestBody';
 import { truncateRecipeTitle } from '@/utils/format';
-import { MealType } from '@/generated/prisma';
+import { UiMealType } from '../_typs/UiMealType';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
@@ -42,7 +42,7 @@ const MealModal = ({
   targetMeal,
 }: Props) => {
   //カテゴリアイコン
-  const getMealIcon = (type: MealType) => {
+  const getMealIcon = (type: UiMealType) => {
     switch (type) {
       case 'BREAKFAST':
         return '/images/morningIcon.png';
@@ -50,7 +50,7 @@ const MealModal = ({
         return '/images/daytimeIcon.png';
       case 'DINNER':
         return '/images/nightIcon.png';
-      case null:
+      case 'UNSELECTED':
         return '/images/nullIcon.png';
       default:
         return null;
@@ -58,7 +58,12 @@ const MealModal = ({
   };
 
   //カテゴリ分け　外枠
-  const categories: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
+  const categories: UiMealType[] = [
+    'BREAKFAST',
+    'LUNCH',
+    'DINNER',
+    'UNSELECTED',
+  ];
 
   const year = selectedDate.getFullYear();
   const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
@@ -81,7 +86,7 @@ const MealModal = ({
         //API側でユーザーの特定をしているためuser.idはここでは不要
         date: date,
         recipes: uniqueRecipes.map((r, index) => {
-          if (r.mealType === null) {
+          if (r.mealType === 'UNSELECTED') {
             //DB保存時、null想定なしのためフロントであらかじめ弾いておく
             throw new Error('mealType未選択');
           }

@@ -44,12 +44,13 @@ const MealModalBase = ({
   const [selectedRecipes, setSelectedRecipes] = useState<SelectedRecipe[]>([]); //ユーザーが今操作してる状態→選択されたレシピをここで管理（配列の中に、選択済みレシピのオブジェクトが入ってる）
 
   const {
-    handleSubmit,
     formState: { isSubmitting },
   } = useForm();
 
   //未カテゴリ
-  const hasUnselected = selectedRecipes.some((r) => r.mealType === null);
+  const hasUnselected = selectedRecipes.some(
+    (r) => r.mealType === 'UNSELECTED',
+  );
   // 未カテゴリがある場合はボタンを無効化
   const isDisabled =
     isSubmitting || hasUnselected || selectedRecipes.length === 0;

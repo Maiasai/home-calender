@@ -6,6 +6,7 @@ import { SelectedRecipe } from '../_typs/SelectedRecipe';
 import Image from 'next/image';
 import { truncateRecipeTitle } from '@/utils/format';
 import { MealType } from '@/generated/prisma';
+import { UiMealType } from '../_typs/UiMealType';
 
 type Props = {
   selectedRecipes: SelectedRecipe[];
@@ -24,10 +25,15 @@ const CustomizeView = ({
   hasUnselected,
   isEmpty,
 }: Props) => {
-  const mealTypes: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
+  const mealTypes: UiMealType[] = [
+    'BREAKFAST',
+    'LUNCH',
+    'DINNER',
+    'UNSELECTED',
+  ];
 
   //レシピ内のカテゴリを変更、２件以上同じカテゴリ登録できないロジック
-  const changeMealType = (id: string, type: MealType | null) => {
+  const changeMealType = (id: string, type: UiMealType) => {
     //type → 選択されたカテゴリ
     setSelectedRecipes((prev) => {
       // 未以外は2件制限
@@ -113,6 +119,7 @@ const CustomizeView = ({
                       checked={recipe.mealType === type} //今何が選ばれているか（recipe.mealTypeは親の selectedRecipes 配列から受け取っている）
                       onChange={() => changeMealType(recipe.id, type)} //クリックされたレシピidと選択肢をchangeMealType に渡す
                     />
+                    {type === 'UNSELECTED' && '未'}
                     {type === 'BREAKFAST' && '朝'}
                     {type === 'LUNCH' && '昼'}
                     {type === 'DINNER' && '晩'}
