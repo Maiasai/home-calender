@@ -222,8 +222,6 @@ export const PUT = async (
 
     for (let i = 0; i < body.steps.length; i++) {
       const step = body.steps[i];
-      console.log('ingredients', body.ingredients);
-      console.log('steps', body.steps);
 
       if (!step.recipestep?.trim()) continue;
 

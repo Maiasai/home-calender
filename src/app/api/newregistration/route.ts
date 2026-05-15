@@ -11,7 +11,6 @@ export const POST = async (request: NextRequest) => {
     const body: NicknameData = await request.json();
 
     const { nickname } = body;
-    console.log(user.id);
 
     if (!nickname || typeof nickname !== 'string') {
       return NextResponse.json(

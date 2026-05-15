@@ -3,7 +3,6 @@
 
 'use client';
 
-import { Dispatch, SetStateAction } from 'react';
 import { MealModalStep } from '../_typs/MealModalStep';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
 import Image from 'next/image';
@@ -13,11 +12,11 @@ import { Meal } from '../_typs/Meal';
 import { MealRequestBody } from '../_typs/MealRequestBody';
 import { truncateRecipeTitle } from '@/utils/format';
 import { UiMealType } from '../_typs/UiMealType';
+import { getMealIcon } from '../_utils/getMealIcon';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
   selectedRecipes: SelectedRecipe[];
-  setSelectedRecipes: Dispatch<SetStateAction<SelectedRecipe[]>>;
   onClose: () => void;
   selectedDate: Date;
   isDisabled: boolean;
@@ -31,7 +30,6 @@ type Props = {
 const MealModal = ({
   onSelect,
   selectedRecipes,
-  setSelectedRecipes,
   onClose,
   selectedDate,
   isDisabled,
@@ -41,22 +39,6 @@ const MealModal = ({
   mode,
   targetMeal,
 }: Props) => {
-  //カテゴリアイコン
-  const getMealIcon = (type: UiMealType) => {
-    switch (type) {
-      case 'BREAKFAST':
-        return '/images/morningIcon.png';
-      case 'LUNCH':
-        return '/images/daytimeIcon.png';
-      case 'DINNER':
-        return '/images/nightIcon.png';
-      case 'UNSELECTED':
-        return '/images/nullIcon.png';
-      default:
-        return null;
-    }
-  };
-
   //カテゴリ分け　外枠
   const categories: UiMealType[] = [
     'BREAKFAST',

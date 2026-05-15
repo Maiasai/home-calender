@@ -12,9 +12,7 @@ type Props = {
 
 const NutritionResultView = ({ result, onClose, displayDate }: Props) => {
   const overallMessage = NutritionMessages.overall[result.overall];
-
   const overallProtein = NutritionMessages.protein[result.protein];
-
   const overallVegetable = NutritionMessages.vegetable[result.vegetable];
 
   const levelColorMap = {

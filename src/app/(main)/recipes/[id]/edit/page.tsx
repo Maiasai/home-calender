@@ -151,7 +151,6 @@ const RecipeEdit = ({ params }: Props) => {
     };
     const result = await supabase.auth.getSession();
 
-    console.log('payload前', payload);
     try {
       const res = await fetch(`/api/recipes/${recipe.id}`, {
         method: 'PUT',
@@ -162,7 +161,6 @@ const RecipeEdit = ({ params }: Props) => {
         body: JSON.stringify(payload),
       });
 
-      console.log('payload後', payload);
       if (!res.ok) {
         //HTTPステータスコードが200-299の時trueになる
         const text = await res.text();

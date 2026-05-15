@@ -13,6 +13,8 @@ import { MealId } from '../_typs/MealId';
 import { NutritionResult } from '@/lib/nutrition/typs';
 import calculateNutrition from '@/lib/nutrition/calculateNutrition';
 import NutritionResultView from './NutritionResultView';
+import { MealSection } from './MealSection';
+import { buildMead } from '../_utils/buildMeal';
 
 type Props = {
   data: MonthData;
@@ -47,42 +49,7 @@ const CalenderSelectedDate = ({
     !selectedDayData?.dinner?.length;
 
   //その日の献立取得用（編集用データ）*朝昼晩を１つの配列にまとめてMeal型に変換
-  const meal: Meal | null = selectedDayData
-    ? {
-        id: selectedDayData.id,
-        date: selectedKey,
-        recipes: [
-          //配列の中に配列で展開されてしまうため、スプレッド構文を使用。[{...},{...},{...}]
-          ...selectedDayData.breakfast.map((r) => ({
-            recipe: {
-              id: r.id,
-              title: r.title,
-              thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
-              ingredients: r.ingredients ?? [],
-            },
-            mealType: 'BREAKFAST' as const,
-          })),
-          ...selectedDayData.lunch.map((r) => ({
-            recipe: {
-              id: r.id,
-              title: r.title,
-              thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
-              ingredients: r.ingredients ?? [],
-            },
-            mealType: 'LUNCH' as const,
-          })),
-          ...selectedDayData.dinner.map((r) => ({
-            recipe: {
-              id: r.id,
-              title: r.title,
-              thumbnailUrl: r.thumbnailUrl ?? '/images/noImage.jpg',
-              ingredients: r.ingredients ?? [],
-            },
-            mealType: 'DINNER' as const,
-          })),
-        ],
-      }
-    : null;
+  const meal: Meal | null = buildMead({ selectedDayData, selectedKey });
 
   //献立削除処理
   const deleteMeal = async (mealId: MealId) => {
@@ -138,77 +105,25 @@ const CalenderSelectedDate = ({
           {isEmpty && <div>献立が未登録です</div>}
 
           {/* 朝 */}
-          {selectedDayData?.breakfast.map((item) => (
-            <Link key={item.id} href={`/recipes/${item.id}`}>
-              <div className="flex items-center text-sm gap-x-2 mb-4">
-                <div>
-                  <Image
-                    src="/images/morningIcon.png"
-                    alt="朝アイコン"
-                    width={20}
-                    height={20}
-                    className="mr-1"
-                  />{' '}
-                </div>
-                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
-                  <Image
-                    src={item.thumbnailUrl ?? '/images/noImage.jpg'}
-                    alt={item.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {item.title}
-              </div>
-            </Link>
-          ))}
+          <MealSection
+            items={selectedDayData?.breakfast || []}
+            iconSrc="/images/morningIcon.png"
+            iconAlt="朝アイコン"
+          />
 
           {/* 昼 */}
-          {selectedDayData?.lunch.map((item) => (
-            <Link key={item.id} href={`/recipes/${item.id}`}>
-              <div className="flex items-center text-sm gap-x-2 mb-4">
-                <Image
-                  src="/images/daytimeIcon.png"
-                  alt="昼アイコン"
-                  width={20}
-                  height={20}
-                  className="mr-1"
-                />{' '}
-                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
-                  <Image
-                    src={item.thumbnailUrl ?? '/images/noImage.jpg'}
-                    alt={item.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {item.title}
-              </div>
-            </Link>
-          ))}
+          <MealSection
+            items={selectedDayData?.lunch || []}
+            iconSrc="/images/daytimeIcon.png"
+            iconAlt="昼アイコン"
+          />
+
           {/* 夜 */}
-          {selectedDayData?.dinner.map((item) => (
-            <Link key={item.id} href={`/recipes/${item.id}`}>
-              <div className="flex items-center text-sm gap-x-2 mb-4">
-                <Image
-                  src="/images/nightIcon.png"
-                  alt="夜アイコン"
-                  width={20}
-                  height={20}
-                  className="mr-1"
-                />{' '}
-                <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded">
-                  <Image
-                    src={item.thumbnailUrl ?? '/images/noImage.jpg'}
-                    alt={item.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {item.title}
-              </div>
-            </Link>
-          ))}
+          <MealSection
+            items={selectedDayData?.dinner || []}
+            iconSrc="/images/nightIcon.png"
+            iconAlt="夜アイコン"
+          />
         </div>
       </div>
 

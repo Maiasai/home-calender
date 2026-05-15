@@ -110,7 +110,6 @@ const MealModalBase = ({
           {step === 'select' && ( //ボタンが押されたらstep変更を依頼
             <MealModal
               selectedRecipes={selectedRecipes}
-              setSelectedRecipes={setSelectedRecipes} // 同期用
               onSelect={setStep}
               onClose={onClose}
               selectedDate={selectedDate}
