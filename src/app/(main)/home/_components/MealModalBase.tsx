@@ -24,6 +24,7 @@ type Props = {
   mode: 'create' | 'edit';
   initialRecipes?: SelectedRecipe[];
   targetMeal: Meal | null;
+  displayDate: string;
 };
 
 const MealModalBase = ({
@@ -34,6 +35,7 @@ const MealModalBase = ({
   mode,
   initialRecipes,
   targetMeal,
+  displayDate,
 }: Props) => {
   const [step, setStep] = useState<MealModalStep>('select');
   const [category, setCategory] = useState<CategoryFilter>(''); // "" は「すべて」
@@ -102,9 +104,7 @@ const MealModalBase = ({
               showClose
             />
 
-            <h2 className="flex justify-center">
-              {selectedDate?.toLocaleDateString()} の献立
-            </h2>
+            <h2 className="flex justify-center">{displayDate} の献立</h2>
           </div>
 
           {step === 'select' && ( //ボタンが押されたらstep変更を依頼

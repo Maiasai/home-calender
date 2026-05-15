@@ -20,6 +20,7 @@ type Props = {
   setModalOpen: (v: boolean) => void;
   onEdit: (meal: Meal) => void;
   onList: (meal: Meal) => void;
+  displayDate: string;
 };
 
 const CalenderSelectedDate = ({
@@ -28,6 +29,7 @@ const CalenderSelectedDate = ({
   setModalOpen,
   onEdit,
   onList,
+  displayDate,
 }: Props) => {
   //詳細表示用
   const selectedKey = selectedDate.toLocaleDateString('sv-SE'); //選択している日付
@@ -103,7 +105,7 @@ const CalenderSelectedDate = ({
     <div className="flex flex-col">
       <div className='mt-4 p-3 border rounded"'>
         <div className="flex justify-between items-center mb-4 ">
-          {selectedDate.toLocaleDateString()} の献立
+          {displayDate} の献立
           {isEmpty && (
             <button onClick={() => setModalOpen(true)}>
               <img
@@ -224,10 +226,11 @@ const CalenderSelectedDate = ({
       />
 
       {nutritionOpen && nutritionResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 rounded-sm">
           <NutritionResultView
             result={nutritionResult}
             onClose={() => setNutritionOpen(false)}
+            displayDate={displayDate}
           />
         </div>
       )}
