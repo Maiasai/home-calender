@@ -5,7 +5,7 @@
 import BackIcon from '@/app/components/image/backicon';
 import CategoryBadge from '@/app/components/image/CategoryBadge';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import RecipeEditButton from '@/app/components/image/RecipeEditButton';
 import RecipeDeleateButton from '@/app/components/image/RecipeDeleateButton';
@@ -22,6 +22,9 @@ type Props = {
 const RecipeDetail = ({ params }: Props) => {
   const { id } = params;
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
 
   const {
     data: recipe,
@@ -51,6 +54,15 @@ const RecipeDetail = ({ params }: Props) => {
     router.push(`/recipes/${id}/edit`); //遷移なのでrouter.pushでOK
   };
 
+  //戻るボタンの処理
+  const handleBack = () => {
+    if (from === 'calendar') {
+      router.push('/home');
+    } else {
+      router.push('/recipes');
+    }
+  };
+
   return (
     <div className="flex flex-col max-w-xl mx-auto pb-24">
       {/* ページタイトル */}
@@ -58,9 +70,9 @@ const RecipeDetail = ({ params }: Props) => {
 
       <div className="flex justify-between w-full">
         <div className="ml-2">
-          <Link href="/recipes">
+          <button onClick={handleBack}>
             <BackIcon />
-          </Link>
+          </button>
         </div>
 
         <div className="flex gap-2">

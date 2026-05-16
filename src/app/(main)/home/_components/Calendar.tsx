@@ -90,12 +90,16 @@ const Calender = ({
                     {dayData?.breakfast.map((databreak, index) => {
                       if (index === 0) {
                         return (
-                          <CalenderUi
-                            keyId={databreak.id}
-                            iconData="/images/morningIcon.png"
-                            altData="朝アイコン"
-                            title={databreak.title}
-                          />
+                          <div
+                            key={databreak.id}
+                            className="flex items-center text-xs"
+                          >
+                            <CalenderUi
+                              iconData="/images/morningIcon.png"
+                              altData="朝アイコン"
+                              title={databreak.title}
+                            />
+                          </div>
                         );
                       }
                       return null;
@@ -107,12 +111,16 @@ const Calender = ({
                     {dayData?.lunch.map((datalunch, index) => {
                       if (index === 0) {
                         return (
-                          <CalenderUi
-                            keyId={datalunch.id}
-                            iconData="/images/daytimeIcon.png"
-                            altData="昼アイコン"
-                            title={datalunch.title}
-                          />
+                          <div
+                            key={datalunch.id}
+                            className="flex items-center text-xs"
+                          >
+                            <CalenderUi
+                              iconData="/images/daytimeIcon.png"
+                              altData="昼アイコン"
+                              title={datalunch.title}
+                            />
+                          </div>
                         );
                       }
                       return null;
@@ -125,12 +133,16 @@ const Calender = ({
                     {dayData?.dinner.map((datadinner, index) => {
                       if (index === 0) {
                         return (
-                          <CalenderUi
-                            keyId={datadinner.id}
-                            iconData="/images/nightIcon.png"
-                            altData="夜アイコン"
-                            title={datadinner.title}
-                          />
+                          <div
+                            key={datadinner.id}
+                            className="flex items-center text-xs"
+                          >
+                            <CalenderUi
+                              iconData="/images/nightIcon.png"
+                              altData="夜アイコン"
+                              title={datadinner.title}
+                            />
+                          </div>
                         );
                       }
                       return null;
