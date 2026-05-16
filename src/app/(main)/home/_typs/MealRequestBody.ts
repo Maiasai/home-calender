@@ -7,6 +7,6 @@ export type MealRequestBody = {
   recipes: {
     recipeId: string;
     mealType: MealType;
-    position?: number;
+    position: number;
   }[];
 };

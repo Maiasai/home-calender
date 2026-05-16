@@ -76,7 +76,7 @@ const MealRecipeSelect = ({
           id: recipe.id,
           title: recipe.title,
           thumbnailUrl: recipe.thumbnailUrl ?? '/images/noImage.jpg',
-          mealType: null, //初期値は未分類
+          mealType: 'UNSELECTED', //初期値は未分類
         },
       ];
     });

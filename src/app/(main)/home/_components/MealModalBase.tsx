@@ -24,6 +24,7 @@ type Props = {
   mode: 'create' | 'edit';
   initialRecipes?: SelectedRecipe[];
   targetMeal: Meal | null;
+  displayDate: string;
 };
 
 const MealModalBase = ({
@@ -34,6 +35,7 @@ const MealModalBase = ({
   mode,
   initialRecipes,
   targetMeal,
+  displayDate,
 }: Props) => {
   const [step, setStep] = useState<MealModalStep>('select');
   const [category, setCategory] = useState<CategoryFilter>(''); // "" は「すべて」
@@ -44,12 +46,13 @@ const MealModalBase = ({
   const [selectedRecipes, setSelectedRecipes] = useState<SelectedRecipe[]>([]); //ユーザーが今操作してる状態→選択されたレシピをここで管理（配列の中に、選択済みレシピのオブジェクトが入ってる）
 
   const {
-    handleSubmit,
     formState: { isSubmitting },
   } = useForm();
 
   //未カテゴリ
-  const hasUnselected = selectedRecipes.some((r) => r.mealType === null);
+  const hasUnselected = selectedRecipes.some(
+    (r) => r.mealType === 'UNSELECTED',
+  );
   // 未カテゴリがある場合はボタンを無効化
   const isDisabled =
     isSubmitting || hasUnselected || selectedRecipes.length === 0;
@@ -101,15 +104,12 @@ const MealModalBase = ({
               showClose
             />
 
-            <h2 className="flex justify-center">
-              {selectedDate?.toLocaleDateString()} の献立
-            </h2>
+            <h2 className="flex justify-center">{displayDate} の献立</h2>
           </div>
 
           {step === 'select' && ( //ボタンが押されたらstep変更を依頼
             <MealModal
               selectedRecipes={selectedRecipes}
-              setSelectedRecipes={setSelectedRecipes} // 同期用
               onSelect={setStep}
               onClose={onClose}
               selectedDate={selectedDate}

@@ -23,6 +23,7 @@ import MemoForm from '../../_components/MemoForm';
 import { RecipeDetail } from '../../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
+import UrlForm from '../../_components/UrlForm';
 
 type Props = {
   params: { id: string };
@@ -69,6 +70,7 @@ const RecipeEdit = ({ params }: Props) => {
         },
       ],
       steps: [{ recipestep: '' }],
+      sourceUrl: '',
     },
   });
 
@@ -113,6 +115,7 @@ const RecipeEdit = ({ params }: Props) => {
         memo: recipe.memo ?? '',
         servings: recipe.servings ?? undefined,
         thumbnailImageUrl: recipe.thumbnailUrl ?? undefined,
+        sourceUrl: recipe.sourceUrl ?? '',
 
         ingredients: recipe.recipeIngredients?.length
           ? recipe.recipeIngredients.map((ing) => ({
@@ -123,7 +126,7 @@ const RecipeEdit = ({ params }: Props) => {
           : [{ name: '', amount: undefined, unitId: '' }],
 
         steps: recipe.recipeSteps?.length
-          ? recipe.recipeSteps.map((stp: any) => ({
+          ? recipe.recipeSteps.map((stp) => ({
               recipestep: stp.instructionText ?? '',
             }))
           : [{ recipestep: '' }],
@@ -148,7 +151,6 @@ const RecipeEdit = ({ params }: Props) => {
     };
     const result = await supabase.auth.getSession();
 
-    console.log('payload前', payload);
     try {
       const res = await fetch(`/api/recipes/${recipe.id}`, {
         method: 'PUT',
@@ -159,7 +161,6 @@ const RecipeEdit = ({ params }: Props) => {
         body: JSON.stringify(payload),
       });
 
-      console.log('payload後', payload);
       if (!res.ok) {
         //HTTPステータスコードが200-299の時trueになる
         const text = await res.text();
@@ -260,6 +261,11 @@ const RecipeEdit = ({ params }: Props) => {
           <div className="mt-8">
             {/* メモ */}
             <MemoForm registerMemo={register} />
+          </div>
+
+          <div className="mt-8">
+            {/*  URLフォーム */}
+            <UrlForm registerUrl={register} errors={errors} />
           </div>
         </div>
       </form>

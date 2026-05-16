@@ -3,7 +3,6 @@
 
 'use client';
 
-import { Dispatch, SetStateAction } from 'react';
 import { MealModalStep } from '../_typs/MealModalStep';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
 import Image from 'next/image';
@@ -12,12 +11,12 @@ import { MonthData } from '../_typs/Menu';
 import { Meal } from '../_typs/Meal';
 import { MealRequestBody } from '../_typs/MealRequestBody';
 import { truncateRecipeTitle } from '@/utils/format';
-import { MealType } from '@/generated/prisma';
+import { UiMealType } from '../_typs/UiMealType';
+import { getMealIcon } from '../_utils/getMealIcon';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
   selectedRecipes: SelectedRecipe[];
-  setSelectedRecipes: Dispatch<SetStateAction<SelectedRecipe[]>>;
   onClose: () => void;
   selectedDate: Date;
   isDisabled: boolean;
@@ -31,7 +30,6 @@ type Props = {
 const MealModal = ({
   onSelect,
   selectedRecipes,
-  setSelectedRecipes,
   onClose,
   selectedDate,
   isDisabled,
@@ -41,24 +39,13 @@ const MealModal = ({
   mode,
   targetMeal,
 }: Props) => {
-  //カテゴリアイコン
-  const getMealIcon = (type: MealType) => {
-    switch (type) {
-      case 'BREAKFAST':
-        return '/images/morningIcon.png';
-      case 'LUNCH':
-        return '/images/daytimeIcon.png';
-      case 'DINNER':
-        return '/images/nightIcon.png';
-      case null:
-        return '/images/nullIcon.png';
-      default:
-        return null;
-    }
-  };
-
   //カテゴリ分け　外枠
-  const categories: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER'];
+  const categories: UiMealType[] = [
+    'BREAKFAST',
+    'LUNCH',
+    'DINNER',
+    'UNSELECTED',
+  ];
 
   const year = selectedDate.getFullYear();
   const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
@@ -81,7 +68,7 @@ const MealModal = ({
         //API側でユーザーの特定をしているためuser.idはここでは不要
         date: date,
         recipes: uniqueRecipes.map((r, index) => {
-          if (r.mealType === null) {
+          if (r.mealType === 'UNSELECTED') {
             //DB保存時、null想定なしのためフロントであらかじめ弾いておく
             throw new Error('mealType未選択');
           }

@@ -1,11 +1,11 @@
 //献立作成モーダルにて選択済みレシピ型
 
-import { MealType } from '@/generated/prisma';
+import { UiMealType } from './UiMealType';
 
 export type SelectedRecipe = {
   id: string;
   title: string;
   thumbnailUrl?: string;
-  mealType: MealType | null;
+  mealType: UiMealType;
   position?: number;
 };

@@ -92,6 +92,13 @@ const TopPage = () => {
     setModalOpen(true); // ← モーダル開く
   };
 
+  //表示用
+  const displayDate = selectedDate.toLocaleDateString('ja-JP', {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short',
+  });
+
   //買い物リストへ追加処理
   const handleAddList = async (meal: Meal) => {
     const hasIngredients = meal.recipes.some(
@@ -168,6 +175,7 @@ const TopPage = () => {
           setModalOpen={setModalOpen}
           onEdit={handleEdit} //ユーザーが編集押下＞MenuButtonのonClickが感知→onEditにその日の献立がくっついてここにくる。
           onList={handleAddList}
+          displayDate={displayDate}
         />
       )}
 
@@ -179,6 +187,7 @@ const TopPage = () => {
         mode={mode}
         initialRecipes={initialRecipes}
         targetMeal={targetMeal}
+        displayDate={displayDate}
       />
     </div>
   );
