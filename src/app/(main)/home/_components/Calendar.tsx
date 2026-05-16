@@ -2,11 +2,10 @@
 
 'use client';
 
-import Image from 'next/image';
 import { Dispatch, SetStateAction } from 'react';
 import { MonthData } from '../_typs/Menu';
 import { CalendarCell } from '../_typs/CalendarCell';
-import { truncateCalendarTitle } from '@/utils/format';
+import { CalenderUi } from './CalenderUi';
 
 type Props = {
   data: MonthData;
@@ -88,59 +87,54 @@ const Calender = ({
                 {/* 朝 */}
                 <div className="mt-3">
                   <div>
-                    {dayData?.breakfast.map((databreak) => (
-                      <div
-                        key={databreak.id}
-                        className="flex items-center text-xs"
-                      >
-                        <Image
-                          src="/images/morningIcon.png"
-                          alt="朝アイコン"
-                          width={15}
-                          height={15}
-                          className="mr-1"
-                        />
-                        {truncateCalendarTitle(databreak.title)}
-                      </div>
-                    ))}
+                    {dayData?.breakfast.map((databreak, index) => {
+                      if (index === 0) {
+                        return (
+                          <CalenderUi
+                            keyId={databreak.id}
+                            iconData="/images/morningIcon.png"
+                            altData="朝アイコン"
+                            title={databreak.title}
+                          />
+                        );
+                      }
+                      return null;
+                    })}
                   </div>
 
                   {/* 昼 */}
                   <div>
-                    {dayData?.lunch.map((datalunch) => (
-                      <div
-                        key={datalunch.id}
-                        className="flex items-center text-xs"
-                      >
-                        <Image
-                          src="/images/daytimeIcon.png"
-                          alt="昼アイコン"
-                          width={15}
-                          height={15}
-                          className="mr-1"
-                        />
-                        {truncateCalendarTitle(datalunch.title)}
-                      </div>
-                    ))}
+                    {dayData?.lunch.map((datalunch, index) => {
+                      if (index === 0) {
+                        return (
+                          <CalenderUi
+                            keyId={datalunch.id}
+                            iconData="/images/daytimeIcon.png"
+                            altData="昼アイコン"
+                            title={datalunch.title}
+                          />
+                        );
+                      }
+                      return null;
+                    })}
                   </div>
 
                   {/* 夜 */}
+
                   <div>
-                    {dayData?.dinner.map((datadinner) => (
-                      <div
-                        key={datadinner.id}
-                        className="flex items-center text-xs"
-                      >
-                        <Image
-                          src="/images/nightIcon.png"
-                          alt="夜アイコン"
-                          width={15}
-                          height={15}
-                          className="mr-1"
-                        />
-                        {truncateCalendarTitle(datadinner.title)}
-                      </div>
-                    ))}
+                    {dayData?.dinner.map((datadinner, index) => {
+                      if (index === 0) {
+                        return (
+                          <CalenderUi
+                            keyId={datadinner.id}
+                            iconData="/images/nightIcon.png"
+                            altData="夜アイコン"
+                            title={datadinner.title}
+                          />
+                        );
+                      }
+                      return null;
+                    })}
                   </div>
                 </div>
               </div>
