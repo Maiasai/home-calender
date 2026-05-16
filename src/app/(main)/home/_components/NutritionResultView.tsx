@@ -3,6 +3,7 @@
 import CloseButton from '@/app/components/image/CloseButton';
 import { NutritionMessages } from '@/lib/nutrition/nutritionMessages';
 import { NutritionResult } from '@/lib/nutrition/typs';
+import { NutritionResultUi } from './NutritionResultUi';
 
 type Props = {
   result: NutritionResult;
@@ -21,6 +22,8 @@ const NutritionResultView = ({ result, onClose, displayDate }: Props) => {
     bad: 'text-red-400 font-bold text-sm',
   };
 
+  const colorResult = levelColorMap[result.overall];
+
   return (
     <div className="absolute bg-gray-100 w-[600px] max-h-[80vh] overflow-y-auto rounded-xl">
       <div className="flex flex-col m-2">
@@ -34,27 +37,26 @@ const NutritionResultView = ({ result, onClose, displayDate }: Props) => {
           </div>
         </div>
 
-        <div className="flex flex-col bg-white  mx-4 mt-2 mb-2 p-3 rounded-lg">
-          <h2 className="border-b mb-2">全体バランス</h2>
-          <p className={levelColorMap[result.overall]}>
-            {overallMessage.title}
-          </p>
-          <p className="text-sm mt-2">{overallMessage.comment}</p>
-        </div>
-        <div className="flex flex-col bg-white  mx-4 mt-2 mb-2 p-3 rounded-lg">
-          <h2 className="border-b mb-2">タンパク質</h2>
-          <p className={levelColorMap[result.overall]}>
-            {overallProtein.title}
-          </p>
-          <p className="text-sm mt-2">{overallProtein.comment}</p>
-        </div>
-        <div className="flex flex-col bg-white  mx-4 mt-2 mb-2 p-3 rounded-lg">
-          <h2 className="border-b mb-2">野菜・ビタミン</h2>
-          <p className={levelColorMap[result.overall]}>
-            {overallVegetable.title}
-          </p>
-          <p className="text-sm mt-2">{overallVegetable.comment}</p>
-        </div>
+        <NutritionResultUi
+          title="全体バランス"
+          cname={colorResult}
+          message={overallMessage.title}
+          comment={overallMessage.comment}
+        />
+
+        <NutritionResultUi
+          title="タンパク質"
+          cname={colorResult}
+          message={overallProtein.title}
+          comment={overallProtein.comment}
+        />
+
+        <NutritionResultUi
+          title="野菜・ビタミン"
+          cname={colorResult}
+          message={overallVegetable.title}
+          comment={overallVegetable.comment}
+        />
 
         <div className="flex flex-col bg-white  mx-4 mt-2 mb-2 p-2 rounded-lg">
           <h2 className="text-xs">

@@ -49,7 +49,7 @@ const CalenderSelectedDate = ({
     !selectedDayData?.dinner?.length;
 
   //その日の献立取得用（編集用データ）*朝昼晩を１つの配列にまとめてMeal型に変換
-  const meal: Meal | null = buildMead({ selectedDayData, selectedKey });
+  const meal = buildMead({ selectedDayData, selectedKey });
 
   //献立削除処理
   const deleteMeal = async (mealId: MealId) => {

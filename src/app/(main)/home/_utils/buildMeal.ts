@@ -1,3 +1,4 @@
+import { Meal } from '../_typs/Meal';
 import { DayData } from '../_typs/Menu';
 
 type Props = {
@@ -5,7 +6,10 @@ type Props = {
   selectedKey: string;
 };
 
-export const buildMead = ({ selectedDayData, selectedKey }: Props) => {
+export const buildMead = ({
+  selectedDayData,
+  selectedKey,
+}: Props): Meal | null => {
   if (!selectedDayData) return null;
 
   return {
