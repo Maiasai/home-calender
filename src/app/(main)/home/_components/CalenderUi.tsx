@@ -5,15 +5,14 @@ import Image from 'next/image';
 import { truncateCalendarTitle } from '@/utils/format';
 
 type Props = {
-  keyId: string;
   iconData: string;
   altData: string;
   title: string;
 };
 
-export const CalenderUi = ({ keyId, iconData, altData, title }: Props) => {
+export const CalenderUi = ({ iconData, altData, title }: Props) => {
   return (
-    <div key={keyId} className="flex items-center text-xs">
+    <div className="flex items-center text-xs">
       <Image
         src={iconData}
         alt={altData}

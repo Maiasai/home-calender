@@ -44,6 +44,13 @@ enum MealType {
 enum NutritionCategory {
   PROTEIN
   VEGETABLE
+  CARB
+}
+
+//野菜分類
+enum VegetableType {
+  GREEN_YELLOW
+  LIGHT
 }
 
 
@@ -76,6 +83,8 @@ model Ingredient {
   normalizedName String   @map("normalized_name")
 
   nutritionCategory NutritionCategory?
+  vegetableType VegetableType?
+  proteinScore Int?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

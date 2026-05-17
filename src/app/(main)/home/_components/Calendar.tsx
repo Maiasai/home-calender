@@ -90,10 +90,7 @@ const Calender = ({
                     {dayData?.breakfast.map((databreak, index) => {
                       if (index === 0) {
                         return (
-                          <div
-                            key={databreak.id}
-                            className="flex items-center text-xs"
-                          >
+                          <div key={databreak.id}>
                             <CalenderUi
                               iconData="/images/morningIcon.png"
                               altData="朝アイコン"
@@ -111,10 +108,7 @@ const Calender = ({
                     {dayData?.lunch.map((datalunch, index) => {
                       if (index === 0) {
                         return (
-                          <div
-                            key={datalunch.id}
-                            className="flex items-center text-xs"
-                          >
+                          <div key={datalunch.id}>
                             <CalenderUi
                               iconData="/images/daytimeIcon.png"
                               altData="昼アイコン"
@@ -133,10 +127,7 @@ const Calender = ({
                     {dayData?.dinner.map((datadinner, index) => {
                       if (index === 0) {
                         return (
-                          <div
-                            key={datadinner.id}
-                            className="flex items-center text-xs"
-                          >
+                          <div key={datadinner.id}>
                             <CalenderUi
                               iconData="/images/nightIcon.png"
                               altData="夜アイコン"
