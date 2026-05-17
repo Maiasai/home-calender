@@ -6,12 +6,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import AddRecipeModalBase from './AddRecipeModalBase';
+import { KeyedMutator } from 'swr';
+import { RecipeData } from '../_types/RecipeTypes';
 
 type Props = {
   onSelect: (step: RecipeModalStep) => void;
+  mutate: KeyedMutator<RecipeData[]>;
 };
 
-const AddRecipeSelect = ({ onSelect }: Props) => {
+const AddRecipeSelect = ({ onSelect, mutate }: Props) => {
   const [RecipeModalOpen, setRecipeModalOpen] = useState(false);
 
   return (
@@ -20,6 +23,7 @@ const AddRecipeSelect = ({ onSelect }: Props) => {
         <AddRecipeModalBase
           open={RecipeModalOpen} // モーダル表示/非表示の state
           onClose={() => setRecipeModalOpen(false)} // 閉じるボタン押したときに state を false にする
+          mutate={mutate}
         />
 
         {/* URLから追加する */}
