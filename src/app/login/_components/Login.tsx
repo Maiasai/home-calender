@@ -125,7 +125,7 @@ const LoginModal = ({
               />
             </button>
           </div>
-          <div className="pl-2 mb-2">
+          <div className="pl-2 mb-2 mt-2">
             {errorssign.password && (
               <ErrorMessage error={errorssign.password} />
             )}
@@ -136,18 +136,9 @@ const LoginModal = ({
               <button
                 type="submit"
                 disabled={!isValidsign || isSubmittingsign}
-                className={`transition${
-                  !isValidsign || isSubmittingsign
-                    ? 'opacity-50 grayscale cursor-not-allowed'
-                    : ''
-                }`}
+                className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValidsign || isSubmittingsign ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
               >
-                <Image
-                  src="/images/loginbutton.png"
-                  alt="ログインボタン"
-                  width={200}
-                  height={20}
-                />
+                ログイン
               </button>
             </div>
             <div className="flex justify-center pt-2 border-b text-sm">

@@ -4,7 +4,6 @@
 
 import { supabase } from '@/lib/supabase';
 import { SignupData } from '@/app/login/_typs/SignupData';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
@@ -169,7 +168,7 @@ const NewRegistration = ({
             placeholder="ニックネームを入力"
             className="border p-2 px-2 py-1 w-full"
           />
-          <div className="pl-2 mb-2">
+          <div className="pl-2 mb-2 mt-2">
             {errorssign.nickname && (
               <ErrorMessage error={errorssign.nickname} />
             )}
@@ -218,18 +217,9 @@ const NewRegistration = ({
           <button
             type="submit"
             disabled={!isValidsign || isSubmittingsign}
-            className={`transition${
-              !isValidsign || isSubmittingsign
-                ? 'opacity-50 grayscale cursor-not-allowed'
-                : ''
-            }`}
+            className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValidsign || isSubmittingsign ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
           >
-            <Image
-              src="/images/newregistrationbutton.png"
-              alt="登録ボタン"
-              width={200}
-              height={20}
-            />
+            登録
           </button>
 
           <button

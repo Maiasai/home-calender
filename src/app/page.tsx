@@ -90,13 +90,10 @@ const Home = () => {
           <div className="flex justify-center mb-6">
             <button //開くボタン
               onClick={() => setLoginModalOpen(true)}
+              className="h-12 px-8 rounded-2xl bg-orange-500 text-white font-semibold 
+              text-sm shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
             >
-              <Image
-                src="/images/loginRegistrationbutton.png"
-                alt="新規登録　またはログイン"
-                width={200}
-                height={50}
-              />
+              新規登録　またはログイン
             </button>
           </div>
 

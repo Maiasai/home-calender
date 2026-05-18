@@ -60,7 +60,7 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
             height={24}
           />
         </button>
-        <div className="pl-2 mb-2">
+        <div className="pl-2 mb-2 mt-2">
           {errorssign.password && <ErrorMessage error={errorssign.password} />}
         </div>
         <p className="whitespace-pre-line text-xs mb-2 pl-2">
@@ -95,7 +95,7 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
             height={24}
           />
         </button>
-        <div className="pl-2 mb-16">
+        <div className="pl-2 mb-16 mt-2">
           {errorssign.confirmPassword && (
             <ErrorMessage error={errorssign.confirmPassword} />
           )}
