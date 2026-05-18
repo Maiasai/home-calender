@@ -6,15 +6,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import AddRecipeModalBase from './AddRecipeModalBase';
-import { KeyedMutator } from 'swr';
-import { RecipeData } from '../_types/RecipeTypes';
+import { mutate } from 'swr';
 
 type Props = {
   onSelect: (step: RecipeModalStep) => void;
-  mutate: KeyedMutator<RecipeData[]>;
 };
 
-const AddRecipeSelect = ({ onSelect, mutate }: Props) => {
+const AddRecipeSelect = ({ onSelect }: Props) => {
   const [RecipeModalOpen, setRecipeModalOpen] = useState(false);
 
   return (

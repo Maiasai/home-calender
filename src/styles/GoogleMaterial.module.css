@@ -1,0 +1,42 @@
+.button {
+  user-select: none;
+  appearance: none;
+  background-color: #131314;
+  border: 1px solid #8e918f;
+  border-radius: 20px;
+  color: #e3e3e3;
+  cursor: pointer;
+  font-family: 'Roboto', arial, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.25px;
+  overflow: hidden;
+  position: relative;
+  transition:
+    background-color 0.218s,
+    border-color 0.218s,
+    box-shadow 0.218s;
+}
+
+.button:hover {
+  box-shadow:
+    0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+.state {
+  transition: opacity 0.218s;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.button:hover .state {
+  background-color: white;
+  opacity: 0.08;
+}
+
+.button:active .state,
+.button:focus .state {
+  background-color: white;
+  opacity: 0.12;
+}
