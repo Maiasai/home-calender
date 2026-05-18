@@ -13,8 +13,15 @@ export type NutritionResult = {
 };
 
 export type IngredientItem = {
+  amount: number;
   name: string;
   nutritionCategory: NutritionCategory;
   vegetableType?: vegetableType;
   proteinScore?: number;
+  unitId: Unit;
 };
+
+export type Unit = {
+  id: string;
+  name: string;
+} | null;

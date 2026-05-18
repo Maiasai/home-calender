@@ -20,7 +20,12 @@ export const getIngredients = (meal: Meal): (IngredientItem | null)[] => {
 
       return {
         //栄養判定専用データに変換
+        //レシピ側
         name: i.name,
+        amount: i.amount,
+        unitId: i.unit,
+
+        //辞書側
         nutritionCategory: matched.nutritionCategory,
         vegetableType: matched.vegetableType,
         proteinScore: matched.proteinScore,

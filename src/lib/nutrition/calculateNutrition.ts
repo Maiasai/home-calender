@@ -12,6 +12,8 @@ const calculateNutrition = (menu: Meal) => {
   //①食材取得
   const ingredients = getIngredients(menu);
 
+  console.log('ingredients', ingredients);
+
   const ingredientsNotNull = ingredients.filter(
     (i): i is IngredientItem => i !== null,
   );
@@ -19,6 +21,8 @@ const calculateNutrition = (menu: Meal) => {
   //タンパク質と野菜に分けてをさらに細かくする
   //＜タンパク質＞
   const proteins = splitEnergyFoods(ingredientsNotNull);
+
+  console.log('proteins', proteins);
 
   //＜野菜＞
   const { greenYellow, light } = splitVegetables(ingredientsNotNull);
