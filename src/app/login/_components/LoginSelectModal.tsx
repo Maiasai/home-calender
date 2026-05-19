@@ -5,6 +5,8 @@
 import Image from 'next/image';
 import { ModalStep } from '../_typs/ModalStep';
 import signInWithGoogle from './SignInWithGoogle';
+import { Mail } from 'lucide-react';
+import { GoogleMaterial } from './GoogleMeterial';
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<ModalStep>>;
@@ -26,19 +28,9 @@ const LoginSelectModal = ({ setStep }: Props) => {
         新規登録またはログイン
       </h1>
 
-      <button
-        onClick={() => {
-          signInWithGoogle(); // ここでは redirectTo 付きでリダイレクト
-        }}
-        className="flex justify-center mb-6"
-      >
-        <Image
-          src="/images/Sign up with Google.png"
-          alt="googleで続ける"
-          width={178}
-          height={39}
-        />
-      </button>
+      <div className="flex justify-center mb-8">
+        <GoogleMaterial signInWithGoogle={signInWithGoogle} />
+      </div>
 
       <div className="flex justify-center mb-6">
         <Image
@@ -49,17 +41,17 @@ const LoginSelectModal = ({ setStep }: Props) => {
         />
       </div>
 
-      <button
-        onClick={() => setStep('email')}
-        className="flex justify-center mb-6"
-      >
-        <Image
-          src="/images/mailbutton.png"
-          alt="メールで続ける"
-          width={232}
-          height={39}
-        />
-      </button>
+      <div className="flex justify-center">
+        <button
+          onClick={() => setStep('email')}
+          className="flex items-center justify-center gap-2
+            w-40 h-11 rounded-2xl bg-orange-500 text-white text-sm font-medium
+            shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95"
+        >
+          <Mail size={18} />
+          メールで続ける
+        </button>
+      </div>
     </div>
   );
 };

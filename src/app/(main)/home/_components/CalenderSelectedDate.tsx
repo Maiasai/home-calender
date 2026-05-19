@@ -101,7 +101,7 @@ const CalenderSelectedDate = ({
             />
           )}
         </div>
-        <div>
+        <div className="max-h-80 overflow-y-auto">
           {isEmpty && <div>献立が未登録です</div>}
 
           {/* 朝 */}

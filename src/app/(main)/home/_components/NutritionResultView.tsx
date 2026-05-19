@@ -22,7 +22,9 @@ const NutritionResultView = ({ result, onClose, displayDate }: Props) => {
     bad: 'text-red-400 font-bold text-sm',
   };
 
-  const colorResult = levelColorMap[result.overall];
+  const overallColor = levelColorMap[result.overall];
+  const proteinColor = levelColorMap[result.protein];
+  const vegetableColor = levelColorMap[result.vegetable];
 
   return (
     <div className="absolute bg-gray-100 w-[600px] max-h-[80vh] overflow-y-auto rounded-xl">
@@ -39,29 +41,37 @@ const NutritionResultView = ({ result, onClose, displayDate }: Props) => {
 
         <NutritionResultUi
           title="全体バランス"
-          cname={colorResult}
+          cname={overallColor}
           message={overallMessage.title}
           comment={overallMessage.comment}
         />
 
         <NutritionResultUi
           title="タンパク質"
-          cname={colorResult}
+          cname={proteinColor}
           message={overallProtein.title}
           comment={overallProtein.comment}
         />
 
         <NutritionResultUi
-          title="野菜・ビタミン"
-          cname={colorResult}
+          title="野菜"
+          cname={vegetableColor}
           message={overallVegetable.title}
           comment={overallVegetable.comment}
         />
 
         <div className="flex flex-col bg-white  mx-4 mt-2 mb-2 p-2 rounded-lg">
-          <h2 className="text-xs">
+          <h2 className="text-xs text-gray-500">
             ※ 内容は食材データに基づいた推定です。医療行為ではありません。
           </h2>
+          <p className="text-xs text-gray-500 mt-2">
+            ※
+            本データは「日本食品標準成分表（八訂）増補2023年」を参考にしています。
+            出典：文部科学省 食品成分データベース
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            ※ 一部の食材は表記ゆれのため、正確に判定できない場合があります。
+          </p>
         </div>
       </div>
     </div>

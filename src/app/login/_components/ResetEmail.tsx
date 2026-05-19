@@ -8,23 +8,25 @@ import {
   UseFormHandleSubmit,
   UseFormRegister,
 } from 'react-hook-form';
-import Image from 'next/image';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 
 type Props = {
   register: UseFormRegister<EmailFormValues>;
   errors: FieldErrors<EmailFormValues>;
-  email: string;
+
   onSubmit: SubmitHandler<EmailFormValues>;
   handleSubmit: UseFormHandleSubmit<EmailFormValues>;
+  isValid: boolean;
+  isSubmitting: boolean;
 };
 
 const ResetEmail = ({
   register,
   errors,
-  email,
   onSubmit,
   handleSubmit,
+  isValid,
+  isSubmitting,
 }: Props) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -43,20 +45,18 @@ const ResetEmail = ({
             })}
             placeholder="exsample@email.com"
             className="border w-full p-2 mx-4"
-            value={email}
           />
-          <div className="pl-2">
+          <div className="pl-6 mt-2">
             {errors.email && <ErrorMessage error={errors.email} />}
           </div>
         </div>
         <div className="flex justify-center mt-4">
-          <button>
-            <Image
-              src="/images/sendpasswordreset.png"
-              alt="認証メールを送信ボタン"
-              width={229}
-              height={34}
-            />
+          <button
+            type="submit"
+            disabled={!isValid || isSubmitting}
+            className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+          >
+            認証メールを送信ボタン
           </button>
         </div>
       </div>

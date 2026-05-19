@@ -184,7 +184,8 @@ const RecipeEdit = ({ params }: Props) => {
       const ok = confirm('変更が破棄されますがよろしいですか？');
       if (!ok) return;
     }
-    router.push('main/recipes');
+    if (!recipe) return;
+    router.push(`/recipes/${recipe.id}`);
   };
 
   if (error) return <p>エラーが発生しました</p>;
@@ -263,10 +264,12 @@ const RecipeEdit = ({ params }: Props) => {
             <MemoForm registerMemo={register} />
           </div>
 
-          <div className="mt-8">
-            {/*  URLフォーム */}
-            <UrlForm registerUrl={register} errors={errors} />
-          </div>
+          {recipe?.sourceUrl && (
+            <div className="mt-8">
+              {/*  URLフォーム */}
+              <UrlForm registerUrl={register} errors={errors} />
+            </div>
+          )}
         </div>
       </form>
     </div>

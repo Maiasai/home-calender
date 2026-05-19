@@ -85,7 +85,12 @@ const LoginFlowModal = ({
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<EmailFormValues>({ mode: 'onChange' });
+  } = useForm<EmailFormValues>({
+    mode: 'onChange',
+    defaultValues: {
+      email: email,
+    },
+  });
 
   //認証コード管理用
   const {
@@ -98,7 +103,7 @@ const LoginFlowModal = ({
     },
   } = useForm<VerifyCodeFormValues>({ mode: 'onChange' }); //これを書くことでリアルタイムバリデチェックON
 
-  //ニックネーム、パスワード、電話番号管理用
+  //ニックネーム、パスワード管理用
   const {
     register: registersign,
     handleSubmit: handleSubmitsign,
@@ -380,9 +385,10 @@ const LoginFlowModal = ({
                 <ResetEmail
                   register={register}
                   errors={errors}
-                  email={email}
                   onSubmit={onSubmitEmail}
                   handleSubmit={handleSubmit}
+                  isValid={isValid}
+                  isSubmitting={isSubmitting}
                 />
               </div>
             </div>

@@ -11,6 +11,8 @@ import {
   UseFormRegister,
 } from 'react-hook-form';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
+import { GoogleMaterial } from './GoogleMeterial';
+import ModalDescriptionText from './ModalDescriptionText';
 
 type Props = {
   handleSubmit: UseFormHandleSubmit<EmailFormValues>;
@@ -48,31 +50,22 @@ const MailInputModal = ({
             placeholder="exsample@email.com"
             className="border w-full p-2"
           />
-          <div className="pl-2">
+          <div className="pl-2 mt-2">
             {errors.email && <ErrorMessage error={errors.email} />}
           </div>
         </div>
 
-        <label className="flex items-center justify-center whitespace-pre-line text-sm m-6">
-          {`メールアドレスが登録済みかどうかを確認し、
-          お持ちでない場合はそのまま新規登録ができます。`}
-        </label>
+        <ModalDescriptionText>
+          {`メールアドレスが登録済みかどうかを
+            確認し、お持ちでない場合はそのまま新規登録ができます。`}
+        </ModalDescriptionText>
 
         <div className="flex items-center justify-center mb-10 w-full">
           <button
             disabled={!isValid || isSubmitting} //バリデーション表示,送信中はtureになる→true時はボタン無効
-            className={`transition${
-              !isValid || isSubmitting
-                ? 'opacity-50 grayscale cursor-not-allowed'
-                : ''
-            }`}
+            className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
           >
-            <Image
-              src="/images/nextbutton.png"
-              alt="次へボタン"
-              width={229}
-              height={34}
-            />
+            次へ
           </button>
         </div>
       </form>
@@ -86,14 +79,9 @@ const MailInputModal = ({
         />
       </div>
 
-      <button onClick={signInWithGoogle} className="flex w-full justify-center">
-        <Image
-          src="/images/Sign up with Google.png"
-          alt="googleで続ける"
-          width={178}
-          height={39}
-        />
-      </button>
+      <div className="flex justify-center mb-8">
+        <GoogleMaterial signInWithGoogle={signInWithGoogle} />
+      </div>
     </div>
   );
 };
