@@ -2,11 +2,9 @@
 
 'use client';
 
-import Image from 'next/image';
 import { MonthData } from '../_typs/Menu';
 import MenuButton from './MenuButton';
 import { Meal } from '../_typs/Meal';
-import Link from 'next/link';
 import { useState } from 'react';
 import ConfirmDialog from '../../recipes/_components/ConfirmDialog';
 import { MealId } from '../_typs/MealId';
@@ -15,6 +13,7 @@ import calculateNutrition from '@/lib/nutrition/calculateNutrition';
 import NutritionResultView from './NutritionResultView';
 import { MealSection } from './MealSection';
 import { buildMead } from '../_utils/buildMeal';
+import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 
 type Props = {
   data: MonthData;
@@ -68,9 +67,12 @@ const CalenderSelectedDate = ({
     }
   };
 
+  //モーダル外　スクロール防止
+  useBodyScrollLock({ open: nutritionOpen });
+
   return (
     <div className="flex flex-col">
-      <div className='mt-4 p-3 border rounded"'>
+      <div className="mt-4 p-3 border rounded">
         <div className="flex justify-between items-center mb-4 ">
           {displayDate} の献立
           {isEmpty && (

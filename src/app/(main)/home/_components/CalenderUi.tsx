@@ -13,13 +13,7 @@ type Props = {
 export const CalenderUi = ({ iconData, altData, title }: Props) => {
   return (
     <div className="flex items-center text-xs">
-      <Image
-        src={iconData}
-        alt={altData}
-        width={15}
-        height={15}
-        className="mr-1"
-      />
+      <Image src={iconData} alt={altData} width={15} height={15} />
       {truncateCalendarTitle(title)}
     </div>
   );

@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import LoginFlowModal from './login/_components/LoginFlowModal';
+import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 
 const Home = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
 
+  useBodyScrollLock({ open: LoginModalOpen });
   return (
     <div>
       {/* 背景画像 */}

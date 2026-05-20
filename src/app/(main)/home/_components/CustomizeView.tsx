@@ -5,7 +5,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
 import Image from 'next/image';
 import { truncateRecipeTitle } from '@/utils/format';
-import { MealType } from '@/generated/prisma';
 import { UiMealType } from '../_typs/UiMealType';
 
 type Props = {
@@ -112,7 +111,10 @@ const CustomizeView = ({
               {/* ラジオボタン */}
               <div className="flex gap-4">
                 {mealTypes.map((type) => (
-                  <label key={type} className="flex gap-1">
+                  <label
+                    key={type}
+                    className="flex justify-center items-center gap-1"
+                  >
                     <input
                       type="radio"
                       name={`meal-${recipe.id}`} //レシピごとに独立したラジオボタンにしている

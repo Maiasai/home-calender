@@ -13,7 +13,7 @@ const SearchBarSimple = ({
   setKeyword,
 }: Props) => {
   return (
-    <div className="flex justify-center mb-4 gap-">
+    <div className="flex justify-center mb-4 gap-2">
       <input
         value={inputKeyword}
         onChange={(e) => setInputKeyword(e.currentTarget.value)}
