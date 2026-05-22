@@ -10,6 +10,5 @@ export type GroupedItem = {
   totalQuantity: number;
   count: number;
   checked: boolean;
-  memo: string;
   sortOrder: number;
 };

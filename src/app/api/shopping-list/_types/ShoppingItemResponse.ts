@@ -7,7 +7,6 @@ export type ShoppingItemResponse = {
   unitId: string | null;
   checked: boolean;
   sortOrder: number;
-  memo: string | null;
   unit: {
     id: string;
     name: string;

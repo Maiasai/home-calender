@@ -229,7 +229,6 @@ model ShoppingItem {
   quantityText Float?
   unitId       String?   @db.Uuid//材料の単位カラム
   checked      Boolean  @default(false)
-  memo String?
 
   sortOrder Int @default(0)
   createdAt    DateTime @default(now())

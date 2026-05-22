@@ -111,7 +111,7 @@ const TopPage = () => {
     }
 
     try {
-      const res = await fetch('/api/shopping-list', {
+      const res = await fetch('/api/shopping-list/from-menu', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ const TopPage = () => {
       }
 
       const data = await res.json();
-      await globalMutate('/api/shopping-list');
+      await globalMutate('/api/shopping-list/from-menu');
 
       alert('買い物リストに追加しました');
     } catch (error) {
