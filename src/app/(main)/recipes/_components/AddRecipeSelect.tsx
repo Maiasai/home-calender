@@ -11,7 +11,7 @@ type Props = {
 
 const AddRecipeSelect = ({ onSelect }: Props) => {
   return (
-    <div className="bg-gray-100 w-[600px] max-h-[60vh] overflow-y-auto">
+    <div className="bg-gray-100 max-w-[900px] max-h-[60vh] overflow-y-auto">
       <div className="flex flex-col gap-3 m-3">
         {/* URLから追加する */}
         <div className="flex flex-col bg-white  mx-4 mt-4 mb-2 p-4 rounded-lg">

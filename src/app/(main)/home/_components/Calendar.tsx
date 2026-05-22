@@ -82,7 +82,7 @@ const Calender = ({
             <button
               key={index}
               onClick={() => setSelectedDate(date)}
-              className={`flex flex-cols text-center justify-center md:p-2 rounded text-sm border
+              className={`flex flex-cols text-center md:p-2 p-1 rounded text-sm border
                 ${isSelected ? 'bg-orange-50' : 'hover:bg-gray-100'}
                 `}
             >
@@ -90,7 +90,7 @@ const Calender = ({
                 {date.getDate()}
 
                 {/* 朝 */}
-                <div className="mt-3">
+                <div className="mt-2">
                   <div>
                     {dayData?.breakfast.map((databreak, index) => {
                       if (index === 0) {

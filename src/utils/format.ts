@@ -2,9 +2,6 @@
 
 import { truncate } from './string';
 
-// カレンダー用（短め）
-export const truncateCalendarTitle = (text: string) => truncate(text, 5);
-
 //献立レシピ選択画面
 export const truncateRecipeListTitle = (text: string) => truncate(text, 7);
 

@@ -70,15 +70,14 @@ const AddRecipeUrlModal = ({ onClose, step }: Props) => {
   };
 
   return (
-    <div className="bg-gray-100 w-[600px] max-h-[80vh] overflow-y-auto">
+    <div className="bg-gray-100 w-full max-w-[900px] max-h-[80vh] overflow-y-auto">
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col items-center h-[150px] bg-white m-5 p-4 rounded-lg">
+          <div className="flex flex-col items-center md:h-[180px] h-[190px] bg-white m-5 p-4 rounded-lg">
             {/* タイトル */}
             <div className="w-full">
               <TitleForm registerTitle={register} errors={errors} step={step} />
             </div>
-            <div className="w-full border-b"></div>
             {/* Url */}
             <div className="w-full">
               <UrlForm registerUrl={register} errors={errors} />
@@ -95,7 +94,7 @@ const AddRecipeUrlModal = ({ onClose, step }: Props) => {
           </div>
 
           {/* メモ */}
-          <div className="flex items-center h-[150px] gap-6 bg-white m-5 p-4 rounded-lg">
+          <div className="flex items-center h-[140px] gap-6 bg-white m-5 p-4 rounded-lg">
             <MemoForm registerMemo={register} />
           </div>
 
@@ -103,18 +102,9 @@ const AddRecipeUrlModal = ({ onClose, step }: Props) => {
             <button
               type="submit" //このボタンが押されたらフォームを送信する
               disabled={!isValid || isSubmitting} //バリデーション表示,送信中はtureになる→true時はボタン無効
-              className={`transition${
-                !isValid || isSubmitting
-                  ? 'opacity-50 grayscale cursor-not-allowed'
-                  : ''
-              }`}
+              className={`w-[160px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
             >
-              <Image
-                src="/images/recipecreate.png"
-                alt="レシピを登録する"
-                width={160}
-                height={40}
-              />
+              レシピを登録する
             </button>
           </div>
         </form>

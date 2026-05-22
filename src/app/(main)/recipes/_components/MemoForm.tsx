@@ -10,7 +10,7 @@ type Props<T extends FieldValues> = {
 
 const MemoForm = <T extends FieldValues>({ registerMemo }: Props<T>) => {
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col mb-1">
       <label>メモ</label>
 
       <textarea

@@ -40,7 +40,7 @@ const RecipeCard = ({
       {isBulkMode && (
         <input
           type="checkbox"
-          className="absolute top-4 left-4 z-10 scale-150 rounded-3xl"
+          className="absolute sm:top-4 sm:left-4 top-2 left-2 z-10 sm:scale-150 rounded-3xl"
           checked={selectedIds.includes(String(recipe.id))}
           onChange={(e) => {
             e.stopPropagation();
@@ -82,7 +82,7 @@ const RecipeCard = ({
             className="object-cover"
           />
 
-          <div className="absolute flex gap-x-2 top-4 right-4">
+          <div className="absolute flex gap-x-2 md:top-4 md:right-4 top-1 right-1">
             <FavoriteButton
               recipeId={recipe.id}
               isFavorite={isFav}
@@ -102,7 +102,9 @@ const RecipeCard = ({
           </div>
         </div>
 
-        <div className="flex justify-between mt-1 ml-2">{recipe.title}</div>
+        <div className="flex  md:text-base text-sm mt-1 ml-2">
+          {recipe.title}
+        </div>
       </Link>
     </div>
   );

@@ -29,6 +29,11 @@ const TitleForm = <T extends FieldValues>({
   return (
     <div className="flex flex-col w-full">
       <label>{step === 'MANUAL' && 'タイトル'}</label>
+      {step === 'URL' && (
+        <p className="flex items-center w-full text-base text-gray-500 mb-1 ml-2 mt-1">
+          レシピ名を入力してください
+        </p>
+      )}
 
       <div className="flex w-full≈">
         <input

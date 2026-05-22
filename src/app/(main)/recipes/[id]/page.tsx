@@ -4,7 +4,6 @@
 
 import BackIcon from '@/app/components/image/backicon';
 import CategoryBadge from '@/app/components/image/CategoryBadge';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import RecipeEditButton from '@/app/components/image/RecipeEditButton';
@@ -64,7 +63,7 @@ const RecipeDetail = ({ params }: Props) => {
   };
 
   return (
-    <div className="flex flex-col max-w-xl mx-auto pb-24">
+    <div className="flex flex-col max-w-xl mx-auto pb-24 p-2">
       {/* ページタイトル */}
       <PageTitle>レシピ詳細</PageTitle>
 
@@ -180,13 +179,14 @@ const RecipeDetail = ({ params }: Props) => {
         {/* hrefは→ string | undefinedしか許さないため、return前でreturn nullを実施*/}
         <div className="flex justify-center">
           {recipe.sourceType === 'URL' && recipe.sourceUrl && (
-            <a href={recipe.sourceUrl} target="_blank">
-              <Image
-                src="/images/recipesiteopen.png"
-                alt="レシピサイトを開く"
-                width={159}
-                height={34}
-              />
+            <a
+              href={recipe.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <button className="w-[159px] h-[34px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm">
+                レシピサイトを開く
+              </button>
             </a>
           )}
         </div>
