@@ -108,18 +108,26 @@ const List = () => {
 
   //追加処理
   const addItem = async () => {
-    await fetch('/api/shopping-list', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: '',
-        quantityText: 1,
-        unitId: null,
-      }),
-    });
-    mutate();
+    try {
+      const res = await fetch('/api/shopping-list', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: '',
+          quantityText: 1,
+          unitId: null,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error('追加に失敗しました');
+      }
+      mutate();
+    } catch (error) {
+      console.log(error);
+      alert('エラーが発生しました');
+    }
   };
 
   //削除処理

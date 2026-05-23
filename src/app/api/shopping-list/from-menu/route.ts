@@ -74,10 +74,11 @@ export const POST = async (request: NextRequest) => {
         { status: 404 },
       );
     }
+    const familyId = dbUser.activeFamilyId; //変数にすることでnullじゃないことを確定して伝える
 
     const mealData = await prisma.menu.findFirst({
       where: {
-        familyId: dbUser.activeFamilyId,
+        familyId: familyId,
         id: body.id,
       },
       include: {
@@ -122,42 +123,44 @@ export const POST = async (request: NextRequest) => {
         .filter((ing) => ing.ingredient?.name?.trim())
         .map((ing) => ({
           userId: user.id,
-          name: ing.ingredient?.name ?? null,
+          name: ing.ingredient!.name.trim(),
           quantityText: ing.quantityText ?? 0,
           unitId: ing.unit?.id ?? null,
           sortOrder: globalIndex++,
         })),
     );
 
-    for (const item of data) {
-      const existing = await prisma.shoppingItem.findFirst({
-        where: {
-          userId: user.id,
-          name: item.name.trim(),
-          unitId: item.unitId,
-        },
-      });
-
-      if (existing) {
-        await prisma.shoppingItem.update({
+    await Promise.all(
+      data.map(async (item) => {
+        const existing = await prisma.shoppingItem.findFirst({
           where: {
-            id: existing.id,
+            userId: user.id,
+            name: item.name.trim(),
+            unitId: item.unitId,
           },
+        });
 
-          data: {
-            quantityText:
-              (existing.quantityText ?? 0) + (item.quantityText ?? 0),
-          },
-        });
-      } else {
-        await prisma.shoppingItem.create({
-          data: {
-            ...item,
-            familyId: dbUser.activeFamilyId,
-          },
-        });
-      }
-    }
+        if (existing) {
+          await prisma.shoppingItem.update({
+            where: {
+              id: existing.id,
+            },
+
+            data: {
+              quantityText:
+                (existing.quantityText ?? 0) + (item.quantityText ?? 0),
+            },
+          });
+        } else {
+          await prisma.shoppingItem.create({
+            data: {
+              ...item,
+              familyId: familyId,
+            },
+          });
+        }
+      }),
+    );
 
     return NextResponse.json(
       { message: '買い物リスト追加完了' },
