@@ -115,6 +115,16 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
+    //DBからsortOrderの最大値取得
+    const maxSortOrder = await prisma.shoppingItem.aggregate({
+      _max: {
+        sortOrder: true,
+      },
+      where: {
+        familyId: familyId,
+      },
+    });
+
     let globalIndex = 0;
 
     console.dir(mealData, { depth: null });
@@ -126,7 +136,7 @@ export const POST = async (request: NextRequest) => {
           name: ing.ingredient!.name.trim(),
           quantityText: ing.quantityText ?? 0,
           unitId: ing.unit?.id ?? null,
-          sortOrder: globalIndex++,
+          sortOrder: (maxSortOrder._max.sortOrder ?? -1) + 1 + globalIndex++,
         })),
     );
 

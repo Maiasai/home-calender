@@ -25,7 +25,7 @@ export const POST = async (request: NextRequest) => {
     }
     const maxSortOrder = await prisma.shoppingItem.aggregate({
       _max: {
-        sortOrder: true,
+        sortOrder: true, //ここでDBに今ある最大sortOrderを取得
       },
       where: {
         familyId: dbUser.activeFamilyId,
@@ -41,7 +41,8 @@ export const POST = async (request: NextRequest) => {
         checked: false,
         unitId: body.unitId ?? null,
 
-        sortOrder: (maxSortOrder._max.sortOrder ?? 0) + 1, //ソート番号を付与
+        //今DBにある一番大きいsortOrderを見て、その次の番号を付ける→create時に保存
+        sortOrder: (maxSortOrder._max.sortOrder ?? -1) + 1, //ソート番号を付与
       },
     });
     return NextResponse.json(data, { status: 201 });
