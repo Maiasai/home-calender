@@ -130,11 +130,20 @@ const List = () => {
     }
   };
 
-  //削除処理
+  //削除処理（単体）
   const deleateItem = async (id: string) => {
     await fetch('/api/shopping-list/from-menu', {
       method: 'DELETE',
       body: JSON.stringify({ id }),
+    });
+    mutate();
+  };
+
+  //削除処理
+  const deleateItems = async (items: GroupedItem[]) => {
+    await fetch('/api/shopping-list/from-menu', {
+      method: 'DELETE',
+      body: JSON.stringify({ items }),
     });
     mutate();
   };
@@ -146,6 +155,23 @@ const List = () => {
       </nav>
 
       <div className=" rounded-3xl sm:p-2 min-h-[500px]">
+        <button
+          onClick={() => {
+            if (confirm('削除すると元に戻せません。本当に削除しますか？')) {
+              deleateItems(groupedItems);
+            }
+          }}
+          className="flex items-center text-red-500 mb-6"
+        >
+          <Image
+            src="/images/delete_50dp.png"
+            alt="削除"
+            width={30}
+            height={30}
+          />
+          <p className="ml-2">全削除</p>
+        </button>
+
         <div className="flex flex-col justify-between items-center mb-4">
           {/* 買い物リスト */}
           {data?.length === 0 && (
