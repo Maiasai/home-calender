@@ -94,7 +94,7 @@ const MealModalBase = ({
     <>
       <div className="fixed inset-0 bg-black/40 flex  items-center justify-center">
         {/* モーダル内 */}
-        <div className="bg-white p-6 rounded w-[500px] h-[500px] overflow-auto">
+        <div className="bg-white p-6 rounded w-[500px] h-[600px] overflow-auto">
           <div>
             <PageHeader
               title={baseTitle}

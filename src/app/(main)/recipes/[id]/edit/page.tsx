@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
-import RecipeUpdateButton from '@/app/components/image/RecipeUpdateButton';
 import { useSupabaseSession } from '../../../home/_hooks/useSupabaseSession';
 import { RecipeFormValues } from '../../_types/RecipeFormValues';
 import PageTitle from '../../styles/PageTitle';
@@ -193,13 +192,13 @@ const RecipeEdit = ({ params }: Props) => {
   if (!data) return <p>データが見つかりませんでした</p>;
 
   return (
-    <div className="max-w-xl mx-auto px-4 gap-2 pb-24">
+    <div className="max-w-xl mx-auto px-4 gap-2 pb-24 p-2">
       {/* ページタイトル */}
       <PageTitle>レシピ編集</PageTitle>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-between items-center mb-4">
-          <div className="mb-6">
+          <div>
             <button type="button" onClick={handleBack}>
               <BackIcon />
             </button>
@@ -209,13 +208,9 @@ const RecipeEdit = ({ params }: Props) => {
             type="submit" //このボタンが押されたらフォームを送信する
             //|| → どちらかが true ならボタンは disabled
             disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
-            className={`transition${
-              !isValid || isSubmitting
-                ? 'opacity-50 grayscale cursor-not-allowed'
-                : ''
-            }`} //バリデーションエラーあり OR 送信中ならグレーアウト
+            className={`w-[100px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`} //バリデーションエラーあり OR 送信中ならグレーアウト
           >
-            <RecipeUpdateButton />
+            更新
           </button>
         </div>
 

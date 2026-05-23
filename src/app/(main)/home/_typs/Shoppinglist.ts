@@ -6,7 +6,6 @@ export type Shoppinglist = {
   quantityText: number | null;
   unitName: string | null;
   checked: boolean;
-  memo?: string;
   sortOrder: number;
   unit: {
     id: string;

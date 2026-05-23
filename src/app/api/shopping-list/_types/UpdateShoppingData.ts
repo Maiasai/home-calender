@@ -5,7 +5,6 @@ export type UpdateShoppingData = {
   name?: string;
   quantityText?: number;
   unitName?: string;
-  memo?: string;
   checked?: boolean;
   unitId?: string | null;
 };

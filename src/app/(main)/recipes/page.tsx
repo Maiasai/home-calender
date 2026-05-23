@@ -17,6 +17,7 @@ import FilterPanel from './_components/FilterPanel';
 import CategoryFilterButtons from './_components/CategoryFilterButtons';
 import RecipeCard from './_components/RecipeCard';
 import ConfirmDialog from './_components/ConfirmDialog';
+import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 
 const RecipesPage = () => {
   const [RecipeModalOpen, setRecipeModalOpen] = useState(false);
@@ -75,6 +76,9 @@ const RecipesPage = () => {
     setIsBulkMode(false); // 一括モード解除→チェックボックス自体も消える
   };
 
+  //モーダル外 スクロール防止
+  useBodyScrollLock({ open: RecipeModalOpen });
+
   if (isError) return <p>エラーが発生しました...</p>;
 
   return (
@@ -85,7 +89,7 @@ const RecipesPage = () => {
         mutate={mutate}
       />
 
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto p-2">
         <nav className="flex justify-center border-b-2 max mb-4">
           レシピ一覧
         </nav>

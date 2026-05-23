@@ -56,7 +56,7 @@ const StepList = ({ fields, append, remove, register, errors }: Props) => {
               />
             </div>
 
-            <div className="pl-10">
+            <div className="pl-8 mb-2">
               <ErrorMessage error={errors.steps?.[index]?.recipestep} />
             </div>
           </div>
@@ -68,14 +68,9 @@ const StepList = ({ fields, append, remove, register, errors }: Props) => {
           <button
             type="button"
             onClick={() => append({ recipestep: '' })}
-            className="cursor-pointer"
+            className="w-[150px] h-[30px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
           >
-            <Image
-              src="/images/buttonstepadd.png"
-              alt="手順を追加"
-              width={100}
-              height={40}
-            />
+            ＋手順を追加
           </button>
         </div>
       )}

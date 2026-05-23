@@ -12,6 +12,7 @@ import CalenderSelectedDate from './_components/CalenderSelectedDate';
 import { SelectedRecipe } from './_typs/SelectedRecipe';
 import { Meal } from './_typs/Meal';
 import Image from 'next/image';
+import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 
 const TopPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -110,7 +111,7 @@ const TopPage = () => {
     }
 
     try {
-      const res = await fetch('/api/shopping-list', {
+      const res = await fetch('/api/shopping-list/from-menu', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +124,7 @@ const TopPage = () => {
       }
 
       const data = await res.json();
-      await globalMutate('/api/shopping-list');
+      await globalMutate('/api/shopping-list/from-menu');
 
       alert('買い物リストに追加しました');
     } catch (error) {
@@ -139,13 +140,16 @@ const TopPage = () => {
     setInitialRecipes([]); // ←モーダル内初期値を初期化
   };
 
+  //モーダル外 スクロール防止
+  useBodyScrollLock({ open: modalOpen });
+
   if (!data)
     return (
       <div className="flex items-center justify-center mt-10">loading...</div>
     );
 
   return (
-    <div className="max-w-3xl mx-auto pb-24">
+    <div className="max-w-3xl mx-auto sm:p-2">
       <nav className="flex justify-center border-b-2 max mb-4">
         献立カレンダー
       </nav>
@@ -163,7 +167,7 @@ const TopPage = () => {
       <Image
         src="/images/homeimage.png"
         alt="ホームの画像"
-        width={1200}
+        width={1300}
         height={90}
       />
 

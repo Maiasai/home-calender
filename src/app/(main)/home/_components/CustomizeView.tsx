@@ -5,7 +5,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
 import Image from 'next/image';
 import { truncateRecipeTitle } from '@/utils/format';
-import { MealType } from '@/generated/prisma';
 import { UiMealType } from '../_typs/UiMealType';
 
 type Props = {
@@ -32,15 +31,15 @@ const CustomizeView = ({
     'UNSELECTED',
   ];
 
-  //レシピ内のカテゴリを変更、２件以上同じカテゴリ登録できないロジック
+  //レシピ内のカテゴリを変更、4件以上同じカテゴリ登録できないロジック
   const changeMealType = (id: string, type: UiMealType) => {
     //type → 選択されたカテゴリ
     setSelectedRecipes((prev) => {
-      // 未以外は2件制限
+      // 未以外は3件制限
       if (type !== null) {
         //選択されたカテゴリが null でない場合
         const count = prev.filter((r) => r.mealType === type).length; //元々の配列にあるtypeと、入ってきたタイプが同じものがいくつか。
-        if (count >= 2) return prev; //そのカテゴリにすでに割り当てられているレシピが 2 件以上なら 変更を無視して元の配列を返す
+        if (count >= 3) return prev; //そのカテゴリにすでに割り当てられているレシピが 4 件以上なら 変更を無視して元の配列を返す
       }
 
       //対象のレシピだけmealTypeを変更し、新しい配列をmapで作る
@@ -90,6 +89,12 @@ const CustomizeView = ({
         <div className="flex items-center justify-center w-full mt-10">
           {/* 献立がない場合の表示 */}
           {isEmpty && <p>まだ献立がありません</p>}
+
+          {!isEmpty && (
+            <p className="text-xs text-red-500">
+              ※朝・昼・晩それぞれ最大3品まで選択できます
+            </p>
+          )}
         </div>
 
         {selectedRecipes?.map((recipe) => (
@@ -112,7 +117,10 @@ const CustomizeView = ({
               {/* ラジオボタン */}
               <div className="flex gap-4">
                 {mealTypes.map((type) => (
-                  <label key={type} className="flex gap-1">
+                  <label
+                    key={type}
+                    className="flex justify-center items-center gap-1"
+                  >
                     <input
                       type="radio"
                       name={`meal-${recipe.id}`} //レシピごとに独立したラジオボタンにしている

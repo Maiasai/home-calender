@@ -12,7 +12,8 @@ export const createGroupedItems = (
   const map = new Map<string, GroupedItem>();
 
   data.forEach((item) => {
-    const key = item.name; //同じ食材をまとめる基準
+    //同じもの判定用ラベル（keyに名前 or id 入れてる）
+    const key = item.name.trim() ? item.name : item.id; //名前が空欄だったらidをkeyとする
     const existing = map.get(key);
 
     if (!existing) {
@@ -24,7 +25,6 @@ export const createGroupedItems = (
         totalQuantity: item.quantityText ?? 0,
         count: 1,
         checked: item.checked, //買ったかどうか　ture/false
-        memo: item.memo ?? '',
         sortOrder: item.sortOrder ?? 0, //見た目の順番をデータ化したもの
       });
     } else {
@@ -32,6 +32,7 @@ export const createGroupedItems = (
       existing.count += 1;
       existing.totalQuantity += item.quantityText ?? 0;
       existing.sortOrder = Math.min(
+        //ここで最初に出てきた位置保持
         existing.sortOrder,
 
         item.sortOrder ?? 0,

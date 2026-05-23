@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { MonthData } from '../_typs/Menu';
 import { CalendarCell } from '../_typs/CalendarCell';
 import { CalenderUi } from './CalenderUi';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type Props = {
   data: MonthData;
@@ -40,11 +41,15 @@ const Calender = ({
     <div>
       {/* 月切り替え */}
       <div className="flex justify-between items-center mb-4">
-        <button onClick={prevMonth}>◀</button>
+        <button onClick={prevMonth}>
+          <ChevronLeft />
+        </button>
         <h2 className="text-lg font-bold">
           {year}年 {month + 1}月
         </h2>
-        <button onClick={nextMonth}>▶</button>
+        <button onClick={nextMonth}>
+          <ChevronRight />
+        </button>
       </div>
 
       {/* 曜日 */}
@@ -77,7 +82,7 @@ const Calender = ({
             <button
               key={index}
               onClick={() => setSelectedDate(date)}
-              className={`flex flex-cols text-center justify-center p-2 rounded text-sm border
+              className={`flex flex-cols text-center md:p-2 p-1 rounded text-sm border
                 ${isSelected ? 'bg-orange-50' : 'hover:bg-gray-100'}
                 `}
             >
@@ -85,7 +90,7 @@ const Calender = ({
                 {date.getDate()}
 
                 {/* 朝 */}
-                <div className="mt-3">
+                <div className="mt-2">
                   <div>
                     {dayData?.breakfast.map((databreak, index) => {
                       if (index === 0) {

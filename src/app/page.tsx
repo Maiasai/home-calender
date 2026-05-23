@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import LoginFlowModal from './login/_components/LoginFlowModal';
+import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 
 const Home = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
 
+  useBodyScrollLock({ open: LoginModalOpen });
   return (
     <div>
       {/* 背景画像 */}
-      <div className="relative min-h-screen">
+      <div className="relative min-h-screen z-0">
         {/* 左下 */}
         <Image
           src="/images/backimgTOP.png"
@@ -23,7 +25,7 @@ const Home = () => {
         {/* 右上 */}
         <Image
           src="/images/backimgTOP.png"
-          className="fixed top-0 right-0 w-[300px] opacity-20 pointer-events-none"
+          className="fixed top-0 right-0 w-[300px] opacity-20 pointer-events-none z-0"
           alt="TOP画像右上"
           width={300}
           height={200}
@@ -32,7 +34,7 @@ const Home = () => {
         {/* コンテンツ */}
         <div>
           {/* 中身 */}
-          <div className="flex justify-center mb-6 mt-16 z-20">
+          <div className="relative flex justify-center mb-6 mt-16 z-10">
             <Image
               src="/images/rogo.png"
               alt="サイトのロゴ"
@@ -42,7 +44,7 @@ const Home = () => {
           </div>
 
           {/* 文章 */}
-          <p className="whitespace-pre-line text-center mb-10 font-hui">
+          <p className="relative whitespace-pre-line text-center mb-10 font-hui z-10">
             {`毎日の献立づくりを、もっとかんたんに。
             ブラウザですぐ使える献立管理Webアプリです。
 
@@ -87,7 +89,7 @@ const Home = () => {
 
             今日から献立づくりをもっとラクにしませんか？`}
           </p>
-          <div className="flex justify-center mb-6">
+          <div className="relative flex justify-center mb-6 z-10">
             <button //開くボタン
               onClick={() => setLoginModalOpen(true)}
               className="h-12 px-8 rounded-2xl bg-orange-500 text-white font-semibold 

@@ -2,7 +2,6 @@
 'use client';
 
 import Image from 'next/image';
-import { truncateCalendarTitle } from '@/utils/format';
 
 type Props = {
   iconData: string;
@@ -13,14 +12,10 @@ type Props = {
 export const CalenderUi = ({ iconData, altData, title }: Props) => {
   return (
     <div className="flex items-center text-xs">
-      <Image
-        src={iconData}
-        alt={altData}
-        width={15}
-        height={15}
-        className="mr-1"
-      />
-      {truncateCalendarTitle(title)}
+      <Image src={iconData} alt={altData} width={15} height={15} />
+      <span className="ml-1 overflow-hidden whitespace-nowrap sm:text-ellipsis">
+        {title}
+      </span>
     </div>
   );
 };

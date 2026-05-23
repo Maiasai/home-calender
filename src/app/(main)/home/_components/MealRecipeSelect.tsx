@@ -62,8 +62,8 @@ const MealRecipeSelect = ({
         return prev.filter((r) => r.id !== recipe.id);
       }
 
-      // 上限6件
-      if (prev.length >= 6) {
+      // 上限9件
+      if (prev.length >= 9) {
         return prev;
       }
 
@@ -118,7 +118,7 @@ const MealRecipeSelect = ({
       {/* カテゴリ絞り込み※クリック時にセット */}
       <CategoryFilterButtons category={category} setCategory={setCategory} />
 
-      <div>{selectedRecipes.length}/6件選択</div>
+      <div>{selectedRecipes.length}/9件選択</div>
 
       {/* 検索結果ない場合 */}
       {recipes?.length === 0 && (
