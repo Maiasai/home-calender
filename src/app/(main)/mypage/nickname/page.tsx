@@ -1,14 +1,115 @@
 //マイページ＞ニックネームの変更
 
 'use client';
-import React from 'react';
+import { UserResponseType } from '@/app/api/mypage/_typs/UserResponseType';
+import { fetcher } from '@/lib/featcher';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import useSWR from 'swr';
+import ErrorMessage from '../../recipes/_components/ErrorMessage';
+import { NickNameType } from './_type/NickNameType';
 
 const NickName = () => {
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<NickNameType>({
+    mode: 'onChange',
+    defaultValues: { nickname: '' }, //①初回レンダリングで空フォーム作成
+  });
+
+  //②SWRで取得
+  const { data, error } = useSWR<UserResponseType>(`/api/mypage/`, fetcher);
+
+  console.log('data', data);
+
+  //③data取得できたら発動（resetがフォーム全体の値を入れ直してくれる）
+  useEffect(() => {
+    if (data) {
+      reset({
+        //reset = フォームstateを強制的に入れ替える役割
+
+        //SWRのdataからくるnicknameにはnullが入っている.
+        //useForm側はstringのみを期待しているため、ここでnullを空文字に変換して安全にuseForm側に値を渡す
+        nickname: data.nickname ?? '',
+      });
+    }
+  }, [data, reset]); //useEffect 内で使ってる値はdependencyに全部入れるルールがあるからresetも必要
+
+  //更新処理
+  const onSubmit = async (data: NickNameType) => {
+    try {
+      const res = await fetch('/api/mypage/nickname', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status}-${text}`);
+      }
+      const d = await res.json;
+      alert('ニックネームを更新しました');
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
+
+  if (!data) return <div>loading...</div>; //！　SWR の undefined 対策
+  if (error) return <div>エラーが発生しました</div>;
+
   return (
     <div className="max-w-3xl mx-auto">
-      <nav className="flex justify-center border-b-2 max mb-4">
+      <nav className="flex justify-center border-b-2 mb-10">
         ニックネームの変更
       </nav>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex items-center max-w-md mx-auto">
+          <div className="flex flex-col p-1">
+            <input
+              {...register('nickname', {
+                required: 'ニックネームは必須です',
+                maxLength: {
+                  value: 10,
+                  message: '10文字以内で入力してください',
+                },
+              })}
+              placeholder="ニックネームを入力"
+              className="w-full  max-w-[400px] border px-2 py-1 rounded"
+            />
+            <div className="my-2 ml-2">
+              <ErrorMessage error={errors.nickname} />
+            </div>
+
+            <div className="ml-3">
+              <p className="flex  text-xs sm:text-sm text-gray-400 mb-1">
+                ※20文字以内にする必要があります
+              </p>
+              <p className="flex  text-xs sm:text-sm text-gray-400 mb-10">
+                ※プロフィールに表示され、他のユーザーが閲覧できます。
+              </p>
+            </div>
+
+            <div className="flex justify-center">
+              <button
+                type="submit" //このボタンが押されたらフォームを送信する
+                //|| → どちらかが true ならボタンは disabled
+                disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
+                className={`w-[100px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`} //バリデーションエラーあり OR 送信中ならグレーアウト
+              >
+                更新
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   );
 };

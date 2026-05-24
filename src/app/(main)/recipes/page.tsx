@@ -90,9 +90,7 @@ const RecipesPage = () => {
       />
 
       <div className="max-w-3xl mx-auto p-2">
-        <nav className="flex justify-center border-b-2 max mb-4">
-          レシピ一覧
-        </nav>
+        <nav className="flex justify-center border-b-2 mb-4">レシピ一覧</nav>
 
         {/* 検索・絞り込み項目 */}
         <SearchBar
