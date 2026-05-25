@@ -57,14 +57,14 @@ const LoginModal = ({
     return `${name.slice(0, 2)}***@${domain}`;
   };
 
-  //入力されたパスワードがDBと合っているか確認する処理
+  //ログイン処理
   const onSubmitPass = async (data: SignupData) => {
     if (!data.password) {
       alert('パスワードが必要です');
       setLoading(false);
       return;
     }
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
       email, // さっき入力したやつをstateから
       password: data.password,
     });
@@ -82,9 +82,20 @@ const LoginModal = ({
 
       return;
     }
-    setLoginModalOpen(false);
-    setStep('select');
-    router.push('/home');
+    if (!error) {
+      await fetch('/api/sync-email', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: authData.user?.email,
+        }),
+      });
+      setLoginModalOpen(false);
+      setStep('select');
+      router.push('/home');
+    }
   };
   return (
     <div className="flex  justify-center">

@@ -54,7 +54,7 @@ const NickName = () => {
         const text = await res.text();
         throw new Error(`HTTP ${res.status}-${text}`);
       }
-      const d = await res.json;
+      const d = await res.json();
       alert('ニックネームを更新しました');
     } catch (err: any) {
       console.error(err.message);
