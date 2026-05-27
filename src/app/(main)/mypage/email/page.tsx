@@ -148,11 +148,9 @@ const EmailChange = () => {
           </div>
         </form>
       ) : (
-        <div className="flex justify-center text-sm sm:whitespace-normal whitespace-pre-line text-gray-500 p-6">
-          {`Googleアカウントで
-          ログイン中のため、 
-          メールアドレスは変更
-          できません。`}
+        <div className="flex justify-center text-sm whitespace-pre-line text-gray-500 p-6">
+          {`Googleアカウントでログイン中のため、 
+          メールアドレスは変更できません。`}
         </div>
       )}
     </div>

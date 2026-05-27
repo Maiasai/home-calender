@@ -23,8 +23,14 @@ export const useAuthCallback = () => {
 
     try {
       //①GoogleがユーザーOK→一時的なコードを発行
-      await supabase.auth.exchangeCodeForSession(window.location.href);
+      const code = new URL(window.location.href).searchParams.get('code');
 
+      if (!code) {
+        router.push('/');
+        return;
+      }
+
+      await supabase.auth.exchangeCodeForSession(code);
       const {
         data: { user },
         error: userError,

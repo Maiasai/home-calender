@@ -414,6 +414,8 @@ const LoginFlowModal = ({
                 watch={watch}
                 setStep={setStep}
                 setEmail={setEmail}
+                isValidsign={isValidsign}
+                isSubmittingsign={isSubmittingsign}
               />
             </div>
           </div>

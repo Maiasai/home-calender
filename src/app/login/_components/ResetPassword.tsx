@@ -7,7 +7,6 @@ import {
   UseFormRegister,
   UseFormWatch,
 } from 'react-hook-form';
-import Image from 'next/image';
 import { useEffect } from 'react';
 import { SignupData } from '@/app/login/_typs/SignupData';
 import { supabase } from '@/lib/supabase';
@@ -21,6 +20,8 @@ type Props = {
   watch: UseFormWatch<SignupData>;
   setStep: React.Dispatch<React.SetStateAction<ModalStep>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
+  isValidsign: boolean;
+  isSubmittingsign: boolean;
 };
 
 const ResetPassword = ({
@@ -30,6 +31,8 @@ const ResetPassword = ({
   watch,
   setStep,
   setEmail,
+  isValidsign,
+  isSubmittingsign,
 }: Props) => {
   const handleResetPassword: SubmitHandler<SignupData> = async (data) => {
     const { password, confirmPassword } = data;
@@ -94,14 +97,14 @@ const ResetPassword = ({
             />
           </div>
 
-          <div className="flex justify-center mt-2">
-            <button>
-              <Image
-                src="/images/updatepass.png"
-                alt="パスワード更新ボタン"
-                width={200}
-                height={34}
-              />
+          <div className="flex justify-center">
+            <button
+              type="submit" //このボタンが押されたらフォームを送信する
+              //|| → どちらかが true ならボタンは disabled
+              disabled={!isValidsign || isSubmittingsign} // バリデーションエラーあり or 送信中なら押せない
+              className={`w-[100px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValidsign || isSubmittingsign ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`} //バリデーションエラーあり OR 送信中ならグレーアウト
+            >
+              更新
             </button>
           </div>
         </div>
