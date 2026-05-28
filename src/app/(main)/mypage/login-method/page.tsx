@@ -2,13 +2,53 @@
 
 'use client';
 import React from 'react';
+import useSWR from 'swr';
+import { fetcher } from '@/lib/featcher';
+import { LoginMethodType } from '../email/_type/LoginMethodType';
 
 const LoginMethod = () => {
+  const { data, error } = useSWR<LoginMethodType>(`/api/mypage/`, fetcher);
+
+  //Emailマスク表示
+  const maskEmail = (mail: string) => {
+    const [name, domain] = mail.split('@');
+    return `${name.slice(0, 2)}***@${domain}`;
+  };
+
+  if (!data) return <div>loading...</div>;
+  if (error) return <div>エラーが発生しました</div>;
+
   return (
     <div className="max-w-3xl mx-auto">
-      <nav className="flex justify-center border-b-2 max mb-4">
+      <nav className="flex justify-center border-b-2 max mb-10">
         ログイン方法の確認
       </nav>
+
+      <div className="p-3">
+        <p className="flex justify-center sm:whitespace-normal whitespace-pre-line text-sm md:text-base  mb-4">
+          {`◼︎現在登録されている
+          メールアドレス`}
+        </p>
+
+        {data.authProvider === 'EMAIL' ? (
+          <div className="flex flex-col justify-center mb-6">
+            <p className="flex justify-center text-sm md:text-base ml-1">
+              {maskEmail(data.email)}
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center mb-6">
+            <p className="flex justify-center sm:whitespace-normal whitespace-pre-line text-xs md:text-sm mb-4 p-2">
+              {`※このメールアドレスはGoogleアカウントの
+            認証に使用されています`}
+            </p>
+
+            <p className="flex justify-center text-sm md:text-base ml-1">
+              {maskEmail(data.email)}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
