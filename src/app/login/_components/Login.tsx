@@ -16,6 +16,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Mode } from '../_typs/mode';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
+import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -46,6 +47,7 @@ const LoginModal = ({
   setLoading,
   email,
 }: Props) => {
+  const { token } = useSupabaseSession();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -57,14 +59,14 @@ const LoginModal = ({
     return `${name.slice(0, 2)}***@${domain}`;
   };
 
-  //入力されたパスワードがDBと合っているか確認する処理
+  //ログイン処理
   const onSubmitPass = async (data: SignupData) => {
     if (!data.password) {
       alert('パスワードが必要です');
       setLoading(false);
       return;
     }
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
       email, // さっき入力したやつをstateから
       password: data.password,
     });
@@ -75,16 +77,28 @@ const LoginModal = ({
       console.error(error);
 
       if (error.message.includes('Invalid login credentials')) {
-        alert('パスワードが正しくありません');
+        alert('入力された情報が正しくありません');
       } else {
         alert('ログインに失敗しました');
       }
 
       return;
     }
-    setLoginModalOpen(false);
-    setStep('select');
-    router.push('/home');
+    if (!error) {
+      await fetch('/api/sync-email', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: authData.user?.email,
+        }),
+      });
+      setLoginModalOpen(false);
+      setStep('select');
+      router.push('/home');
+    }
   };
   return (
     <div className="flex  justify-center">

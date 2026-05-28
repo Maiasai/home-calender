@@ -13,6 +13,7 @@ import { MealRequestBody } from '../_typs/MealRequestBody';
 import { truncateRecipeTitle } from '@/utils/format';
 import { UiMealType } from '../_typs/UiMealType';
 import { getMealIcon } from '../_utils/getMealIcon';
+import { useSupabaseSession } from '../_hooks/useSupabaseSession';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
@@ -39,6 +40,8 @@ const MealModal = ({
   mode,
   targetMeal,
 }: Props) => {
+  const { token } = useSupabaseSession();
+
   //カテゴリ分け　外枠
   const categories: UiMealType[] = [
     'BREAKFAST',
@@ -91,6 +94,7 @@ const MealModal = ({
         method: mode === 'edit' ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });

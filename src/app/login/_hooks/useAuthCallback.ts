@@ -7,6 +7,7 @@
 import { supabase } from '@/lib/supabase';
 import { GetMeResponse } from '@/app/api/_types/ApiResponse';
 import { useRouter } from 'next/navigation';
+import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 
 type Options = {
   onSignupOpen?: () => void;
@@ -15,6 +16,7 @@ type Options = {
 };
 
 export const useAuthCallback = () => {
+  const { token } = useSupabaseSession();
   const router = useRouter();
 
   //options→関数をまとめて渡すためのオブジェクト
@@ -23,8 +25,14 @@ export const useAuthCallback = () => {
 
     try {
       //①GoogleがユーザーOK→一時的なコードを発行
-      await supabase.auth.exchangeCodeForSession(window.location.href);
+      const code = new URL(window.location.href).searchParams.get('code');
 
+      if (!code) {
+        router.push('/');
+        return;
+      }
+
+      await supabase.auth.exchangeCodeForSession(code);
       const {
         data: { user },
         error: userError,
@@ -43,6 +51,7 @@ export const useAuthCallback = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           id: user.id,

@@ -3,12 +3,12 @@
 
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { GetMeResponse } from '../../_types/ApiResponse';
 
-export const GET = async () => {
+export const GET = async (request: NextRequest) => {
   try {
-    const user = await requireUser(); //ログインしている人かをsupabaseに聞いてる
+    const user = await requireUser(request); //ログインしている人かをsupabaseに聞いてる
     //結果）　user = {id: "c6fa914d-xxxx",email: "...",}　。もし未ログインならcatchに飛ぶ
 
     const dbUser = await prisma.user.findUnique({

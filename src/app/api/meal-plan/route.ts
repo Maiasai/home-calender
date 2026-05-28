@@ -10,7 +10,7 @@ import { MealRequestBody } from '@/app/(main)/home/_typs/MealRequestBody';
 //献立取得
 export const GET = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       //アプリ用情報
       where: {
@@ -66,7 +66,7 @@ export const GET = async (request: NextRequest) => {
 
 export const POST = async (request: NextRequest) => {
   try {
-    const user = await requireUser(); //ここでユーザーを特定している
+    const user = await requireUser(request); //ここでユーザーを特定している
     const dbUser = await prisma.user.findUnique({
       //アプリ用情報
       where: {
@@ -118,7 +118,7 @@ export const POST = async (request: NextRequest) => {
 //献立更新API
 export const PUT = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       //アプリ用情報
       where: {
@@ -171,7 +171,7 @@ export const PUT = async (request: NextRequest) => {
 
 export const DELETE = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const body: MealId = await request.json();
 
     const result = await prisma.menu.deleteMany({

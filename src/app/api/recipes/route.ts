@@ -1,6 +1,6 @@
 //レシピ一覧API
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import requireUser from '@/lib/auth';
 import { RecipeCategory } from '@/generated/prisma';
@@ -8,9 +8,9 @@ import { CreatePostRequestBody } from './_types/CreatePostRequestBody';
 
 export const runtime = 'nodejs';
 
-export const GET = async (request: Request) => {
+export const GET = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       //アプリ用情報
       where: {
@@ -130,9 +130,9 @@ export const GET = async (request: Request) => {
 
 //レシピ新規作成
 
-export const POST = async (request: Request) => {
+export const POST = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,

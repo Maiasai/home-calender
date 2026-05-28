@@ -19,11 +19,7 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
 
   return (
     <div>
-      <div className="flex items-center justify-center mb-2 text-base font-semibold">
-        <label>パスワードを作成</label>
-      </div>
-
-      <div className="relative mb-2">
+      <div className="relative mb-2 mt-10">
         <input
           type={showPassword ? 'text' : 'password'}
           {...registersign('password', {
@@ -63,7 +59,7 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
         <div className="pl-2 mb-2 mt-2">
           {errorssign.password && <ErrorMessage error={errorssign.password} />}
         </div>
-        <p className="whitespace-pre-line text-xs mb-2 pl-2">
+        <p className="whitespace-pre-line text-xs mb-8 pl-2">
           {`※英数字含めた6文字以上12文字以内にする必要があります`}
         </p>
       </div>
@@ -95,11 +91,14 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
             height={24}
           />
         </button>
-        <div className="pl-2 mb-16 mt-2">
+        <div className="pl-2 mb-2 mt-2">
           {errorssign.confirmPassword && (
             <ErrorMessage error={errorssign.confirmPassword} />
           )}
         </div>
+        <p className="whitespace-pre-line text-xs mb-2 pl-2">
+          {`※英数字含めた6文字以上12文字以内にする必要があります`}
+        </p>
       </div>
     </div>
   );

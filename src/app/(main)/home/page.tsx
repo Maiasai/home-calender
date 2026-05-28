@@ -13,8 +13,10 @@ import { SelectedRecipe } from './_typs/SelectedRecipe';
 import { Meal } from './_typs/Meal';
 import Image from 'next/image';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
+import { useSupabaseSession } from './_hooks/useSupabaseSession';
 
 const TopPage = () => {
+  const { token } = useSupabaseSession();
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
 
@@ -115,6 +117,7 @@ const TopPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ id: meal.id }),
       });

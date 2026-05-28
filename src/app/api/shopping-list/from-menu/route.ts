@@ -6,9 +6,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ShoppingItemResponse } from '../_types/ShoppingItemResponse';
 import { UpdateShoppingData } from '../_types/UpdateShoppingData';
 
-export const GET = async () => {
+export const GET = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,
@@ -60,7 +60,7 @@ type shoppingData = {
 
 export const POST = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,
@@ -115,6 +115,16 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
+    //DBからsortOrderの最大値取得
+    const maxSortOrder = await prisma.shoppingItem.aggregate({
+      _max: {
+        sortOrder: true,
+      },
+      where: {
+        familyId: familyId,
+      },
+    });
+
     let globalIndex = 0;
 
     console.dir(mealData, { depth: null });
@@ -126,7 +136,7 @@ export const POST = async (request: NextRequest) => {
           name: ing.ingredient!.name.trim(),
           quantityText: ing.quantityText ?? 0,
           unitId: ing.unit?.id ?? null,
-          sortOrder: globalIndex++,
+          sortOrder: (maxSortOrder._max.sortOrder ?? -1) + 1 + globalIndex++,
         })),
     );
 
@@ -176,7 +186,7 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,
@@ -228,7 +238,7 @@ export const PUT = async (request: NextRequest) => {
 
 //削除
 export const DELETE = async (request: NextRequest) => {
-  const user = await requireUser();
+  const user = await requireUser(request);
   const dbUser = await prisma.user.findUnique({
     where: {
       id: user.id,

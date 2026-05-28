@@ -14,6 +14,7 @@ import NutritionResultView from './NutritionResultView';
 import { MealSection } from './MealSection';
 import { buildMead } from '../_utils/buildMeal';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
+import { useSupabaseSession } from '../_hooks/useSupabaseSession';
 
 type Props = {
   data: MonthData;
@@ -52,11 +53,13 @@ const CalenderSelectedDate = ({
 
   //献立削除処理
   const deleteMeal = async (mealId: MealId) => {
+    const { token } = useSupabaseSession();
     try {
       await fetch('/api/meal-plan', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           id: mealId,

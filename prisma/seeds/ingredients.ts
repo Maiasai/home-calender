@@ -1,9 +1,6 @@
 //食材マスタ
 
 import { NutritionCategory, vegetableType } from '@/lib/nutrition/typs';
-import { PrismaClient } from '../../generated/prisma';
-
-const prisma = new PrismaClient();
 
 type IngredientMaster = {
   name: string;

@@ -18,8 +18,11 @@ import {
 } from '@dnd-kit/sortable';
 import SortableItem from './_components/SortableItem';
 import { GroupedItem } from './_typs/GroupedItem';
+import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 
 const List = () => {
+  const { token } = useSupabaseSession();
+
   const [units, setUnits] = useState<UnitData[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItem[]>([]);
 
@@ -76,6 +79,7 @@ const List = () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         items: items.map((i) => ({
@@ -96,6 +100,7 @@ const List = () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         id,
@@ -113,6 +118,7 @@ const List = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: '',
@@ -130,11 +136,28 @@ const List = () => {
     }
   };
 
-  //削除処理
+  //削除処理（単体）
   const deleateItem = async (id: string) => {
     await fetch('/api/shopping-list/from-menu', {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ id }),
+    });
+    mutate();
+  };
+
+  //削除処理
+  const deleateItems = async (items: GroupedItem[]) => {
+    await fetch('/api/shopping-list/from-menu', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ items }),
     });
     mutate();
   };
@@ -146,16 +169,36 @@ const List = () => {
       </nav>
 
       <div className=" rounded-3xl sm:p-2 min-h-[500px]">
-        <div className="flex flex-col justify-between items-center mb-4">
-          {/* 買い物リスト */}
-          {data?.length === 0 && (
-            <div className="text-center mt-10">
-              該当の買い物リストがありませんでした
-            </div>
-          )}
+        <button
+          onClick={() => {
+            if (confirm('削除すると元に戻せません。本当に削除しますか？')) {
+              deleateItems(groupedItems);
+            }
+          }}
+          className="flex items-center text-red-500 mb-6"
+        >
+          <Image
+            src="/images/delete_50dp.png"
+            alt="削除"
+            width={30}
+            height={30}
+          />
+          <p className="ml-2 text-sm">全削除</p>
+        </button>
 
+        <div className="flex flex-col justify-between items-center mb-4">
           {/* リスト */}
-          <div className="w-full mx-auto max-w-sm sm:max-w-3xl bg-white rounded-2xl shadow-md overflow-hidden">
+          <div className="w-full mx-auto max-w-sm sm:max-w-3xl bg-white rounded-sm shadow-md overflow-hidden">
+            {/* ヘッダー */}
+
+            <div className="grid grid-cols-[70px_1fr_80px_70px_15px] sm:grid-cols-[70px_1fr_70px_60px_300px]  items-center px-2 py-3 border-b bg-gray-50 text-sm font-semibold text-gray-600">
+              <div></div>
+              <div>品名</div>
+              <div>数量</div>
+              <div>単位</div>
+              <div></div>
+            </div>
+
             <DndContext
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
@@ -244,9 +287,9 @@ const List = () => {
                                 }}
                               />
                               <select
-                                className="w-12 h-9 px-2 border border-gray-300 rounded-lg"
+                                className="w-20 h-9 px-2 border border-gray-300 rounded-lg"
                                 disabled={item.checked}
-                                defaultValue={item.unit?.id ?? ''} //ここで最初に何を表示するか指定＊このValueはoptionのvalueから来ている
+                                value={item.unit?.id ?? ''} //ここで最初に何を表示するか指定＊このValueはoptionのvalueから来ている
                                 onChange={(
                                   //！「e」の中にイベント「発生元：target」「登録元：currentTarget」両方が入ってる。子要素で発生したイベントを親でも受け取れるようにするために2つ存在してる。
                                   // ※　target = 実際にイベントが発生した要素//currentTarget = イベントを書いた要素

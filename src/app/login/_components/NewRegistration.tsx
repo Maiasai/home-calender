@@ -17,6 +17,7 @@ import { GetMeResponse } from '../../api/_types/ApiResponse';
 import { NicknameData } from '../_typs/NicknameData';
 import PasswordInput from './PasswordInput';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
+import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -45,6 +46,7 @@ const NewRegistration = ({
   setLoading,
   googleUserEmail,
 }: Props) => {
+  const { token } = useSupabaseSession();
   const router = useRouter();
 
   const [isGoogleUser, setIsGoogleUser] = useState(false);
@@ -133,6 +135,7 @@ const NewRegistration = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       credentials: 'include',
       body: JSON.stringify(payload),

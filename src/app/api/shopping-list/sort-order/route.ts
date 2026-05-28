@@ -7,7 +7,7 @@ import { SortItems } from './_types/SortItems';
 
 export const PUT = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,

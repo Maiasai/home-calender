@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSupabaseSession } from './useSupabaseSession';
 import { GetMeResponse } from '@/app/api/_types/ApiResponse';
+import { fetcher } from '@/lib/featcher';
 
 type UserProfile = { nickname: string | null };
 
@@ -14,8 +15,7 @@ export const useUserProfile = () => {
     if (!session || isLoading) return;
 
     const fetchProfile = async () => {
-      const res = await fetch('/api/users/me');
-      const data: GetMeResponse = await res.json();
+      const data: GetMeResponse = await fetcher('/api/users/me');
 
       setProfile(data.user ? { nickname: data.user.nickname } : null); // data === { nickname: 'm' }
     };

@@ -3,6 +3,7 @@
 
 import { KeyedMutator } from 'swr/_internal';
 import { RecipeData } from '../../recipes/_types/RecipeTypes';
+import { useSupabaseSession } from './useSupabaseSession';
 
 type CookedAndIsFavoriteRequestBody = {
   isFavorite?: boolean;
@@ -18,6 +19,8 @@ const toggleStatus = async (
   key: StatusKey, // ← "isFavorite" どのステータスを更新するか
   mutate: KeyedMutator<RecipeData[]>, // ← mutate を引数で受け取る
 ) => {
+  const { token } = useSupabaseSession();
+
   // UIの先行更新（optimistic update）
   mutate((recipes: RecipeData[] | undefined) => {
     //このrecipesは/api/recipesから取ってきたキャッシュデータ
@@ -56,7 +59,10 @@ const toggleStatus = async (
 
   await fetch(`/api/recipes/${id}/${apiPath}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(requestBody),
   });
   mutate(); //SWRのデータを再取得する命令（GET /api/recipes）→最新のisFavorite/hasCookedがUIに反映

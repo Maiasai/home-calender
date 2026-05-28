@@ -17,13 +17,13 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const shareMenuItems = [{ name: 'アプリの共有設定', href: '/mypage/share' }];
 
   return (
-    <div className="max-w-[700px] mx-auto flex mt-10 gap-6">
+    <div className="flex max-w-3xl mx-auto mt-10 gap-1 sm:gap-2">
       {/* 左側：サイドメニュー */}
 
-      <aside className="w-full md:w-56 shrink-0">
-        <nav className="bg-white rounded-xl shadow-sm p-4">
+      <aside className="w-42 sm:w-56 shrink-0">
+        <nav className="bg-white rounded-xl shadow-sm p-1 sm:p-4">
           {/* アカウント */}
-          <h2 className="font-bold text-lg mb-4 border-b pb-1 ml-2">
+          <h2 className="font-bold text-sm sm:text-lg mb-4 border-b ml-2">
             アカウント
           </h2>
 
@@ -32,13 +32,13 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`p-3 rounded-lg transition-colors ${
+                className={`p-1 sm:p-3 rounded-lg transition-colors ${
                   pathname === item.href
                     ? 'bg-orange-100 text-gray-400 font-bold' // 現在のページ
                     : 'hover:bg-gray-100'
                 }`}
               >
-                <span className="text-sm">{item.name}</span>
+                <span className="text-xs  sm:text-sm">{item.name}</span>
                 <span>　›</span>
               </Link>
             ))}
@@ -54,13 +54,13 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`p-3 rounded-lg transition-colors ${
+                className={`p-1 sm:p-3 rounded-lg transition-colors ${
                   pathname === item.href
                     ? 'bg-orange-100 text-gray-400 font-bold' // 現在のページ
                     : 'hover:bg-gray-100'
                 }`}
               >
-                <span className="text-sm">{item.name}</span>
+                <span className="text-xs  sm:text-sm">{item.name}</span>
                 <span>　›</span>
               </Link>
             ))}
@@ -69,7 +69,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
       </aside>
 
       {/* 右側：メインコンテンツ */}
-      <main className="flex-1 bg-white p-6 rounded-xl shadow-smr">
+      <main className="flex-1 bg-white pr-1 sm:p-4 rounded-xl shadow-smr">
         {children}
       </main>
     </div>
