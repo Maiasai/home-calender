@@ -75,7 +75,7 @@ const LoginModal = ({
       console.error(error);
 
       if (error.message.includes('Invalid login credentials')) {
-        alert('パスワードが正しくありません');
+        alert('入力された情報が正しくありません');
       } else {
         alert('ログインに失敗しました');
       }

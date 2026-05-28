@@ -187,6 +187,7 @@ const LoginFlowModal = ({
       );
       return;
     }
+
     //パスワードリセットメール送信
     await supabase.auth.resetPasswordForEmail(email, {
       //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
