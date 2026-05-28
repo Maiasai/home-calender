@@ -26,8 +26,6 @@ const NickName = () => {
   //②SWRで取得
   const { data, error } = useSWR<UserResponseType>(`/api/mypage/`, fetcher);
 
-  console.log('data', data);
-
   //③data取得できたら発動（resetがフォーム全体の値を入れ直してくれる）
   useEffect(() => {
     if (data) {

@@ -53,6 +53,12 @@ enum VegetableType {
   LIGHT
 }
 
+//招待ステータス
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+}
 
 
 model User {
@@ -245,6 +251,7 @@ model Family {
   createdAt DateTime @default(now())
 
   members FamilyMember[]
+  Invite FamilyInvite[]
   activeUsers User[] @relation("ActiveFamily")
   recipes Recipe[]
   menus Menu[]
@@ -260,4 +267,17 @@ model FamilyMember {
   family Family @relation(fields: [familyId], references: [id])
 
   @@unique([userId, familyId])
+}
+
+//共有　招待
+model FamilyInvite {
+  id        String @id @default(uuid()) @db.Uuid
+  familyId  String @db.Uuid
+  email     String
+  status    InviteStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  family Family @relation(fields: [familyId], references: [id])
+
+  @@unique([familyId, email])
 }
