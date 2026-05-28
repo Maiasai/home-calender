@@ -8,8 +8,11 @@ import { useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import ErrorMessage from '../../recipes/_components/ErrorMessage';
 import { NickNameType } from './_type/NickNameType';
+import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 
 const NickName = () => {
+  const { token } = useSupabaseSession();
+
   const {
     register,
     reset,
@@ -46,6 +49,7 @@ const NickName = () => {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });

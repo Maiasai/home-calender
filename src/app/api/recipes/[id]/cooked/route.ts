@@ -14,7 +14,7 @@ export const PATCH = async (
   { params }: { params: { id: string } },
 ) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
 
     const body: CoockedRequestBody = await request.json(); //フロントからきたデータを読む
     const { hasCooked } = body;

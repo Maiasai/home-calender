@@ -14,7 +14,7 @@ export const PATCH = async (
   { params }: { params: { id: string } }, //ここでparams.idが「/recipes/123/favorite」の123になる
 ) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
 
     const body: FavoriteRequestBody = await request.json(); //フロントからきたデータを読む
     const { isFavorite } = body;

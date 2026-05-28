@@ -2,7 +2,6 @@
 
 'use client';
 
-import Image from 'next/image';
 import TitleForm from './TitleForm';
 import MemoForm from './MemoForm';
 import CategorySelector from './CategorySelector';
@@ -13,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { CreateRecipeByUrlRequest } from '../_types/CreateRecipeByUrlRequest';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import UrlForm from './UrlForm';
+import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 
 type Props = {
   onClose: () => void;
@@ -20,6 +20,8 @@ type Props = {
 };
 
 const AddRecipeUrlModal = ({ onClose, step }: Props) => {
+  const { token } = useSupabaseSession();
+
   const [category, setCategory] = useState<RecipeCategory | ''>('');
   const [loading, setLoading] = useState(false);
 
@@ -53,6 +55,7 @@ const AddRecipeUrlModal = ({ onClose, step }: Props) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });

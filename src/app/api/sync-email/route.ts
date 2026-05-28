@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const PUT = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const body: InputEmailData = await request.json();
 
     const result = await prisma.user.update({

@@ -16,6 +16,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Mode } from '../_typs/mode';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
+import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -46,6 +47,7 @@ const LoginModal = ({
   setLoading,
   email,
 }: Props) => {
+  const { token } = useSupabaseSession();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -87,6 +89,7 @@ const LoginModal = ({
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           email: authData.user?.email,

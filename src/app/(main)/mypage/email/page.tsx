@@ -10,8 +10,11 @@ import { UserResponseType } from '@/app/api/mypage/_typs/UserResponseType';
 import { fetcher } from '@/lib/featcher';
 import { supabase } from '@/lib/supabase';
 import { useSearchParams } from 'next/navigation';
+import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 
 const EmailChange = () => {
+  const { token } = useSupabaseSession();
+
   const {
     register,
     handleSubmit,
@@ -22,8 +25,6 @@ const EmailChange = () => {
 
   const searchParams = useSearchParams();
   const { data, error } = useSWR<UserResponseType>(`/api/mypage/`, fetcher);
-
-  console.log('data', data);
 
   //Emailマスク表示
   const maskEmail = (mail: string) => {
@@ -69,11 +70,10 @@ const EmailChange = () => {
         //Prisma(DB)へ同期
         await fetch('/api/sync-email', {
           method: 'PUT',
-
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
-
           body: JSON.stringify({
             email: authEmail,
           }),

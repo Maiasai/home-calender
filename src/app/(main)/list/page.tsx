@@ -18,8 +18,11 @@ import {
 } from '@dnd-kit/sortable';
 import SortableItem from './_components/SortableItem';
 import { GroupedItem } from './_typs/GroupedItem';
+import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 
 const List = () => {
+  const { token } = useSupabaseSession();
+
   const [units, setUnits] = useState<UnitData[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItem[]>([]);
 
@@ -76,6 +79,7 @@ const List = () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         items: items.map((i) => ({
@@ -96,6 +100,7 @@ const List = () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         id,
@@ -113,6 +118,7 @@ const List = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: '',
@@ -134,6 +140,10 @@ const List = () => {
   const deleateItem = async (id: string) => {
     await fetch('/api/shopping-list/from-menu', {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ id }),
     });
     mutate();
@@ -143,6 +153,10 @@ const List = () => {
   const deleateItems = async (items: GroupedItem[]) => {
     await fetch('/api/shopping-list/from-menu', {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ items }),
     });
     mutate();

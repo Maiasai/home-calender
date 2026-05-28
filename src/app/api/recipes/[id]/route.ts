@@ -14,7 +14,7 @@ export const GET = async (
   //
   //DBから一件だけ取得する
 
-  const user = await requireUser(); //認証チェック（関数コンポーネント）
+  const user = await requireUser(request); //認証チェック（関数コンポーネント）
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
   });
@@ -61,7 +61,7 @@ export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const user = await requireUser(); //Supabaseが特定したログインユーザーがここに来る
+  const user = await requireUser(request); //Supabaseが特定したログインユーザーがここに来る
   const dbUser = await prisma.user.findUnique({
     where: {
       id: user.id,
@@ -114,7 +114,7 @@ export const PUT = async (
   { params }: { params: { id: string } },
 ) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const body: CreatePutRequestBody = await request.json();
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },

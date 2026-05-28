@@ -2,12 +2,12 @@
 
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { UserResponseType } from './_typs/UserResponseType';
 
-export const GET = async () => {
+export const GET = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const result = await prisma.user.findUnique({
       where: {
         id: user.id,

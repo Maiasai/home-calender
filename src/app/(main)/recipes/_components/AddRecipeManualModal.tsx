@@ -11,7 +11,6 @@ import TitleForm from './TitleForm';
 import MemoForm from './MemoForm';
 import CategorySelector from './CategorySelector';
 import { RecipeCategory } from '@/generated/prisma';
-import Image from 'next/image';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
@@ -100,6 +99,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
         credentials: 'include', // cookie を送る
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });

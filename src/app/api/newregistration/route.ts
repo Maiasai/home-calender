@@ -7,7 +7,7 @@ import { NicknameData } from '@/app/login/_typs/NicknameData';
 
 export const POST = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const body: NicknameData = await request.json();
 
     const { nickname } = body;

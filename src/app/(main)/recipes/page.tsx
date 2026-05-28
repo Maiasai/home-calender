@@ -18,8 +18,11 @@ import CategoryFilterButtons from './_components/CategoryFilterButtons';
 import RecipeCard from './_components/RecipeCard';
 import ConfirmDialog from './_components/ConfirmDialog';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
+import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 
 const RecipesPage = () => {
+  const { token } = useSupabaseSession();
+
   const [RecipeModalOpen, setRecipeModalOpen] = useState(false);
 
   const [category, setCategory] = useState<CategoryFilter>(''); // "" は「すべて」
@@ -59,6 +62,7 @@ const RecipesPage = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         //selectedIds を JSON 文字列化して送る

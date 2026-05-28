@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (request: NextRequest) => {
   try {
-    const user = await requireUser();
+    const user = await requireUser(request);
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,

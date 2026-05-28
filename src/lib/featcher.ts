@@ -1,11 +1,20 @@
 //featcher用
 
-export const fetcher = async (url: string) => {
-  const res = await fetch(url);
+import { supabase } from './supabase';
 
-  if (!res.ok) {
-    throw new Error('データ取得失敗');
-  }
+export const fetcher = async (url: string) => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const token = session?.access_token;
+
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error('取得失敗');
 
   return res.json();
 };

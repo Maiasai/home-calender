@@ -23,6 +23,7 @@ import ResetPassword from './ResetPassword';
 import { Mode } from '../_typs/mode';
 import { InputEmailData } from '../_typs/InputEmailData';
 import PageHeader from '@/app/(main)/recipes/_components/PageHeader';
+import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 
 const titles = {
   email: 'メールアドレスを入力',
@@ -43,6 +44,8 @@ const LoginFlowModal = ({
   onClose,
   setLoginModalOpen,
 }: LoginModalProps) => {
+  const { token } = useSupabaseSession();
+
   const [step, setStep] = useState<ModalStep>('select');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -123,6 +126,7 @@ const LoginFlowModal = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email: targetEmail }),
     });
@@ -150,7 +154,10 @@ const LoginFlowModal = ({
     //①まず存在チェック
     const res = await fetch('/api/users/check-email', {
       method: 'POST', //POST→データを渡して、存在するかどうか調べてもらうため（GETを使わないのは、セキュリティ的なところもある）
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ email: inputEmail }),
     });
 
