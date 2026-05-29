@@ -8,9 +8,13 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useUserProfile } from './home/_hooks/useUserProfile';
 import { Hamburger } from './hamburger';
+import useSWR from 'swr';
+import { fetcher } from '@/lib/featcher';
 
 const Header = () => {
   const [open, setOpen] = useState(false); //ハンバーガーメニュー用
+
+  const { data } = useSWR('/api/notifications', fetcher);
 
   const router = useRouter();
 
@@ -24,15 +28,25 @@ const Header = () => {
   return (
     <nav className="site-header md:mt-20 w-full">
       <div className="flex justify-center flex-col w-full max-w-[900px] mx-auto  mb-8">
-        {profile && (
-          <div className="flex justify-end w-full">
-            <div className="items-center space-x-10 mr-8 mb-4  hidden md:block">
-              {/* Reactはデータが揃ってなくても描画してしまうため、データがあるときだけ描画する(クラッシュ対策）*/}
-              {profile && <span>{profile.nickname} さんログイン中</span>}
-              <button onClick={handleLogout}>ログアウト</button>
+        <div className="flex">
+          {profile && (
+            <div className="flex justify-end w-full">
+              <div className="items-center space-x-10 mr-8 mb-4  hidden md:block">
+                {/* Reactはデータが揃ってなくても描画してしまうため、データがあるときだけ描画する(クラッシュ対策）*/}
+                {profile && <span>{profile.nickname} さんログイン中</span>}
+                <button onClick={handleLogout}>ログアウト</button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          <Link href="/notifications">
+            <Image
+              src="/images/bell.png"
+              alt="通知アイコン"
+              width={30}
+              height={20}
+            />
+          </Link>
+        </div>
 
         <div className="flex justify-between pt-4 pl-4 md:justify-center w-full shrink-0">
           <Link href="/home">

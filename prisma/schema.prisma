@@ -63,7 +63,7 @@ enum InviteStatus {
 
 model User {
   id            String @id @db.Uuid//Supabase のUUIDを使用するため @default(uuid()) 削除
-  nickname      String?
+  nickname      String
   email         String      @unique
   authProvider AuthProvider @map("auth_provider")
   activeFamilyId String? @db.Uuid//今どの家族を見ているか
@@ -258,6 +258,7 @@ model Family {
   shoppingItems ShoppingItem[]
 }
 
+//共有　参加済みメンバー
 model FamilyMember {
   id       String @id @default(uuid()) @db.Uuid
   userId   String @db.Uuid
@@ -269,7 +270,7 @@ model FamilyMember {
   @@unique([userId, familyId])
 }
 
-//共有　招待
+//共有　招待中
 model FamilyInvite {
   id        String @id @default(uuid()) @db.Uuid
   familyId  String @db.Uuid
