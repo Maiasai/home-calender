@@ -36,6 +36,7 @@ export const POST = async (req: NextRequest) => {
               email,
               authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
               activeFamilyId: family.id,
+              homeFamilyId: family.id,
             },
           }),
 

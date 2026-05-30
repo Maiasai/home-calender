@@ -63,15 +63,17 @@ enum InviteStatus {
 
 model User {
   id            String @id @db.Uuid//Supabase のUUIDを使用するため @default(uuid()) 削除
-  nickname      String
+  nickname      String?
   email         String      @unique
   authProvider AuthProvider @map("auth_provider")
   activeFamilyId String? @db.Uuid//今どの家族を見ているか
+  homeFamilyId String? @db.Uuid//グループ抜けた後 元のid参照用
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now())
 
   activeFamily Family? @relation("ActiveFamily", fields: [activeFamilyId], references: [id])
+  homeFamily Family? @relation("HomeFamily", fields: [homeFamilyId], references: [id])
   members FamilyMember[]
   // relations
   recipes Recipe[]
@@ -253,6 +255,7 @@ model Family {
   members FamilyMember[]
   Invite FamilyInvite[]
   activeUsers User[] @relation("ActiveFamily")
+  homeUsers   User[] @relation("HomeFamily")
   recipes Recipe[]
   menus Menu[]
   shoppingItems ShoppingItem[]

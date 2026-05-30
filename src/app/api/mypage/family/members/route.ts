@@ -36,7 +36,7 @@ export const GET = async (request: NextRequest) => {
     const formatted: MembersTyps[] = members.map((m) => ({
       id: m.id,
       userId: m.userId,
-      nickname: m.user.nickname,
+      nickname: m.user.nickname ?? '',
       email: m.user.email,
     }));
 

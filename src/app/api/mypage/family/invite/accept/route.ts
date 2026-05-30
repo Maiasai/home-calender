@@ -27,9 +27,6 @@ export const POST = async (request: NextRequest) => {
         id: body.inviteId,
       },
     });
-    if (!invite || invite.email !== dbUser.email) {
-      return NextResponse.json({ message: 'invalid invite' }, { status: 403 });
-    }
 
     if (!invite) {
       return NextResponse.json(
@@ -37,32 +34,46 @@ export const POST = async (request: NextRequest) => {
         { status: 400 },
       );
     }
-    //招待元の人のfamilyMemberテーブルに、招待された人を所属追加
-    await prisma.familyMember.create({
-      data: {
-        userId: dbUser.id,
-        familyId: invite.familyId,
-      },
-    });
 
-    //招待された側のactiveFamilyId変更
-    const data = await prisma.user.update({
-      where: {
-        id: dbUser.id,
-      },
-      data: {
-        activeFamilyId: invite.familyId,
-      },
-    });
+    if (invite.email !== dbUser.email) {
+      return NextResponse.json({ message: 'invalid invite' }, { status: 403 });
+    }
 
-    await prisma.familyInvite.update({
-      where: {
-        id: invite.id,
-      },
-      data: {
-        status: 'ACCEPTED',
-      },
-    });
+    if (invite.status !== 'PENDING') {
+      return NextResponse.json(
+        { message: 'invalid invite status' },
+        { status: 403 },
+      );
+    }
+
+    await prisma.$transaction([
+      //招待元の人のfamilyMemberテーブルに、招待された人を所属追加
+      prisma.familyMember.create({
+        data: {
+          userId: dbUser.id,
+          familyId: invite.familyId,
+        },
+      }),
+
+      //招待された側のactiveFamilyId変更
+      prisma.user.update({
+        where: {
+          id: dbUser.id,
+        },
+        data: {
+          activeFamilyId: invite.familyId,
+        },
+      }),
+
+      prisma.familyInvite.update({
+        where: {
+          id: invite.id,
+        },
+        data: {
+          status: 'ACCEPTED',
+        },
+      }),
+    ]);
     return NextResponse.json(
       { message: 'Successful participation' },
       { status: 200 },

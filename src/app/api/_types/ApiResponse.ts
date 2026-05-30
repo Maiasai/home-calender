@@ -7,5 +7,6 @@ export type GetMeResponse = {
     email: string;
     nickname: string | null;
     activeFamilyId: string | null;
+    homeFamilyId: string | null;
   } | null;
 };
