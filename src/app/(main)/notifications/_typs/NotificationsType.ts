@@ -3,20 +3,11 @@
 import { InviteStatus } from '@/generated/prisma';
 
 export type NotificationsType = {
-  email: string;
-  family: familyType;
+  id: string;
   familyId: string;
-  id: string;
+  email: string;
   status: InviteStatus;
-};
-
-export type familyType = {
   createdAt: Date;
-  id: string;
   name: string;
-  owner: OwnerType;
-};
-
-export type OwnerType = {
   nickname: string;
 };

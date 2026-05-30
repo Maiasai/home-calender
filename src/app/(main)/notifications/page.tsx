@@ -47,7 +47,7 @@ const Notifications = () => {
         <div key={d.id}>
           {d.status === 'PENDING' && (
             <div>
-              <p>{d.family.owner.nickname}さんから招待が来ました</p>
+              <p>{d.nickname}さんから招待が来ました</p>
               {/* クリックで招待レコードのIDが呼ばれる */}
               <button onClick={() => Join(d.id)}>[参加]</button>
             </div>

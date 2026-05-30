@@ -1,5 +1,6 @@
 //通知取得API
 
+import { NotificationsType } from '@/app/(main)/notifications/_typs/NotificationsType';
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
@@ -36,7 +37,17 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
-    return NextResponse.json(data, { status: 200 });
+    const formatted: NotificationsType[] = data.map((m) => ({
+      id: m.id,
+      familyId: m.familyId,
+      email: m.email,
+      status: m.status,
+      createdAt: m.family.createdAt,
+      name: m.family.name,
+      nickname: m.family.owner.nickname ?? '',
+    }));
+
+    return NextResponse.json(formatted, { status: 200 });
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
