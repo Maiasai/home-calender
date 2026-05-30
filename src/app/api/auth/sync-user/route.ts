@@ -8,49 +8,56 @@ export const POST = async (req: NextRequest) => {
     const { id: userId, email, provider } = await req.json();
 
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { id: userId },
     });
 
     if (existingUser) {
+      // 既存ユーザーは「更新しない or nicknameだけ」
       await prisma.user.update({
-        where: { email },
+        where: { id: userId },
         data: {
-          id: userId,
           authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
         },
       });
-    } else {
-      await prisma.$transaction(async (tx) => {
-        // ① family作成
-        const family = await tx.family.create({
-          data: {
-            name: 'My Family',
-          },
-        });
-
-        // ② user作成
-        await Promise.all([
-          tx.user.create({
-            data: {
-              id: userId,
-              email,
-              authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
-              activeFamilyId: family.id,
-              homeFamilyId: family.id,
-            },
-          }),
-
-          // ③ family member作成
-          tx.familyMember.create({
-            data: {
-              userId,
-              familyId: family.id,
-            },
-          }),
-        ]);
-      });
+      return NextResponse.json({ ok: true });
     }
-    return NextResponse.json({ ok: true }, { status: 200 });
+    // 新規のみ作る
+    await prisma.$transaction(async (tx) => {
+      // ① User作成
+      await tx.user.create({
+        data: {
+          id: userId,
+          email,
+          authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
+        },
+      });
+
+      // ② family作成
+      const family = await tx.family.create({
+        data: {
+          name: 'My Family',
+          ownerUserId: userId,
+        },
+      });
+
+      // ③ user更新
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          activeFamilyId: family.id,
+          homeFamilyId: family.id,
+        },
+      });
+
+      // ④ member作成
+      await tx.familyMember.create({
+        data: {
+          userId,
+          familyId: family.id,
+        },
+      });
+    });
+    return NextResponse.json({ ok: true });
   } catch (error) {
     console.log(error);
     return NextResponse.json(
