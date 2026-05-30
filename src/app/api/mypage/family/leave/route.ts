@@ -2,7 +2,7 @@
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { LeaveMemberType } from './_typs/leaveMemberType';
+import { LeaveMemberType } from './_typs/LeaveMemberType';
 
 export const DELETE = async (request: NextRequest) => {
   try {

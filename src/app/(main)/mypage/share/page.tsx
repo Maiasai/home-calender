@@ -12,10 +12,17 @@ import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { MembersTyps } from '@/app/api/mypage/family/_typs/MembersTyps';
 import { InvitesType } from '@/app/api/mypage/family/_typs/InvitesType';
 import { useUserProfile } from '../../home/_hooks/useUserProfile';
+import { OwnerType } from '@/app/api/mypage/family/current/_type/OwnerType';
 
 const Share = () => {
   const { token } = useSupabaseSession();
   const { profile } = useUserProfile(); //ユーザー情報取得
+
+  const {
+    data: owner,
+    error: ownerError,
+    mutate: mutateowner,
+  } = useSWR<OwnerType>('/api/mypage/family/current', fetcher); //グループのオーナー　取得
 
   const {
     data: invites,
@@ -215,7 +222,9 @@ const Share = () => {
       {isGuest && (
         <div className="flex items-center max-w-md mx-auto p-1">
           <div className="flex flex-col justify-center p-1">
-            <p className="mb-8">現在「〇〇さんのグループ」に参加しています</p>
+            <p className="mb-8">
+              現在「{owner?.nickname}さんのグループ」に参加しています
+            </p>
             <button>共有から抜ける</button>
           </div>
         </div>

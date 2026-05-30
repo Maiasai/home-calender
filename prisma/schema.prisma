@@ -81,6 +81,9 @@ model User {
   //お気に入りテーブルとのリレーション
   userRecipeStatus UserRecipeStatus[]
 
+  //familyテーブルとのリレーション（誰がそのグループのオーナーかを繋ぐ用）
+  ownedFamilies Family[] @relation("FamilyOwner")
+
   @@map("users")
 }
 
@@ -250,6 +253,7 @@ model ShoppingItem {
 model Family {
   id String @id @default(uuid()) @db.Uuid
   name String
+  ownerUserId String @db.Uuid
   createdAt DateTime @default(now())
 
   members FamilyMember[]
@@ -259,6 +263,9 @@ model Family {
   recipes Recipe[]
   menus Menu[]
   shoppingItems ShoppingItem[]
+
+  //誰がこのグループのオーナーか
+  owner User @relation("FamilyOwner",fields: [ownerUserId],references: [id])
 }
 
 //共有　参加済みメンバー

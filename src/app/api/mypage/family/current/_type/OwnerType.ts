@@ -1,0 +1,5 @@
+//グループのオーナー情報　型
+
+export type OwnerType = {
+  nickname: string;
+};

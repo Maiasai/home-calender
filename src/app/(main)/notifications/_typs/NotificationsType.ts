@@ -14,4 +14,9 @@ export type familyType = {
   createdAt: Date;
   id: string;
   name: string;
+  owner: OwnerType;
+};
+
+export type OwnerType = {
+  nickname: string;
 };
