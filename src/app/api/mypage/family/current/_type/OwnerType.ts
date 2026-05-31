@@ -2,4 +2,5 @@
 
 export type OwnerType = {
   nickname: string;
+  id: string;
 };

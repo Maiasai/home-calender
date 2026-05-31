@@ -6,6 +6,8 @@ import { GetMeResponse } from '@/app/api/_types/ApiResponse';
 import { fetcher } from '@/lib/featcher';
 
 type UserProfile = {
+  id: string;
+  email: string;
   nickname: string | null;
   activeFamilyId: string | null;
   homeFamilyId: string | null;
@@ -24,6 +26,8 @@ export const useUserProfile = () => {
       setProfile(
         data.user
           ? {
+              id: data.user.id,
+              email: data.user.email,
               nickname: data.user.nickname,
               activeFamilyId: data.user.activeFamilyId,
               homeFamilyId: data.user.homeFamilyId,

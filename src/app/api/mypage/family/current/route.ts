@@ -42,6 +42,7 @@ export const GET = async (request: NextRequest) => {
     }
     const formatted: OwnerType = {
       nickname: family.owner.nickname ?? '',
+      id: family.owner.id,
     };
 
     return NextResponse.json(formatted, { status: 200 });
