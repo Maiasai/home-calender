@@ -16,6 +16,7 @@ import { useUserProfile } from '../../home/_hooks/useUserProfile';
 import { OwnerType } from '@/app/api/family/me/_type/OwnerType';
 import { InvitesType } from '@/app/api/family/_typs/InvitesType';
 import { MembersTyps } from '@/app/api/family/_typs/MembersTyps';
+import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteRequest';
 
 const Share = () => {
   const { token } = useSupabaseSession();
@@ -151,30 +152,51 @@ const Share = () => {
     mutateowner();
   };
 
+  //招待中キャンセル処理
+  const onCancel = async (id: DeleteInviteRequest) => {
+    if (
+      id &&
+      !window.confirm(
+        'このメンバーへの招待を取り消しますか？\n取り消した招待は元に戻せません。',
+      )
+    ) {
+      return;
+    }
+    await fetch('/api/family/invite', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(id),
+    });
+    mutateInvites();
+  };
+
   return (
     <div className="max-w-3xl mx-auto">
-      <nav className="flex justify-center border-b-2 max mb-10 mx-1">
+      <nav className="flex justify-center border-b-2 mb-10 px-1">
         アプリの共有設定
       </nav>
 
       {/* グループオーナー表示 */}
       {isOwner && (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="w-full px-1">
+          <div className="w-full px-2">
             <div className="flex flex-col">
               {/* トグルスイッチ */}
               <div className="flex items-center mb-6 w-full">
-                <span className="mr-3 text-base text-gray-600">
+                <span className="pr-3 text-base text-gray-600">
                   同期 {syncEnabled ? 'をOFFにする' : 'をONにする'}
                 </span>
 
                 <button
                   type="button"
                   onClick={onSync}
-                  className={`relative w-14 h-8 flex items-center rounded-full p-1 transition-colors ${syncEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
+                  className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors ${syncEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
                 >
                   <div
-                    className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform ${syncEnabled ? 'translate-x-6' : 'translate-x-0'}`}
+                    className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${syncEnabled ? 'translate-x-6' : 'translate-x-0'}`}
                   />
                 </button>
               </div>
@@ -183,7 +205,10 @@ const Share = () => {
               {syncEnabled ? (
                 <>
                   <div className="mb-14">
-                    <p className="mb-4">◼︎招待するメンバー</p>
+                    <p className="mb-2">◼︎招待するメンバー</p>
+                    <p className="text-xs mb-4 ml-2">
+                      ※新規登録済みユーザーのみ、グループへの参加が可能です
+                    </p>
                     <div className="flex flex-col">
                       {fields.map((field, index) => (
                         <div key={field.id}>
@@ -210,7 +235,7 @@ const Share = () => {
                                 },
                               })}
                               placeholder="exsample@email.com"
-                              className="w-full  max-w-[300px] border px-2 py-1 rounded  ml-1"
+                              className="w-full  max-w-[300px] border px-2 py-1 rounded  ml-1 mb-2"
                             ></input>
                             {index > 0 && (
                               <button
@@ -222,7 +247,7 @@ const Share = () => {
                               </button>
                             )}
                           </div>
-                          <div className="ml-2">
+                          <div className="ml-2 mb-2">
                             <ErrorMessage
                               error={errors.invites?.[index]?.email}
                             />
@@ -258,11 +283,16 @@ const Share = () => {
                       </p>
                     ) : (
                       pendingInvites.map((i: InvitesType) => (
-                        <div key={i.id}>
+                        <div key={i.id} className="flex">
                           <p className="ml-2 text-base text-gray-500">
                             {i.email}
                           </p>
-                          <button>[ キャンセル ]</button>
+                          <button
+                            onClick={() => onCancel({ id: i.id })}
+                            className="text-gray-500 ml-6"
+                          >
+                            ✕
+                          </button>
                         </div>
                       ))
                     )}

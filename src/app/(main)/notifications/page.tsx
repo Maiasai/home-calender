@@ -25,8 +25,8 @@ const Notifications = () => {
         body: JSON.stringify({ inviteId }),
       });
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`HTTP ${res.status}-${text}`);
+        const text = await res.json();
+        throw new Error(text.message);
       }
 
       await mutate();
