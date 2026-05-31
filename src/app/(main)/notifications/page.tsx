@@ -14,9 +14,10 @@ const Notifications = () => {
     fetcher,
   );
 
+  //参加処理
   const Join = async (inviteId: string) => {
     try {
-      const res = await fetch('/api/mypage/family/invite/accept', {
+      const res = await fetch('/api/family/invite/accept', {
         method: 'POST',
         credentials: 'include',
         headers: {

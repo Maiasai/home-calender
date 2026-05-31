@@ -56,7 +56,7 @@ export const GET = async (request: NextRequest) => {
 export const DELETE = async (request: NextRequest) => {
   try {
     const user = await requireUser(request);
-    const body: LeaveMemberType = await request.json();
+
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,
@@ -76,16 +76,31 @@ export const DELETE = async (request: NextRequest) => {
       );
     }
 
+    //自分のfamilyMemberテーブル取得
+    const member = await prisma.familyMember.findFirst({
+      where: {
+        userId: dbUser.id,
+        familyId: dbUser.activeFamilyId,
+      },
+    });
+
+    if (!member) {
+      return NextResponse.json(
+        { message: 'メンバーが見つかりませんでした' },
+        { status: 404 },
+      );
+    }
+
     await prisma.$transaction(async (tx) => {
       // ① FamilyMemberから削除
-      await prisma.familyMember.delete({
+      await tx.familyMember.delete({
         where: {
-          id: body.id,
+          id: member.id,
         },
       });
 
       // ② activeFamilyIdを自分のhomeFamilyIdへ戻す
-      await prisma.user.update({
+      await tx.user.update({
         where: {
           id: dbUser.id,
         },

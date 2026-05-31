@@ -17,10 +17,11 @@ import { OwnerType } from '@/app/api/family/me/_type/OwnerType';
 import { InvitesType } from '@/app/api/family/_typs/InvitesType';
 import { MembersTyps } from '@/app/api/family/_typs/MembersTyps';
 import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteRequest';
+import { LeaveMemberType } from '@/app/api/family/_typs/LeaveMemberType';
 
 const Share = () => {
   const { token } = useSupabaseSession();
-  const { profile } = useUserProfile(); //ユーザー情報取得
+  const { profile, mutateProfile } = useUserProfile(); //ユーザー情報取得
 
   //トグルスイッチ
   const [syncEnabled, setSyncEnabled] = useState(false);
@@ -149,7 +150,7 @@ const Share = () => {
       }),
     });
     setSyncEnabled(next);
-    mutateowner();
+    await mutateowner();
   };
 
   //招待中キャンセル処理
@@ -170,7 +171,31 @@ const Share = () => {
       },
       body: JSON.stringify(id),
     });
-    mutateInvites();
+    await mutateInvites();
+  };
+
+  //グループから退出
+  const onExit = async () => {
+    if (
+      !window.confirm(
+        'このグループからの退出しますか？\n一度退出すると元に戻せません。',
+      )
+    ) {
+      return;
+    }
+    const res = await fetch('/api/family/members/', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) {
+      const text = await res.json();
+      throw new Error(text.message);
+    }
+    await mutateMembers();
+    await mutateProfile();
   };
 
   return (
@@ -355,12 +380,18 @@ const Share = () => {
 
       {/* グループ参加側表示 */}
       {isGuest && (
-        <div className="flex items-center max-w-md mx-auto p-1">
-          <div className="flex flex-col justify-center p-1">
-            <p className="mb-8">
-              現在「{owner?.nickname}さんのグループ」に参加しています
-            </p>
-            <button>共有から抜ける</button>
+        <div className="flex flex-col w-full">
+          <p className="flex justify-center">
+            現在、{owner?.nickname}さんのグループに
+          </p>
+          <p className="flex justify-center mb-8">参加しています</p>
+          <div className="flex justify-center">
+            <button
+              onClick={onExit}
+              className="w-[150px] h-[25px] rounded-lg bg-red-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-red-600 active:scale-95 active:shadow-sm"
+            >
+              グループから退出
+            </button>
           </div>
         </div>
       )}

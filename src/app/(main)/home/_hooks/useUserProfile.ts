@@ -17,27 +17,27 @@ export const useUserProfile = () => {
   const { session, isLoading } = useSupabaseSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
+  const mutateProfile = async () => {
+    const data: GetMeResponse = await fetcher('/api/users/me');
+
+    setProfile(
+      data.user
+        ? {
+            id: data.user.id,
+            email: data.user.email,
+            nickname: data.user.nickname,
+            activeFamilyId: data.user.activeFamilyId,
+            homeFamilyId: data.user.homeFamilyId,
+          }
+        : null,
+    ); // data === {   nickname: "m",activeFamilyId: "aaa",homeFamilyId: "bbb" }
+  };
+
   useEffect(() => {
     if (!session || isLoading) return;
 
-    const fetchProfile = async () => {
-      const data: GetMeResponse = await fetcher('/api/users/me');
-
-      setProfile(
-        data.user
-          ? {
-              id: data.user.id,
-              email: data.user.email,
-              nickname: data.user.nickname,
-              activeFamilyId: data.user.activeFamilyId,
-              homeFamilyId: data.user.homeFamilyId,
-            }
-          : null,
-      ); // data === {   nickname: "m",activeFamilyId: "aaa",homeFamilyId: "bbb" }
-    };
-
-    fetchProfile();
+    mutateProfile();
   }, [session, isLoading]);
 
-  return { profile }; //このhookを使った側がprofile.nickname を使える
+  return { profile, mutateProfile }; //このhookを使った側がprofile.nickname を使える
 };
