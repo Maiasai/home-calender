@@ -48,6 +48,13 @@ export const Hamburger = ({ open, setOpen, handleLogout }: Props) => {
       >
         <div className="flex flex-col gap-8 mt-20 p-2 m-6">
           <Link
+            href="/notifications"
+            onClick={() => setOpen(false)}
+            className="w-full ml-3 border-b"
+          >
+            通知一覧
+          </Link>
+          <Link
             href="/home"
             onClick={() => setOpen(false)}
             className="w-full ml-3 border-b"

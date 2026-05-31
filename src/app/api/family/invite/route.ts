@@ -117,20 +117,49 @@ export const DELETE = async (request: NextRequest) => {
 
     if (!invite) {
       return NextResponse.json(
-        { message: 'invite not found' },
+        { message: '招待が見つかりません' },
         { status: 404 },
       );
     }
 
-    if (invite.familyId !== dbUser.activeFamilyId) {
-      return NextResponse.json({ message: 'forbidden' }, { status: 403 });
+    //オーナーか判定
+    const isOwner = invite.familyId === dbUser.activeFamilyId;
+
+    //招待された本人かどうか判定
+    const isInvitee = invite.email === dbUser.email;
+
+    //オーナーが取り消し
+    if (isOwner) {
+      await prisma.familyInvite.delete({
+        where: {
+          id: invite.id,
+        },
+      });
+      return NextResponse.json(
+        { message: '招待を取り消しました' },
+        { status: 200 },
+      );
     }
 
-    await prisma.familyInvite.delete({
-      where: {
-        id: invite.id,
-      },
-    });
+    //招待された側が辞退
+    if (isInvitee) {
+      await prisma.familyInvite.delete({
+        where: {
+          id: invite.id,
+        },
+      });
+      return NextResponse.json(
+        { message: '招待を辞退しました' },
+        { status: 200 },
+      );
+    }
+
+    if (!isOwner && !isInvitee) {
+      return NextResponse.json(
+        { message: '権限がありません' },
+        { status: 403 },
+      );
+    }
 
     return NextResponse.json({ message: 'invite deleated' }, { status: 200 });
   } catch (error) {
