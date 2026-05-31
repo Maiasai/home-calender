@@ -53,6 +53,12 @@ enum VegetableType {
   LIGHT
 }
 
+//招待ステータス
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+}
 
 
 model User {
@@ -61,17 +67,22 @@ model User {
   email         String      @unique
   authProvider AuthProvider @map("auth_provider")
   activeFamilyId String? @db.Uuid//今どの家族を見ているか
+  homeFamilyId String? @db.Uuid//グループ抜けた後 元のid参照用
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now())
 
   activeFamily Family? @relation("ActiveFamily", fields: [activeFamilyId], references: [id])
+  homeFamily Family? @relation("HomeFamily", fields: [homeFamilyId], references: [id])
   members FamilyMember[]
   // relations
   recipes Recipe[]
 
   //お気に入りテーブルとのリレーション
   userRecipeStatus UserRecipeStatus[]
+
+  //familyテーブルとのリレーション（誰がそのグループのオーナーかを繋ぐ用）
+  ownedFamilies Family[] @relation("FamilyOwner")
 
   @@map("users")
 }
@@ -242,15 +253,22 @@ model ShoppingItem {
 model Family {
   id String @id @default(uuid()) @db.Uuid
   name String
+  ownerUserId String @db.Uuid
   createdAt DateTime @default(now())
 
   members FamilyMember[]
+  Invite FamilyInvite[]
   activeUsers User[] @relation("ActiveFamily")
+  homeUsers   User[] @relation("HomeFamily")
   recipes Recipe[]
   menus Menu[]
   shoppingItems ShoppingItem[]
+
+  //誰がこのグループのオーナーか
+  owner User @relation("FamilyOwner",fields: [ownerUserId],references: [id])
 }
 
+//共有　参加済みメンバー
 model FamilyMember {
   id       String @id @default(uuid()) @db.Uuid
   userId   String @db.Uuid
@@ -260,4 +278,17 @@ model FamilyMember {
   family Family @relation(fields: [familyId], references: [id])
 
   @@unique([userId, familyId])
+}
+
+//共有　招待中
+model FamilyInvite {
+  id        String @id @default(uuid()) @db.Uuid
+  familyId  String @db.Uuid
+  email     String
+  status    InviteStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  family Family @relation(fields: [familyId], references: [id])
+
+  @@unique([familyId, email])
 }

@@ -24,9 +24,11 @@ export const GET = async (request: NextRequest) => {
             email: dbUser.email,
             nickname: dbUser.nickname,
             activeFamilyId: dbUser.activeFamilyId,
+            homeFamilyId: dbUser.homeFamilyId,
           }
         : null,
     });
+    return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

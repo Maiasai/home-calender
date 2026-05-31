@@ -28,28 +28,48 @@ export const POST = async (request: NextRequest) => {
       throw new Error('email is required');
     }
 
-    const family = await prisma.family.create({
-      data: {
-        name: 'My Family',
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      const userRecord = await tx.user.upsert({
+        where: { id: user.id },
+        update: { nickname },
+        create: {
+          id: user.id,
+          email: user.email ?? '',
+          nickname,
+          authProvider: provider,
+        },
+      });
 
-    await prisma.user.upsert({
-      where: { id: user.id },
-      update: { nickname },
-      create: {
-        id: user.id,
-        email: user.email,
-        nickname,
-        authProvider: provider,
-        activeFamilyId: family.id,
-      },
+      const family = await tx.family.create({
+        data: {
+          name: 'My family',
+          ownerUserId: userRecord.id,
+        },
+      });
+
+      await tx.user.update({
+        where: {
+          id: user.id,
+        },
+
+        data: {
+          activeFamilyId: family.id,
+          homeFamilyId: family.id,
+        },
+      });
+
+      await tx.familyMember.create({
+        data: {
+          userId: user.id,
+          familyId: family.id,
+        },
+      });
     });
 
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error(error);
 
-    return NextResponse.json({ message: 'error' }, { status: 500 });
+    return NextResponse.json({ message: String(error) }, { status: 500 });
   }
 };

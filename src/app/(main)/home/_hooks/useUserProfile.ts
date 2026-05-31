@@ -5,7 +5,11 @@ import { useSupabaseSession } from './useSupabaseSession';
 import { GetMeResponse } from '@/app/api/_types/ApiResponse';
 import { fetcher } from '@/lib/featcher';
 
-type UserProfile = { nickname: string | null };
+type UserProfile = {
+  nickname: string | null;
+  activeFamilyId: string | null;
+  homeFamilyId: string | null;
+};
 
 export const useUserProfile = () => {
   const { session, isLoading } = useSupabaseSession();
@@ -17,7 +21,15 @@ export const useUserProfile = () => {
     const fetchProfile = async () => {
       const data: GetMeResponse = await fetcher('/api/users/me');
 
-      setProfile(data.user ? { nickname: data.user.nickname } : null); // data === { nickname: 'm' }
+      setProfile(
+        data.user
+          ? {
+              nickname: data.user.nickname,
+              activeFamilyId: data.user.activeFamilyId,
+              homeFamilyId: data.user.homeFamilyId,
+            }
+          : null,
+      ); // data === {   nickname: "m",activeFamilyId: "aaa",homeFamilyId: "bbb" }
     };
 
     fetchProfile();

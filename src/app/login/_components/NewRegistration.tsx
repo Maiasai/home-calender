@@ -70,6 +70,8 @@ const NewRegistration = ({
 
   //認証済みかチェック
   useEffect(() => {
+    if (!token) return;
+
     const checkUser = async () => {
       const {
         data: { user },
@@ -80,7 +82,11 @@ const NewRegistration = ({
         return;
       }
 
-      const res = await fetch('/api/users/me');
+      const res = await fetch('/api/users/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data: GetMeResponse = await res.json();
       if (data.user) {
         const needsNickname =
@@ -120,7 +126,18 @@ const NewRegistration = ({
       });
 
       if (error) {
-        alert('パスワード設定に失敗');
+        if (
+          error.message.includes(
+            'New password should be different from the old password',
+          )
+        ) {
+          alert(
+            '以前使用したパスワードです。別のパスワードを設定してください。',
+          );
+          return;
+        }
+        alert('パスワード設定に失敗しました');
+        alert(error.message);
         setLoading(false);
         return;
       }
