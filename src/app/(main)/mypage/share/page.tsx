@@ -6,16 +6,16 @@
 
 'use client';
 import { fetcher } from '@/lib/featcher';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import ErrorMessage from '../../recipes/_components/ErrorMessage';
 import { EmailInviteType } from './_type/EmailInviteType';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
-import { MembersTyps } from '@/app/api/mypage/family/_typs/MembersTyps';
-import { InvitesType } from '@/app/api/mypage/family/_typs/InvitesType';
 import { useUserProfile } from '../../home/_hooks/useUserProfile';
-import { OwnerType } from '@/app/api/mypage/family/current/_type/OwnerType';
+import { OwnerType } from '@/app/api/family/me/_type/OwnerType';
+import { InvitesType } from '@/app/api/family/_typs/InvitesType';
+import { MembersTyps } from '@/app/api/family/_typs/MembersTyps';
 
 const Share = () => {
   const { token } = useSupabaseSession();
@@ -28,14 +28,13 @@ const Share = () => {
     data: owner,
     error: ownerError,
     mutate: mutateowner,
-  } = useSWR<OwnerType>('/api/mypage/family/current', fetcher); //グループのオーナー　取得
+  } = useSWR<OwnerType>('/api/family/me', fetcher); //グループのオーナー　取得
 
-  console.log('owner', owner);
   const {
     data: invites,
     error: invitesError,
     mutate: mutateInvites,
-  } = useSWR<InvitesType[]>('/api/mypage/family/invites', fetcher); //招待済みメンバー　取得
+  } = useSWR<InvitesType[]>('/api/family/invites', fetcher); //招待済みメンバー　取得
 
   const {
     control,
@@ -57,13 +56,13 @@ const Share = () => {
     data: members,
     error: membersError,
     mutate: mutateMembers,
-  } = useSWR<MembersTyps[]>('/api/mypage/family/members', fetcher); //参加済みメンバー　取得
+  } = useSWR<MembersTyps[]>('/api/family/members', fetcher); //参加済みメンバー　取得
 
   const pendingInvites = invites?.filter((i) => i.status === 'PENDING') ?? [];
 
   const onSubmit = async (data: EmailInviteType) => {
     try {
-      const res = await fetch('/api/mypage/family/invite', {
+      const res = await fetch('/api/family/invite', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -78,7 +77,7 @@ const Share = () => {
       }
 
       await mutateInvites();
-      alert('招待メールの送信が完了しました');
+      alert('招待通知を送信しました。\n相手の方は通知一覧から参加できます。');
     } catch (err: any) {
       console.error(err.message);
       alert('招待メールの送信に失敗しました');
@@ -97,7 +96,7 @@ const Share = () => {
 
     if (!ok) return;
     try {
-      const res = await fetch('/api/mypage/family/leave', {
+      const res = await fetch('/api/family/members/', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -119,6 +118,39 @@ const Share = () => {
     append({ email: '' });
   };
 
+  //同期トグル（初期同期反映）
+  useEffect(() => {
+    if (!owner) return;
+    setSyncEnabled(owner.syncEnabled);
+  }, [owner]);
+
+  //同期ON/OFF
+  const onSync = async () => {
+    const next = !syncEnabled; //ここで今のボタン状態を反転
+
+    if (
+      syncEnabled &&
+      !window.confirm(
+        '同期をOFFにすると参加メンバーへの共有が停止します。よろしいですか？',
+      )
+    ) {
+      return;
+    }
+
+    await fetch('/api/family/sync', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        syncEnabled: next,
+      }),
+    });
+    setSyncEnabled(next);
+    mutateowner();
+  };
+
   return (
     <div className="max-w-3xl mx-auto">
       <nav className="flex justify-center border-b-2 max mb-10 mx-1">
@@ -138,7 +170,7 @@ const Share = () => {
 
                 <button
                   type="button"
-                  onClick={() => setSyncEnabled(!syncEnabled)}
+                  onClick={onSync}
                   className={`relative w-14 h-8 flex items-center rounded-full p-1 transition-colors ${syncEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
                 >
                   <div

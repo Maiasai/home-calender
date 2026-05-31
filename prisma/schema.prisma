@@ -255,6 +255,7 @@ model Family {
   name String
   ownerUserId String @db.Uuid
   createdAt DateTime @default(now())
+  syncEnabled Boolean @default(false)
 
   members FamilyMember[]
   Invite FamilyInvite[]

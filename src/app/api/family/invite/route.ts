@@ -11,6 +11,8 @@ export const POST = async (request: NextRequest) => {
     const user = await requireUser(request); //操作者
     const body: EmailInviteType = await request.json();
 
+    console.log(body);
+    console.log(body.invites);
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,
@@ -36,20 +38,21 @@ export const POST = async (request: NextRequest) => {
       if (existingMember) {
         return NextResponse.json(
           { message: 'already a member' },
-
           { status: 400 },
         );
       }
+      console.log('existingMember', existingMember);
 
       // ② 既存招待チェック
       const existingInvite = await prisma.familyInvite.findFirst({
         where: { familyId, email },
       });
 
+      console.log('existingInvite', existingInvite);
+
       if (existingInvite) {
         return NextResponse.json(
           { message: 'already invited' },
-
           { status: 400 },
         );
       }
