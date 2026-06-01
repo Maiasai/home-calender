@@ -71,7 +71,6 @@ export const POST = async (request: NextRequest) => {
         data: {
           familyId: familyId,
           email: email, //招待相手
-          status: 'PENDING',
         },
       });
     }

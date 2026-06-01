@@ -74,7 +74,7 @@ const GroupOwner = ({
   };
 
   //参加中メンバー
-  const pendingInvites = invites?.filter((i) => i.status === 'PENDING') ?? [];
+  const pendingInvites = invites ?? [];
 
   //参加中メンバー削除処理
   const handleDelete = async (id: string) => {

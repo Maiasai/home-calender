@@ -42,13 +42,6 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    if (invite.status !== 'PENDING') {
-      return NextResponse.json(
-        { message: 'この招待はすでに処理されています' },
-        { status: 403 },
-      );
-    }
-
     await prisma.$transaction([
       //招待元の人のfamilyMemberテーブルに、招待された人を所属追加
       prisma.familyMember.create({
@@ -68,12 +61,10 @@ export const POST = async (request: NextRequest) => {
         },
       }),
 
-      prisma.familyInvite.update({
+      //招待中テーブルから削除
+      prisma.familyInvite.delete({
         where: {
           id: invite.id,
-        },
-        data: {
-          status: 'ACCEPTED',
         },
       }),
     ]);
