@@ -75,15 +75,14 @@ const Share = () => {
         body: JSON.stringify(data),
       });
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`HTTP ${res.status}-${text}`);
+        const text = await res.json();
+        throw new Error(text.message);
       }
 
       await mutateInvites();
       alert('招待通知を送信しました。\n相手の方は通知一覧から参加できます。');
     } catch (err: any) {
-      console.error(err.message);
-      alert('招待メールの送信に失敗しました');
+      alert(err.message);
     }
   };
 
@@ -174,6 +173,7 @@ const Share = () => {
             onSubmit={onSubmit}
             onCancel={onCancel}
             onSync={onSync}
+            mutateMembers={mutateMembers}
           />
         </>
       )}

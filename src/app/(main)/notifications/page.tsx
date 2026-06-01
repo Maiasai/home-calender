@@ -14,6 +14,8 @@ const Notifications = () => {
     fetcher,
   );
 
+  const hasUnread = data && data.length > 0; //未読判定用
+
   //参加処理
   const Join = async (inviteId: string) => {
     try {
@@ -75,12 +77,12 @@ const Notifications = () => {
         {data?.map((d: NotificationsType) => (
           <div key={d.id} className="border rounded-lg p-4 shadow-sm">
             {d.status === 'PENDING' && (
-              <div>
-                <p className="font-semibold mb-3">
+              <div className="relative">
+                <p className="font-semibold mb-3 ml-6">
                   {d.nickname}さんから招待が届いています
                 </p>
                 {/* クリックで招待レコードのIDが呼ばれる */}
-                <div className="flex gap-3">
+                <div className="flex gap-3 ml-6">
                   <button
                     onClick={() => Join(d.id)}
                     className="w-[80px] h-[25px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
@@ -95,6 +97,9 @@ const Notifications = () => {
                     辞退
                   </button>
                 </div>
+                {hasUnread && (
+                  <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
+                )}
               </div>
             )}
           </div>

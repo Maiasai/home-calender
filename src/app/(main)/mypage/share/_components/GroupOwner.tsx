@@ -41,6 +41,8 @@ type Props = {
   onSubmit: (data: EmailInviteType) => Promise<void>;
   onCancel: (id: DeleteInviteRequest) => Promise<void>;
   onSync: () => Promise<void>;
+
+  mutateMembers: KeyedMutator<MembersTyps[]>;
 };
 
 const GroupOwner = ({
@@ -62,6 +64,7 @@ const GroupOwner = ({
   onSubmit,
   onCancel,
   onSync,
+  mutateMembers,
 }: Props) => {
   //招待欄追加
   const MAX_FIELDS = 5;
@@ -73,10 +76,10 @@ const GroupOwner = ({
   //参加中メンバー
   const pendingInvites = invites?.filter((i) => i.status === 'PENDING') ?? [];
 
-  //参加中メンバー退会 fetch
+  //参加中メンバー削除処理
   const handleDelete = async (id: string) => {
     const ok = window.confirm(
-      '共有から抜けますか？\n共有中のレシピ・献立・買い物リストは表示されなくなります。',
+      'このメンバーを共有グループから削除しますか？\n\n削除後、このメンバーは共有中のレシピ・献立・買い物リストにアクセスできなくなります。\nこの操作は取り消せません。',
     );
 
     if (!ok) return;
@@ -91,6 +94,7 @@ const GroupOwner = ({
           id: id,
         }),
       });
+      await mutateMembers();
     } catch (e) {
       console.error(e);
     }
@@ -199,6 +203,7 @@ const GroupOwner = ({
                     <div key={i.id} className="flex">
                       <p className="ml-2 text-base text-gray-500">{i.email}</p>
                       <button
+                        type="button"
                         onClick={() => onCancel({ id: i.id })}
                         className="text-gray-500 ml-6"
                       >
