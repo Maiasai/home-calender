@@ -2,4 +2,6 @@
 
 export type OwnerType = {
   nickname: string;
+  id: string;
+  syncEnabled: boolean;
 };

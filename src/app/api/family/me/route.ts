@@ -1,20 +1,22 @@
-//共有設定　参加済みメンバー取得用
-//familyId→レコードが属している家族グループ（例：献立や買い物リスト、レシピの所属先）
-//activeFamilyId→今ユーザーが見ている家族（表示状態）
+//共有設定　オーナー情報　取得用
 
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { MembersTyps } from '../_typs/MembersTyps';
+import { OwnerType } from './_type/OwnerType';
 
 export const GET = async (request: NextRequest) => {
   try {
     const user = await requireUser(request);
+
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,
       },
     });
+    if (!dbUser) {
+      return NextResponse.json({ message: 'user not found' }, { status: 404 });
+    }
 
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
@@ -22,23 +24,27 @@ export const GET = async (request: NextRequest) => {
         { status: 400 },
       );
     }
-    const familyId = dbUser.activeFamilyId;
 
-    const members = await prisma.familyMember.findMany({
+    const family = await prisma.family.findUnique({
       where: {
-        familyId: familyId, //今見てる家族に紐づけて取得する
+        id: dbUser.activeFamilyId,
       },
       include: {
-        user: true,
+        owner: true,
       },
     });
 
-    const formatted: MembersTyps[] = members.map((m) => ({
-      id: m.id,
-      userId: m.userId,
-      nickname: m.user.nickname ?? '',
-      email: m.user.email,
-    }));
+    if (!family) {
+      return NextResponse.json(
+        { message: 'family is not found' },
+        { status: 400 },
+      );
+    }
+    const formatted: OwnerType = {
+      nickname: family.owner.nickname ?? '',
+      id: family.owner.id,
+      syncEnabled: family.syncEnabled,
+    };
 
     return NextResponse.json(formatted, { status: 200 });
   } catch (error) {

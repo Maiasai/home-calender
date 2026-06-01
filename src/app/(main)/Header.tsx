@@ -31,21 +31,21 @@ const Header = () => {
         <div className="flex">
           {profile && (
             <div className="flex justify-end w-full">
-              <div className="items-center space-x-10 mr-8 mb-4  hidden md:block">
+              <div className="items-center space-x-10 mr-8 mb-4  hidden md:flex">
                 {/* Reactはデータが揃ってなくても描画してしまうため、データがあるときだけ描画する(クラッシュ対策）*/}
                 {profile && <span>{profile.nickname} さんログイン中</span>}
                 <button onClick={handleLogout}>ログアウト</button>
+                <Link href="/notifications">
+                  <Image
+                    src="/images/bell.png"
+                    alt="通知アイコン"
+                    width={30}
+                    height={20}
+                  />
+                </Link>
               </div>
             </div>
           )}
-          <Link href="/notifications">
-            <Image
-              src="/images/bell.png"
-              alt="通知アイコン"
-              width={30}
-              height={20}
-            />
-          </Link>
         </div>
 
         <div className="flex justify-between pt-4 pl-4 md:justify-center w-full shrink-0">

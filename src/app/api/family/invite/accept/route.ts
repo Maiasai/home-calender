@@ -30,18 +30,21 @@ export const POST = async (request: NextRequest) => {
 
     if (!invite) {
       return NextResponse.json(
-        { message: 'invite not found' },
+        { message: 'この招待は取り消されています' },
         { status: 400 },
       );
     }
 
     if (invite.email !== dbUser.email) {
-      return NextResponse.json({ message: 'invalid invite' }, { status: 403 });
+      return NextResponse.json(
+        { message: 'この招待を承認する権限がありません' },
+        { status: 403 },
+      );
     }
 
     if (invite.status !== 'PENDING') {
       return NextResponse.json(
-        { message: 'invalid invite status' },
+        { message: 'この招待はすでに処理されています' },
         { status: 403 },
       );
     }

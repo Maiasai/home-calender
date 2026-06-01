@@ -28,7 +28,6 @@ export const GET = async (request: NextRequest) => {
           }
         : null,
     });
-    return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

@@ -34,6 +34,9 @@ export const useAuthCallback = () => {
 
       await supabase.auth.exchangeCodeForSession(code);
       const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
@@ -44,6 +47,7 @@ export const useAuthCallback = () => {
         router.push('/');
         return;
       }
+
       await fetch('/api/auth/sync-user', {
         //③Supabaseのユーザー → DBに同期
         //※前提としてSupabase Authには自動保存されるが、Prismaで触るSupabase Databaseには保存されない
@@ -62,8 +66,12 @@ export const useAuthCallback = () => {
 
       //④DBにユーザーいるか確認
       const res = await fetch('/api/users/me', {
-        credentials: 'include', //Googleログインしたユーザーのブラウザに保存されているCookie（セッション情報）も一緒に送る
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
       });
+
       const data: GetMeResponse = await res.json();
 
       const needsNickname =

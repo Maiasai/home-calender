@@ -15,7 +15,6 @@ export const POST = async (request: NextRequest) => {
     });
 
     const body: CreateShoppingItem = await request.json();
-    console.log('body', body);
 
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
