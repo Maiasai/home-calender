@@ -25,19 +25,21 @@ export const PATCH = async (request: NextRequest) => {
       ? currentFamilyId //ON →　現在の共有状態維持
       : homeFamilyId; //OFF →　自分の元の世界に戻す
 
-    // family更新（必ず元のfamilyを使う）
-    await prisma.family.update({
-      where: { id: currentFamilyId },
-      data: { syncEnabled },
-    });
+    await Promise.all([
+      // family更新（必ず元のfamilyを使う）
+      prisma.family.update({
+        where: { id: currentFamilyId },
+        data: { syncEnabled },
+      }),
 
-    // user更新
-    await prisma.user.update({
-      where: { id: dbUser.id },
-      data: {
-        activeFamilyId: targetFamilyId,
-      },
-    });
+      // user更新
+      prisma.user.update({
+        where: { id: dbUser.id },
+        data: {
+          activeFamilyId: targetFamilyId,
+        },
+      }),
+    ]);
 
     return NextResponse.json({ ok: true });
   } catch (error) {
