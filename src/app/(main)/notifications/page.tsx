@@ -85,7 +85,8 @@ const Notifications = () => {
               <div className="flex gap-3 ml-6">
                 <PrimaryButton
                   onClick={() => Join(d.id)}
-                  className="w-[80px] h-[25px]  text-sm font-semibold active:scale-95 active:shadow-sm"
+                  className="w-[80px] h-[25px]"
+                  variant="primary"
                 >
                   参加
                 </PrimaryButton>

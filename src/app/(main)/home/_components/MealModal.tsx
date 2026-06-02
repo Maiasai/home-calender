@@ -118,23 +118,26 @@ const MealModal = ({
           <PrimaryButton
             onClick={onSubmit}
             disabled={isDisabled}
-            className="w-[80px] h-[30px]  font-medium active:scale-95 active:translate-y-[1px] "
+            className="w-[80px] h-[30px]"
+            variant="primary"
           >
             登録
           </PrimaryButton>
         </div>
 
         <div className="flex items-center gap-2 ml-auto">
-          <button
+          <PrimaryButton
             onClick={() => onSelect('customize')}
-            className="flex items-center justify-center gap-1 w-[114px] h-[34px] rounded-lg border border-orange-200 bg-[#fffefe] text-orange-600 text-sm font-medium shadow-sm transition-all duration-150 hover:bg-[#f9e5d9] active:scale-95"
+            className="flex items-center justify-center gap-1 w-[114px] h-[34px] "
+            variant="secondary"
           >
             カスタマイズ
-          </button>
+          </PrimaryButton>
 
           <PrimaryButton
             onClick={() => onSelect('recipeSelect')}
-            className="w-[130px] h-[30px] rounded-lg text-sm font-semibold  active:scale-95 active:shadow-sm"
+            className="w-[130px] h-[30px]"
+            variant="primary"
           >
             ＋レシピから選択
           </PrimaryButton>

@@ -69,7 +69,8 @@ const StepList = ({ fields, append, remove, register, errors }: Props) => {
           <PrimaryButton
             type="button"
             onClick={() => append({ recipestep: '' })}
-            className="w-[150px] h-[30px]  text-sm font-semibold active:scale-95 active:shadow-sm"
+            className="w-[150px] h-[30px]"
+            variant="primary"
           >
             ＋手順を追加
           </PrimaryButton>

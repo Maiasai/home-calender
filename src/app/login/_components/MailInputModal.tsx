@@ -64,7 +64,8 @@ const MailInputModal = ({
         <div className="flex items-center justify-center mb-10 w-full">
           <PrimaryButton
             disabled={!isValid || isSubmitting} //バリデーション表示,送信中はtureになる→true時はボタン無効
-            className="w-60 h-11 rounded-2xl font-medium shad active:scale-95 active:translate-y-[1px] "
+            className="w-60 h-11"
+            variant="primary"
           >
             次へ
           </PrimaryButton>

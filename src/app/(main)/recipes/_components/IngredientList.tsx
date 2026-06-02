@@ -152,7 +152,8 @@ const IngredientList = ({
             type="button"
             disabled={fields.length >= MAX_INGREDIENTS}
             onClick={() => append({ name: '', unitId: '' })} //amountの型定義を?にすることでonClickに記載をしない（項目自体は必須だが、初期値を""で書けないため）
-            className="w-[148px] h-[30px] font-semibold active:scale-95 active:shadow-sm"
+            className="w-[148px] h-[30px]"
+            variant="primary"
           >
             ＋材料を追加
           </PrimaryButton>

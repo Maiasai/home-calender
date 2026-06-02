@@ -176,7 +176,8 @@ const GroupOwner = ({
                     <PrimaryButton
                       type="button"
                       onClick={handleAdd}
-                      className="w-[80px] h-[30px] rounded-lg text-sm font-semibold transition-all duration-150 active:shadow-sm mb-2"
+                      className="w-[80px] h-[30px]"
+                      variant="primary"
                     >
                       追加
                     </PrimaryButton>
@@ -186,7 +187,8 @@ const GroupOwner = ({
                 <PrimaryButton
                   type="submit"
                   disabled={!isValid || isSubmitting}
-                  className="w-[150px] h-[30px] rounded-lg font-medium active:translate-y-[1px]"
+                  className="w-[150px] h-[30px]"
+                  variant="primary"
                 >
                   一括招待ボタン
                 </PrimaryButton>

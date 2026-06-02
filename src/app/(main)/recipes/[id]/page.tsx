@@ -6,8 +6,6 @@ import BackIcon from '@/app/components/image/backicon';
 import CategoryBadge from '@/app/components/image/CategoryBadge';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
-import RecipeEditButton from '@/app/components/image/RecipeEditButton';
-import RecipeDeleateButton from '@/app/components/image/RecipeDeleateButton';
 import Image from 'next/image';
 import PageTitle from '../styles/PageTitle';
 import type { RecipeDetail } from '../_types/RecipeDetail';
@@ -76,21 +74,26 @@ const RecipeDetail = ({ params }: Props) => {
         </div>
 
         <div className="flex gap-2">
-          <button
+          <PrimaryButton
             onClick={() => {
               if (confirm('本当に削除しますか？')) {
                 deleteRecipe(recipe.id);
               }
             }}
-            className="mb-2 mr-2"
+            className="w-[100px] h-[30px] mb-2 mr-2"
+            variant="danger"
           >
-            <RecipeDeleateButton />
-          </button>
+            削除
+          </PrimaryButton>
 
           <div className="mr-2">
-            <button onClick={(e) => editRecipe(recipe.id)}>
-              <RecipeEditButton />
-            </button>
+            <PrimaryButton
+              onClick={() => editRecipe(recipe.id)}
+              className="w-[100px] h-[30px]"
+              variant="primary"
+            >
+              編集
+            </PrimaryButton>
           </div>
         </div>
       </div>
@@ -185,7 +188,7 @@ const RecipeDetail = ({ params }: Props) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <PrimaryButton className="w-[159px] h-[34px]  text-sm font-semibold active:scale-95 active:shadow-sm">
+              <PrimaryButton className="w-[159px] h-[34px]" variant="primary">
                 レシピサイトを開く
               </PrimaryButton>
             </a>

@@ -90,7 +90,8 @@ const MealRecipeSelect = ({
           type="button"
           onClick={onBack}
           disabled={isDisabled}
-          className="w-[80px] h-[30px]  font-medium active:scale-95 active:translate-y-[1px] "
+          className="w-[80px] h-[30px]"
+          variant="primary"
         >
           保存
         </PrimaryButton>

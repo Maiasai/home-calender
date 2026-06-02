@@ -55,7 +55,8 @@ const ResetEmail = ({
           <PrimaryButton
             type="submit"
             disabled={!isValid || isSubmitting}
-            className="w-60 h-11 font-medium active:scale-95 active:translate-y-[1px] "
+            className="w-60 h-11"
+            variant="primary"
           >
             認証メールを送信ボタン
           </PrimaryButton>

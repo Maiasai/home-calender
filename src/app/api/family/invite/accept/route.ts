@@ -10,11 +10,19 @@ export const POST = async (request: NextRequest) => {
     const user = await requireUser(request);
     const body = await request.json();
 
-    const dbUser = await prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
+    const [dbUser, invite] = await Promise.all([
+      prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+      }),
+
+      prisma.familyInvite.findUnique({
+        where: {
+          id: body.inviteId,
+        },
+      }),
+    ]);
 
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
@@ -22,11 +30,6 @@ export const POST = async (request: NextRequest) => {
         { status: 400 },
       );
     }
-    const invite = await prisma.familyInvite.findUnique({
-      where: {
-        id: body.inviteId,
-      },
-    });
 
     if (!invite) {
       return NextResponse.json(

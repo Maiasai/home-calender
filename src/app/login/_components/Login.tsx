@@ -151,7 +151,8 @@ const LoginModal = ({
               <PrimaryButton
                 type="submit"
                 disabled={!isValidsign || isSubmittingsign}
-                className="w-60 h-11 font-medium  active:scale-95 active:translate-y-[1px]"
+                className="w-60 h-11"
+                variant="primary"
               >
                 ログイン
               </PrimaryButton>

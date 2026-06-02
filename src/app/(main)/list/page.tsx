@@ -326,7 +326,11 @@ const List = () => {
             </DndContext>
           </div>
 
-          <PrimaryButton className="w-[148px] h-[30px] mt-10" onClick={addItem}>
+          <PrimaryButton
+            className="w-[148px] h-[30px] mt-10"
+            onClick={addItem}
+            variant="primary"
+          >
             ＋追加
           </PrimaryButton>
         </div>

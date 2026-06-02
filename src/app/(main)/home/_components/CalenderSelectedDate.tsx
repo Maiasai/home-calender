@@ -82,7 +82,8 @@ const CalenderSelectedDate = ({
           {isEmpty && (
             <PrimaryButton
               onClick={() => setModalOpen(true)}
-              className="w-[80px] h-[30px] rounded-lg text-sm font-semibold  active:scale-95 active:shadow-sm"
+              className="w-[80px] h-[30px]"
+              variant="primary"
             >
               献立作成
             </PrimaryButton>

@@ -106,7 +106,8 @@ const AddRecipeUrlModal = ({ onClose, step }: Props) => {
             <PrimaryButton
               type="submit" //このボタンが押されたらフォームを送信する
               disabled={!isValid || isSubmitting} //バリデーション表示,送信中はtureになる→true時はボタン無効
-              className="w-[160px] h-[30px]  font-medium active:scale-95 active:translate-y-[1px]"
+              className="w-[160px] h-[30px] "
+              variant="primary"
             >
               レシピを登録する
             </PrimaryButton>

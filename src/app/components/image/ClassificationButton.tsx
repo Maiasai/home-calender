@@ -1,6 +1,7 @@
 //すべて、主菜、副菜、未分類　ボタン（レシピ一覧）
 'use client';
 
+import PrimaryButton from '@/components/button/PrimaryButton';
 import React from 'react';
 
 interface ClassificationButtonProps {
@@ -15,17 +16,14 @@ const ClassificationButton: React.FC<ClassificationButtonProps> = ({
   onClick,
 }) => {
   return (
-    <button
+    <PrimaryButton
       type="button"
       onClick={onClick} //onClick で親にカテゴリ変更を通知
-      className={`w-[74px] h-[34px] rounded-lg  ${
-        isActive
-          ? ' bg-[#e9925c] text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-[#d26d36] active:scale-95 active:shadow-sm'
-          : ' border border-orange-200 bg-[#fffefe] text-orange-500 text-sm font-medium shadow-sm transition-all duration-150 hover:bg-[#f9e5d9] active:scale-95'
-      }`}
+      className="w-[74px] h-[34px]"
+      variant={isActive ? 'primary' : 'secondary'}
     >
       {children}
-    </button>
+    </PrimaryButton>
   );
 };
 

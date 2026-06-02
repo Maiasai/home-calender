@@ -101,6 +101,7 @@ const Home = () => {
             <PrimaryButton
               onClick={() => setLoginModalOpen(true)}
               className="h-10 px-6"
+              variant="primary"
             >
               新規登録　またはログイン
             </PrimaryButton>

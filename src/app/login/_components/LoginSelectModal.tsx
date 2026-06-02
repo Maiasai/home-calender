@@ -46,7 +46,8 @@ const LoginSelectModal = ({ setStep }: Props) => {
         <PrimaryButton
           onClick={() => setStep('email')}
           className="flex items-center justify-center gap-2
-            w-40 h-11  text-sm font-medium active:scale-95"
+            w-40 h-11"
+          variant="primary"
         >
           <Mail size={18} />
           メールで続ける

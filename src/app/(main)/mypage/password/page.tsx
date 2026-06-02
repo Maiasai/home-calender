@@ -243,7 +243,8 @@ const ChangePassword = () => {
               type="submit" //このボタンが押されたらフォームを送信する
               //|| → どちらかが true ならボタンは disabled
               disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
-              className="w-[100px] h-[30px] rounded-lgactive:scale-95 active:translate-y-[1px] "
+              className="w-[100px] h-[30px]"
+              variant="primary"
             >
               更新
             </PrimaryButton>

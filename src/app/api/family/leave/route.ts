@@ -10,20 +10,22 @@ export const DELETE = async (request: NextRequest) => {
     const user = await requireUser(request); //今操作してる人（user.id→オーナー）
     const memberId: MemberId = await request.json(); //memberId→削除したいメンバー取得
 
-    const dbUser = await prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
+    const [dbUser, member] = await Promise.all([
+      prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+      }),
 
-    const member = await prisma.familyMember.findUnique({
-      where: {
-        id: memberId.id,
-      },
-      include: {
-        user: true,
-      },
-    });
+      prisma.familyMember.findUnique({
+        where: {
+          id: memberId.id,
+        },
+        include: {
+          user: true,
+        },
+      }),
+    ]);
 
     if (!member?.user.homeFamilyId) {
       return NextResponse.json(
