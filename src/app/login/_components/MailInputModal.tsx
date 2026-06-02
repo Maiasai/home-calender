@@ -13,6 +13,7 @@ import {
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { GoogleMaterial } from './GoogleMeterial';
 import ModalDescriptionText from './ModalDescriptionText';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   handleSubmit: UseFormHandleSubmit<EmailFormValues>;
@@ -61,12 +62,12 @@ const MailInputModal = ({
         </ModalDescriptionText>
 
         <div className="flex items-center justify-center mb-10 w-full">
-          <button
+          <PrimaryButton
             disabled={!isValid || isSubmitting} //バリデーション表示,送信中はtureになる→true時はボタン無効
-            className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+            className="w-60 h-11 rounded-2xl font-medium shad active:scale-95 active:translate-y-[1px] "
           >
             次へ
-          </button>
+          </PrimaryButton>
         </div>
       </form>
 

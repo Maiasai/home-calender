@@ -10,6 +10,7 @@ import FilterPanel from '../../recipes/_components/FilterPanel';
 import RecipeCardSimple from './RecipeCardSimple';
 import CategoryFilterButtons from '../../recipes/_components/CategoryFilterButtons';
 import { CategoryFilter } from '../../recipes/_types/category/CategoryFilter';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   recipes: RecipeData[] | undefined;
@@ -85,20 +86,14 @@ const MealRecipeSelect = ({
   return (
     <>
       <div className="flex flex-row w-full justify-end mb-4">
-        <button
+        <PrimaryButton
           type="button"
           onClick={onBack}
           disabled={isDisabled}
-          className={`transition
-            ${isDisabled ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+          className="w-[80px] h-[30px]  font-medium active:scale-95 active:translate-y-[1px] "
         >
-          <Image
-            src="/images/save.png"
-            alt="保存ボタン"
-            width={70}
-            height={70}
-          />
-        </button>
+          保存
+        </PrimaryButton>
       </div>
 
       {/* 検索・絞り込み項目（レシピ一覧と検索周りに差異があるため、別コンポーネントで管理） */}

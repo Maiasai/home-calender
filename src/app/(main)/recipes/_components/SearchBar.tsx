@@ -1,6 +1,7 @@
 //検索絞り込み項目(レシピ一覧)
 'use client';
 
+import PrimaryButton from '@/components/button/PrimaryButton';
 import Image from 'next/image';
 
 type Props = {
@@ -48,25 +49,25 @@ const SearchBar = ({
 
       <div className="flex justify-center gap-2">
         <button
-          className="flex items-center justify-center gap-1 w-[114px] h-[34px] rounded-lg border border-orange-200 bg-orange-100 text-orange-600 text-sm font-medium shadow-sm transition-all duration-150 hover:bg-orange-200 active:scale-95"
+          className="flex items-center justify-center gap-1 w-[114px] h-[34px] rounded-lg border border-orange-200 bg-[#fffefe] text-orange-600 text-sm font-medium shadow-sm transition-all duration-150 hover:bg-[#f9e5d9] active:scale-95"
           onClick={() => setKeyword(inputKeyword)}
         >
           検索
         </button>
 
-        <button
-          className="w-[114px] h-[34px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
+        <PrimaryButton
+          className="w-[114px] h-[34px] text-sm font-semibold shadow-md  active:scale-95 active:shadow-sm"
           onClick={() => setRecipeModalOpen(true)}
         >
           レシピ追加
-        </button>
+        </PrimaryButton>
 
-        <button
-          className="w-[149px] h-[34px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
+        <PrimaryButton
+          className="w-[149px] h-[34px] rounded-lg text-sm font-semibold  active:scale-95 active:shadow-sm"
           onClick={() => setIsBulkMode(!isBulkMode)}
         >
           一括操作モード
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );

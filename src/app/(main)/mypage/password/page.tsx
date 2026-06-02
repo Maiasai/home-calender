@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { UserResponseType } from '@/app/api/mypage/_typs/UserResponseType';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/featcher';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 const ChangePassword = () => {
   //パスワード入力欄を 表示/非表示 にする boolean
@@ -238,14 +239,14 @@ const ChangePassword = () => {
           </div>
 
           <div className="flex justify-center">
-            <button
+            <PrimaryButton
               type="submit" //このボタンが押されたらフォームを送信する
               //|| → どちらかが true ならボタンは disabled
               disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
-              className={`w-[100px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`} //バリデーションエラーあり OR 送信中ならグレーアウト
+              className="w-[100px] h-[30px] rounded-lgactive:scale-95 active:translate-y-[1px] "
             >
               更新
-            </button>
+            </PrimaryButton>
           </div>
         </form>
       ) : (

@@ -17,6 +17,7 @@ import Image from 'next/image';
 import { Mode } from '../_typs/mode';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -147,13 +148,13 @@ const LoginModal = ({
 
           <div className="mt-8">
             <div className="flex justify-center">
-              <button
+              <PrimaryButton
                 type="submit"
                 disabled={!isValidsign || isSubmittingsign}
-                className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValidsign || isSubmittingsign ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+                className="w-60 h-11 font-medium  active:scale-95 active:translate-y-[1px]"
               >
                 ログイン
-              </button>
+              </PrimaryButton>
             </div>
             <div className="flex justify-center pt-2 border-b text-sm">
               <button

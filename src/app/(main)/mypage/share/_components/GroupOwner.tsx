@@ -15,6 +15,7 @@ import { EmailInviteType } from '../_type/EmailInviteType';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { InvitesType } from '@/app/api/family/_typs/InvitesType';
 import { KeyedMutator } from 'swr';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Filed = {
   //useFieldArray内部で一意キーを自動付与してるから以下の型になる
@@ -172,23 +173,23 @@ const GroupOwner = ({
                     </div>
                   ))}
                   {fields.length < MAX_FIELDS && (
-                    <button
+                    <PrimaryButton
                       type="button"
                       onClick={handleAdd}
-                      className="w-[80px] h-[30px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm mb-2"
+                      className="w-[80px] h-[30px] rounded-lg text-sm font-semibold transition-all duration-150 active:shadow-sm mb-2"
                     >
                       追加
-                    </button>
+                    </PrimaryButton>
                   )}
                 </div>
 
-                <button
+                <PrimaryButton
                   type="submit"
                   disabled={!isValid || isSubmitting}
-                  className={`w-[150px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+                  className="w-[150px] h-[30px] rounded-lg font-medium active:translate-y-[1px]"
                 >
                   一括招待ボタン
-                </button>
+                </PrimaryButton>
               </div>
               {/* 招待中メンバー */}
               <div className="flex flex-col mb-8">

@@ -15,6 +15,7 @@ import { MealSection } from './MealSection';
 import { buildMead } from '../_utils/buildMeal';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 import { useSupabaseSession } from '../_hooks/useSupabaseSession';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   data: MonthData;
@@ -79,13 +80,12 @@ const CalenderSelectedDate = ({
         <div className="flex justify-between items-center mb-4 ">
           {displayDate} の献立
           {isEmpty && (
-            <button onClick={() => setModalOpen(true)}>
-              <img
-                src="/images/menucreatebutton.png"
-                alt="献立作成ボタン"
-                width={80}
-              />
-            </button>
+            <PrimaryButton
+              onClick={() => setModalOpen(true)}
+              className="w-[80px] h-[30px] rounded-lg text-sm font-semibold  active:scale-95 active:shadow-sm"
+            >
+              献立作成
+            </PrimaryButton>
           )}
           {!isEmpty && meal && (
             <MenuButton

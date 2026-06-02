@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import LoginFlowModal from './login/_components/LoginFlowModal';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 const Home = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
@@ -97,13 +98,12 @@ const Home = () => {
             今日から献立づくりをもっとラクにしませんか？`}
           </p>
           <div className="relative flex justify-center mb-6 z-10">
-            <button //開くボタン
+            <PrimaryButton
               onClick={() => setLoginModalOpen(true)}
-              className="h-12 px-8 rounded-2xl bg-orange-500 text-white font-semibold 
-              text-sm shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
+              className="h-10 px-6"
             >
               新規登録　またはログイン
-            </button>
+            </PrimaryButton>
           </div>
 
           <LoginFlowModal //モーダル箇所

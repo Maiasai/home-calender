@@ -6,6 +6,7 @@ import useSWR from 'swr';
 import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 import { NotificationsType } from './_typs/NotificationsType';
 import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteRequest';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 const Notifications = () => {
   const { token } = useSupabaseSession();
@@ -82,12 +83,12 @@ const Notifications = () => {
               </p>
               {/* クリックで招待レコードのIDが呼ばれる */}
               <div className="flex gap-3 ml-6">
-                <button
+                <PrimaryButton
                   onClick={() => Join(d.id)}
-                  className="w-[80px] h-[25px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
+                  className="w-[80px] h-[25px]  text-sm font-semibold active:scale-95 active:shadow-sm"
                 >
                   参加
-                </button>
+                </PrimaryButton>
 
                 <button
                   onClick={() => onCancel({ id: d.id })}

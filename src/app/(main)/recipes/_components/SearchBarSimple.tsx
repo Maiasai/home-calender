@@ -28,7 +28,7 @@ const SearchBarSimple = ({
       />
 
       <button
-        className="w-[114px] h-[34px] rounded-lg border text-[#E4A000] bg-[#FFF8EB]"
+        className="flex items-center justify-center gap-1 w-[114px] h-[34px] rounded-lg border border-orange-200 bg-[#fffefe] text-orange-600 text-sm font-medium shadow-sm transition-all duration-150 hover:bg-[#f9e5d9] active:scale-95"
         onClick={() => setKeyword(inputKeyword)}
       >
         検索

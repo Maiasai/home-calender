@@ -2,11 +2,13 @@
 
 'use client';
 
+import PrimaryButton from '@/components/button/PrimaryButton';
+
 const RecipeEditButton = () => {
   return (
-    <button className="w-[100px] h-[30px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm">
+    <PrimaryButton className="w-[100px] h-[30px] text-sm font-semibold active:scale-95 active:shadow-sm">
       編集
-    </button>
+    </PrimaryButton>
   );
 };
 

@@ -18,6 +18,7 @@ import { NicknameData } from '../_typs/NicknameData';
 import PasswordInput from './PasswordInput';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -241,13 +242,13 @@ const NewRegistration = ({
             {''}
             に同意したものとみなします。
           </p>
-          <button
+          <PrimaryButton
             type="submit"
             disabled={!isValidsign || isSubmittingsign}
-            className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValidsign || isSubmittingsign ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+            className="w-60 h-11  font-medium  active:scale-95 active:translate-y-[1px]"
           >
             登録
-          </button>
+          </PrimaryButton>
 
           <button
             type="button"

@@ -12,6 +12,7 @@ import Image from 'next/image';
 import PageTitle from '../styles/PageTitle';
 import type { RecipeDetail } from '../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
+import PrimaryButton from '@/components/button/PrimaryButton';
 //RecipeDetail→typeを自動生成するコンポーネントのため、ここで明示的にtypeとしておく
 
 type Props = {
@@ -184,9 +185,9 @@ const RecipeDetail = ({ params }: Props) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <button className="w-[159px] h-[34px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm">
+              <PrimaryButton className="w-[159px] h-[34px]  text-sm font-semibold active:scale-95 active:shadow-sm">
                 レシピサイトを開く
-              </button>
+              </PrimaryButton>
             </a>
           )}
         </div>
