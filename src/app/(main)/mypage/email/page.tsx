@@ -92,7 +92,7 @@ const EmailChange = () => {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <nav className="flex justify-center border-b-2 mb-6">
+      <nav className="flex justify-center border-b-2 mb-10">
         メールアドレスの変更
       </nav>
       {data.authProvider === 'EMAIL' ? (

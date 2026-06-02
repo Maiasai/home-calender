@@ -43,7 +43,7 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
-          className="absolute right-2 top-1"
+          className="absolute right-2 top-1 mt-0.5"
         >
           <Image
             src={
@@ -52,8 +52,8 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
                 : '/images/eye-slash-solid-full.svg'
             }
             alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-            width={24}
-            height={24}
+            width={22}
+            height={22}
           />
         </button>
         <div className="pl-2 mb-2 mt-2">
@@ -78,7 +78,7 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
         <button
           type="button"
           onClick={() => setShowConfirm((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
-          className="absolute right-2 top-1"
+          className="absolute right-2 top-1 mt-0.5"
         >
           <Image
             src={
@@ -87,8 +87,8 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
                 : '/images/eye-slash-solid-full.svg'
             }
             alt={showConfirm ? 'パスワードを隠す' : 'パスワードを表示'}
-            width={24}
-            height={24}
+            width={22}
+            height={22}
           />
         </button>
         <div className="pl-2 mb-2 mt-2">

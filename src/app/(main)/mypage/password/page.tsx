@@ -102,7 +102,7 @@ const ChangePassword = () => {
 
       {data.authProvider === 'EMAIL' ? (
         <form onSubmit={handleSubmit(handleResetPassword)}>
-          <div className="flex flex-col max-w-md mx-auto mb-8">
+          <div className="flex flex-col max-w-md mx-auto mb-6">
             <div className="relative w-full max-w-[400px]">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -136,8 +136,8 @@ const ChangePassword = () => {
                       : '/images/eye-slash-solid-full.svg'
                   }
                   alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={24}
-                  height={24}
+                  width={22}
+                  height={22}
                 />
               </button>
             </div>
@@ -148,7 +148,7 @@ const ChangePassword = () => {
             </div>
           </div>
 
-          <div className="flex flex-col max-w-md mx-auto mb-8">
+          <div className="flex flex-col max-w-md mx-auto mb-6">
             <div className="relative w-full max-w-[400px]">
               <input
                 //パスワード表示切り替えの実装（ここでpsswordにするとHTMLが自動で⚫︎⚫︎⚫︎⚫︎表示にしてくれる）
@@ -183,8 +183,8 @@ const ChangePassword = () => {
                       : '/images/eye-slash-solid-full.svg'
                   }
                   alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={24}
-                  height={24}
+                  width={22}
+                  height={22}
                 />
               </button>
             </div>
@@ -222,8 +222,8 @@ const ChangePassword = () => {
                       : '/images/eye-slash-solid-full.svg'
                   }
                   alt={showConfirm ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={24}
-                  height={24}
+                  width={22}
+                  height={22}
                 />
               </button>
             </div>

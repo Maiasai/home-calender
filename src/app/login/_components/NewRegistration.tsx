@@ -50,11 +50,16 @@ const NewRegistration = ({
   const router = useRouter();
 
   const [isGoogleUser, setIsGoogleUser] = useState<boolean | null>(null);
+  const [isLoadingProvider, setIsLoadingProvider] = useState(true);
 
   //初回レンダー時　パスワード欄表示見え防止
-  if (isGoogleUser === null) {
-    setLoading(true);
-  }
+  useEffect(() => {
+    if (isGoogleUser === null) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [isGoogleUser]);
 
   // Google 連携ユーザーならパスワード欄を非表示
   useEffect(() => {
@@ -63,12 +68,8 @@ const NewRegistration = ({
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (user?.app_metadata.provider === 'google') {
-        setIsGoogleUser(true);
-        setLoading(false);
-      } else {
-        setIsGoogleUser(false);
-      }
+      setIsGoogleUser(user?.app_metadata.provider === 'google');
+      setIsLoadingProvider(false);
     };
 
     checkProvider();
