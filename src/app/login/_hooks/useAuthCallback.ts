@@ -63,7 +63,7 @@ export const useAuthCallback = () => {
           provider: user.app_metadata?.provider,
         }),
       });
-
+      console.log('token', token);
       //④DBにユーザーいるか確認
       const res = await fetch('/api/users/me', {
         credentials: 'include',

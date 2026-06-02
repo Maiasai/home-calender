@@ -49,7 +49,12 @@ const NewRegistration = ({
   const { token } = useSupabaseSession();
   const router = useRouter();
 
-  const [isGoogleUser, setIsGoogleUser] = useState(false);
+  const [isGoogleUser, setIsGoogleUser] = useState<boolean | null>(null);
+
+  //初回レンダー時　パスワード欄表示見え防止
+  if (isGoogleUser === null) {
+    setLoading(true);
+  }
 
   // Google 連携ユーザーならパスワード欄を非表示
   useEffect(() => {
@@ -60,6 +65,7 @@ const NewRegistration = ({
 
       if (user?.app_metadata.provider === 'google') {
         setIsGoogleUser(true);
+        setLoading(false);
       } else {
         setIsGoogleUser(false);
       }

@@ -35,7 +35,6 @@ export const POST = async (req: NextRequest) => {
       // ② family作成
       const family = await tx.family.create({
         data: {
-          name: 'My Family',
           ownerUserId: userId,
         },
       });

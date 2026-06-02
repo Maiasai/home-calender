@@ -29,7 +29,11 @@ const AuthCallbackPage = () => {
     });
   }, []); //callbackページは1回しか使わないから依存配列はなし
 
-  return <p>ログイン処理中...</p>; //①初回レンダー
+  return (
+    <p className="flex items-center justify-center min-h-screen">
+      ログイン処理中...
+    </p>
+  ); //①初回レンダー
 };
 
 export default AuthCallbackPage;
