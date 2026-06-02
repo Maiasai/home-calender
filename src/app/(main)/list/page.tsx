@@ -19,6 +19,7 @@ import {
 import SortableItem from './_components/SortableItem';
 import { GroupedItem } from './_typs/GroupedItem';
 import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 const List = () => {
   const { token } = useSupabaseSession();
@@ -168,37 +169,27 @@ const List = () => {
         買い物リスト
       </nav>
 
-      <div className=" rounded-3xl sm:p-2 min-h-[500px]">
+      <div className=" rounded-3xl md:p-2 min-h-[500px] bg-[#FAF7F2] p-2">
         <button
           onClick={() => {
             if (confirm('削除すると元に戻せません。本当に削除しますか？')) {
               deleateItems(groupedItems);
             }
           }}
-          className="flex items-center text-red-500 mb-6"
+          className="flex items-center text-[#e95c5c] font-bold mb-6 ml-2 bg-white shadow-md rounded-lg p-2 m-2"
         >
           <Image
             src="/images/delete_50dp.png"
             alt="削除"
-            width={30}
-            height={30}
+            width={20}
+            height={20}
           />
-          <p className="ml-2 text-sm">全削除</p>
+          <p className="mx-1 text-sm">全削除</p>
         </button>
 
-        <div className="flex flex-col justify-between items-center mb-4">
+        <div className="flex flex-col justify-between items-center mb-4 p-1">
           {/* リスト */}
-          <div className="w-full mx-auto max-w-sm sm:max-w-3xl bg-white rounded-sm shadow-md overflow-hidden">
-            {/* ヘッダー */}
-
-            <div className="grid grid-cols-[70px_1fr_80px_70px_15px] sm:grid-cols-[70px_1fr_70px_60px_300px]  items-center px-2 py-3 border-b bg-gray-50 text-sm font-semibold text-gray-600">
-              <div></div>
-              <div>品名</div>
-              <div>数量</div>
-              <div>単位</div>
-              <div></div>
-            </div>
-
+          <div className="w-full mx-auto max-w-sm md:max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
             <DndContext
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
@@ -218,13 +209,13 @@ const List = () => {
                         <div className="flex justify-between w-full">
                           <div className="min-w-0 flex-1">
                             {/* 削除アイコン */}
-                            <div className="flex w-full items-center gap-2 min-w-0">
+                            <div className="flex w-full items-center gap-1 md:gap-2 min-w-0">
                               <button
                                 className="shrink-0"
                                 onClick={() => deleateItem(item.id)}
                               >
                                 <Image
-                                  src="/images/Frame174.png"
+                                  src="/images/close_24dp.png"
                                   alt="削除アイコン"
                                   width={20}
                                   height={20}
@@ -255,7 +246,7 @@ const List = () => {
                               {/* テキスト（左揃え） */}
                               {/* 品名 */}
                               <input
-                                className="flex-1  min-w-0 max-w-[140px] sm:max-w-[220px] pl-2 border border-gray-300 rounded-lg p-1"
+                                className="flex-1  min-w-0 max-w-[140px] md:max-w-[220px] pl-2 border border-gray-300 rounded-lg p-1"
                                 disabled={item.checked}
                                 defaultValue={item.name}
                                 onBlur={(e) =>
@@ -267,7 +258,7 @@ const List = () => {
                               {/* 数量 */}
                               <input
                                 type="number"
-                                className="w-[70px] px-2 border border-gray-300 rounded-lg p-1"
+                                className="w-12 md:w-20 px-2 border border-gray-300 rounded-lg p-1"
                                 disabled={item.checked}
                                 defaultValue={item.totalQuantity}
                                 onBlur={(e) => {
@@ -287,7 +278,7 @@ const List = () => {
                                 }}
                               />
                               <select
-                                className="w-20 h-9 px-2 border border-gray-300 rounded-lg"
+                                className="w-17 h-9 px-2 border border-gray-300 rounded-lg"
                                 disabled={item.checked}
                                 value={item.unit?.id ?? ''} //ここで最初に何を表示するか指定＊このValueはoptionのvalueから来ている
                                 onChange={(
@@ -317,7 +308,7 @@ const List = () => {
 
                           <div
                             {...listeners}
-                            className="shrink-0 cursor-grab mx-2 "
+                            className="shrink-0 cursor-grab ml-3 mr-1 mt-1"
                           >
                             <Image
                               src="/images/Sort_50dp.png"
@@ -335,12 +326,9 @@ const List = () => {
             </DndContext>
           </div>
 
-          <button
-            onClick={addItem}
-            className="w-[148px] h-[30px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm mt-10"
-          >
+          <PrimaryButton className="w-[148px] h-[30px] mt-10" onClick={addItem}>
             ＋追加
-          </button>
+          </PrimaryButton>
         </div>
       </div>
     </div>
