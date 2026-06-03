@@ -113,7 +113,7 @@ export const POST = async (request: NextRequest) => {
         type: 'MENU_CREATED',
       });
     });
-    return NextResponse.json(mealplandata, { status: 200 });
+    return NextResponse.json({ message: 'created' }, { status: 200 });
   } catch (error) {
     console.error('API ERROR:', error);
 
@@ -165,7 +165,7 @@ export const PUT = async (request: NextRequest) => {
         where: { menuId: body.id },
       });
 
-      const newdata = await tx.menuRecipe.createMany({
+      await tx.menuRecipe.createMany({
         data: body.recipes.map((r) => ({
           menuId: body.id,
           recipeId: r.recipeId,
@@ -179,7 +179,7 @@ export const PUT = async (request: NextRequest) => {
         type: 'MENU_UPDATED',
       });
     });
-    return NextResponse.json(mealEditData, { status: 200 });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
   }
