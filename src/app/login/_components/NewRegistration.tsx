@@ -222,7 +222,7 @@ const NewRegistration = ({
           <p className="whitespace-pre-line text-center text-xs">
             登録することで、{''}
             <a
-              href="/login/terms"
+              href="/terms"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 underline hover:text-blue-700"
@@ -232,7 +232,7 @@ const NewRegistration = ({
             {''}
             および{''}
             <a
-              href="/login/privacy"
+              href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 underline hover:text-blue-700"

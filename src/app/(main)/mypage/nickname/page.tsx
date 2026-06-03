@@ -85,7 +85,7 @@ const NickName = () => {
                 },
               })}
               placeholder="ニックネームを入力"
-              className="w-full  max-w-[400px] border px-2 py-1 rounded"
+              className="w-full  max-w-[400px] border px-2 py-1 rounded placeholder:text-sm"
             />
             <div className="my-2 ml-2">
               <ErrorMessage error={errors.nickname} />
@@ -93,7 +93,7 @@ const NickName = () => {
 
             <div className="ml-3">
               <p className="flex  text-xs sm:text-sm text-gray-400 mb-1">
-                ※20文字以内にする必要があります
+                ※10文字以内にする必要があります
               </p>
               <p className="flex  text-xs sm:text-sm text-gray-400 mb-10">
                 ※プロフィールに表示され、他のユーザーが閲覧できます。

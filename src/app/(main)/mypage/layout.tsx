@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname();
+  const pathname = usePathname(); //現在開いているURL
 
   //メニュー項目
   const accountMenuItems = [
@@ -15,6 +15,11 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   const shareMenuItems = [{ name: 'アプリの共有設定', href: '/mypage/share' }];
+
+  const aboutApp = [
+    { name: '利用規約', href: '/terms' },
+    { name: 'プライバシーポリシー', href: '/privacy' },
+  ];
 
   return (
     <div className="flex max-w-3xl mx-auto mt-10 gap-1 sm:gap-2">
@@ -27,7 +32,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
             アカウント
           </h2>
 
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 ml-2">
             {accountMenuItems.map((item) => (
               <Link
                 key={item.href}
@@ -45,11 +50,11 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           {/* 共有設定 */}
-          <h2 className="font-bold text-lg mb-4 border-b pb-1 ml-2 mt-8">
+          <h2 className="font-bold text-sm mb-4 border-b pb-1 ml-2 mt-8">
             共有設定
           </h2>
 
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 ml-2">
             {shareMenuItems.map((item) => (
               <Link
                 key={item.href}
@@ -61,6 +66,28 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
                 }`}
               >
                 <span className="text-xs  sm:text-sm">{item.name}</span>
+                <span>　›</span>
+              </Link>
+            ))}
+          </div>
+
+          {/* アプリについて */}
+          <h2 className="font-bold text-sm mb-4 border-b pb-1 ml-2 mt-8">
+            アプリについて
+          </h2>
+
+          <div className="flex flex-col gap-1 ml-2">
+            {aboutApp.map((a) => (
+              <Link
+                key={a.href}
+                href={a.href}
+                className={`p-1 sm:p-3 rounded-lg transition-colors${
+                  pathname === a.href
+                    ? 'bg-orange-100 text-gray-400 font-bold'
+                    : 'hover:bg-gray-100'
+                }`}
+              >
+                <span className="text-xs  sm:text-sm">{a.name}</span>
                 <span>　›</span>
               </Link>
             ))}

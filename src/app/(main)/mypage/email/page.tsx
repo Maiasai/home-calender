@@ -125,7 +125,7 @@ const EmailChange = () => {
                   },
                 })}
                 placeholder="exsample@email.com"
-                className="w-full  max-w-[400px] border px-2 py-1 rounded  ml-1"
+                className="w-full  max-w-[400px] border px-2 py-1 rounded  ml-1 placeholder:text-sm"
               />
               <div className="ml-2">
                 <ErrorMessage error={errors.email} />
