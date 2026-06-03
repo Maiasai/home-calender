@@ -18,6 +18,7 @@ import { NicknameData } from '../_typs/NicknameData';
 import PasswordInput from './PasswordInput';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -49,7 +50,17 @@ const NewRegistration = ({
   const { token } = useSupabaseSession();
   const router = useRouter();
 
-  const [isGoogleUser, setIsGoogleUser] = useState(false);
+  const [isGoogleUser, setIsGoogleUser] = useState<boolean | null>(null);
+  const [isLoadingProvider, setIsLoadingProvider] = useState(true);
+
+  //初回レンダー時　パスワード欄表示見え防止
+  useEffect(() => {
+    if (isGoogleUser === null) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [isGoogleUser]);
 
   // Google 連携ユーザーならパスワード欄を非表示
   useEffect(() => {
@@ -58,11 +69,8 @@ const NewRegistration = ({
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (user?.app_metadata.provider === 'google') {
-        setIsGoogleUser(true);
-      } else {
-        setIsGoogleUser(false);
-      }
+      setIsGoogleUser(user?.app_metadata.provider === 'google');
+      setIsLoadingProvider(false);
     };
 
     checkProvider();
@@ -234,13 +242,14 @@ const NewRegistration = ({
             {''}
             に同意したものとみなします。
           </p>
-          <button
+          <PrimaryButton
             type="submit"
             disabled={!isValidsign || isSubmittingsign}
-            className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValidsign || isSubmittingsign ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+            className="w-60 h-11"
+            variant="primary"
           >
             登録
-          </button>
+          </PrimaryButton>
 
           <button
             type="button"

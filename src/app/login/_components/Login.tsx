@@ -17,6 +17,7 @@ import Image from 'next/image';
 import { Mode } from '../_typs/mode';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -125,7 +126,7 @@ const LoginModal = ({
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
-              className="absolute right-2 top-1"
+              className="absolute right-2 top-1 mt-0.5"
             >
               <Image
                 src={
@@ -134,8 +135,8 @@ const LoginModal = ({
                     : '/images/eye-slash-solid-full.svg'
                 }
                 alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                width={24}
-                height={24}
+                width={22}
+                height={22}
               />
             </button>
           </div>
@@ -147,13 +148,14 @@ const LoginModal = ({
 
           <div className="mt-8">
             <div className="flex justify-center">
-              <button
+              <PrimaryButton
                 type="submit"
                 disabled={!isValidsign || isSubmittingsign}
-                className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValidsign || isSubmittingsign ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+                className="w-60 h-11"
+                variant="primary"
               >
                 ログイン
-              </button>
+              </PrimaryButton>
             </div>
             <div className="flex justify-center pt-2 border-b text-sm">
               <button

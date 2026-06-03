@@ -9,6 +9,7 @@ import Image from 'next/image';
 import FavoriteButton from '@/app/components/image/FavoriteButton';
 import CookedButton from '@/app/components/image/CookedButton';
 import toggleStatus from '../../home/_hooks/toggleStatus';
+import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 
 type Props = {
   recipe: RecipeData;
@@ -25,8 +26,11 @@ const RecipeCard = ({
   setSelectedIds,
   mutate,
 }: Props) => {
-  //isFav→現在のお気に入り状態
-  //DBから取得済みのデータ が props してくる
+  const { token } = useSupabaseSession();
+
+  //親からmapしてきたものがここに入る。
+  //ここで「このレシピはお気に入り/作ったことある済みか？」を true / false に変換している
+  //　※　!!undefinedは「false」にしてる
   const isFav = !!recipe.userRecipeStatus?.[0]?.isFavorite; //!!→返ってくるものをbooleanに変換できる。undefinedの可能性もあるため、ここでfalseにしてる
   const isCoo = !!recipe.userRecipeStatus?.[0]?.hasCooked;
 
@@ -86,8 +90,10 @@ const RecipeCard = ({
             <FavoriteButton
               recipeId={recipe.id}
               isFavorite={isFav}
-              onToggle={() =>
-                toggleStatus(recipe.id, isFav, 'isFavorite', mutate)
+              onToggle={(id, current) =>
+                //③FavoriteButtonからきた「recipeId,isFavorite」が「id, current」に入って
+                //toggleStatusが実行
+                toggleStatus(id, current, 'isFavorite', mutate, token)
               }
             />
 
@@ -96,7 +102,7 @@ const RecipeCard = ({
               isCooked={isCoo}
               onToggle={() =>
                 //toggleStatusがDB更新を担当
-                toggleStatus(recipe.id, isCoo, 'hasCooked', mutate)
+                toggleStatus(recipe.id, isCoo, 'hasCooked', mutate, token)
               }
             />
           </div>

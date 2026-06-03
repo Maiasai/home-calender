@@ -4,14 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSupabaseSession } from './useSupabaseSession';
 import { GetMeResponse } from '@/app/api/_types/ApiResponse';
 import { fetcher } from '@/lib/featcher';
-
-type UserProfile = {
-  id: string;
-  email: string;
-  nickname: string | null;
-  activeFamilyId: string | null;
-  homeFamilyId: string | null;
-};
+import { UserProfile } from '../_typs/UserProfile';
 
 export const useUserProfile = () => {
   const { session, isLoading } = useSupabaseSession();

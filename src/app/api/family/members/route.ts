@@ -4,7 +4,6 @@
 
 import requireUser from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { LeaveMemberType } from '../_typs/LeaveMemberType';
 import { prisma } from '@/lib/prisma';
 import { MembersTyps } from '../_typs/MembersTyps';
 
@@ -99,7 +98,15 @@ export const DELETE = async (request: NextRequest) => {
         },
       });
 
-      // ② activeFamilyIdを自分のhomeFamilyIdへ戻す
+      // ② FamilyMemberから削除
+      await tx.familyInvite.deleteMany({
+        where: {
+          familyId: member.familyId,
+          email: dbUser.email,
+        },
+      });
+
+      // ③ activeFamilyIdを自分のhomeFamilyIdへ戻す
       await tx.user.update({
         where: {
           id: dbUser.id,

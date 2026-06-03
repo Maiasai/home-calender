@@ -1,6 +1,7 @@
 //検索絞り込み項目(レシピ一覧)
 'use client';
 
+import PrimaryButton from '@/components/button/PrimaryButton';
 import Image from 'next/image';
 
 type Props = {
@@ -47,26 +48,29 @@ const SearchBar = ({
       </div>
 
       <div className="flex justify-center gap-2">
-        <button
-          className="flex items-center justify-center gap-1 w-[114px] h-[34px] rounded-lg border border-orange-200 bg-orange-100 text-orange-600 text-sm font-medium shadow-sm transition-all duration-150 hover:bg-orange-200 active:scale-95"
+        <PrimaryButton
+          className="flex items-center justify-center gap-1 w-[114px] h-[34px]"
           onClick={() => setKeyword(inputKeyword)}
+          variant="secondary"
         >
           検索
-        </button>
+        </PrimaryButton>
 
-        <button
-          className="w-[114px] h-[34px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
+        <PrimaryButton
+          className="w-[114px] h-[34px]"
+          variant="primary"
           onClick={() => setRecipeModalOpen(true)}
         >
           レシピ追加
-        </button>
+        </PrimaryButton>
 
-        <button
-          className="w-[149px] h-[34px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
+        <PrimaryButton
+          className="w-[149px] h-[34px]"
+          variant="primary"
           onClick={() => setIsBulkMode(!isBulkMode)}
         >
           一括操作モード
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );

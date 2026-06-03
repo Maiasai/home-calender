@@ -6,6 +6,7 @@ import useSWR from 'swr';
 import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 import { NotificationsType } from './_typs/NotificationsType';
 import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteRequest';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 const Notifications = () => {
   const { token } = useSupabaseSession();
@@ -13,6 +14,8 @@ const Notifications = () => {
     '/api/notifications',
     fetcher,
   );
+
+  const hasUnread = data && data.length > 0; //未読判定用
 
   //参加処理
   const Join = async (inviteId: string) => {
@@ -74,29 +77,31 @@ const Notifications = () => {
 
         {data?.map((d: NotificationsType) => (
           <div key={d.id} className="border rounded-lg p-4 shadow-sm">
-            {d.status === 'PENDING' && (
-              <div>
-                <p className="font-semibold mb-3">
-                  {d.nickname}さんから招待が届いています
-                </p>
-                {/* クリックで招待レコードのIDが呼ばれる */}
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => Join(d.id)}
-                    className="w-[80px] h-[25px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
-                  >
-                    参加
-                  </button>
+            <div className="relative">
+              <p className="font-semibold mb-3 ml-6">
+                {d.nickname}さんから招待が届いています
+              </p>
+              {/* クリックで招待レコードのIDが呼ばれる */}
+              <div className="flex gap-3 ml-6">
+                <PrimaryButton
+                  onClick={() => Join(d.id)}
+                  className="w-[80px] h-[25px]"
+                  variant="primary"
+                >
+                  参加
+                </PrimaryButton>
 
-                  <button
-                    onClick={() => onCancel({ id: d.id })}
-                    className="w-[80px] h-[25px] rounded-lg bg-red-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-red-600 active:scale-95 active:shadow-sm"
-                  >
-                    辞退
-                  </button>
-                </div>
+                <button
+                  onClick={() => onCancel({ id: d.id })}
+                  className="w-[80px] h-[25px] rounded-lg bg-red-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-red-600 active:scale-95 active:shadow-sm"
+                >
+                  辞退
+                </button>
               </div>
-            )}
+              {hasUnread && (
+                <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
+              )}
+            </div>
           </div>
         ))}
       </div>

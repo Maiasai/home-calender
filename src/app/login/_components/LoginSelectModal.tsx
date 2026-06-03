@@ -7,6 +7,7 @@ import { ModalStep } from '../_typs/ModalStep';
 import signInWithGoogle from './SignInWithGoogle';
 import { Mail } from 'lucide-react';
 import { GoogleMaterial } from './GoogleMeterial';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<ModalStep>>;
@@ -42,15 +43,15 @@ const LoginSelectModal = ({ setStep }: Props) => {
       </div>
 
       <div className="flex justify-center">
-        <button
+        <PrimaryButton
           onClick={() => setStep('email')}
           className="flex items-center justify-center gap-2
-            w-40 h-11 rounded-2xl bg-orange-500 text-white text-sm font-medium
-            shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95"
+            w-40 h-11"
+          variant="primary"
         >
           <Mail size={18} />
           メールで続ける
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );

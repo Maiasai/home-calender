@@ -11,6 +11,7 @@ import { fetcher } from '@/lib/featcher';
 import { supabase } from '@/lib/supabase';
 import { useSearchParams } from 'next/navigation';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 const EmailChange = () => {
   const { token } = useSupabaseSession();
@@ -92,7 +93,7 @@ const EmailChange = () => {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <nav className="flex justify-center border-b-2 mb-6">
+      <nav className="flex justify-center border-b-2 mb-10">
         メールアドレスの変更
       </nav>
       {data.authProvider === 'EMAIL' ? (
@@ -135,14 +136,15 @@ const EmailChange = () => {
               </p>
 
               <div className="flex justify-center">
-                <button
+                <PrimaryButton
                   type="submit" //このボタンが押されたらフォームを送信する
                   //|| → どちらかが true ならボタンは disabled
                   disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
-                  className={`w-[100px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`} //バリデーションエラーあり OR 送信中ならグレーアウト
+                  className="w-[100px] h-[30px]"
+                  variant="primary"
                 >
                   更新
-                </button>
+                </PrimaryButton>
               </div>
             </div>
           </div>

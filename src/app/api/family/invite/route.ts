@@ -53,18 +53,15 @@ export const POST = async (request: NextRequest) => {
           { status: 400 },
         );
       }
-      console.log('existingMember', existingMember);
 
       // ③ 既存招待チェック
       const existingInvite = await prisma.familyInvite.findFirst({
         where: { familyId, email },
       });
 
-      console.log('existingInvite', existingInvite);
-
       if (existingInvite) {
         return NextResponse.json(
-          { message: 'already invited' },
+          { message: '既に招待済みのメンバーです' },
           { status: 400 },
         );
       }
@@ -74,7 +71,6 @@ export const POST = async (request: NextRequest) => {
         data: {
           familyId: familyId,
           email: email, //招待相手
-          status: 'PENDING',
         },
       });
     }

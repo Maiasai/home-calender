@@ -12,6 +12,7 @@ import { SignupData } from '@/app/login/_typs/SignupData';
 import { supabase } from '@/lib/supabase';
 import { ModalStep } from '../_typs/ModalStep';
 import PasswordInput from './PasswordInput';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   registersign: UseFormRegister<SignupData>;
@@ -95,14 +96,15 @@ const ResetPassword = ({
         />
 
         <div className="flex justify-center">
-          <button
+          <PrimaryButton
             type="submit" //このボタンが押されたらフォームを送信する
             //|| → どちらかが true ならボタンは disabled
             disabled={!isValidsign || isSubmittingsign} // バリデーションエラーあり or 送信中なら押せない
-            className={`w-[100px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValidsign || isSubmittingsign ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`} //バリデーションエラーあり OR 送信中ならグレーアウト
+            className="w-[100px] h-[30px]"
+            variant="primary"
           >
             更新
-          </button>
+          </PrimaryButton>
         </div>
       </form>
     </div>

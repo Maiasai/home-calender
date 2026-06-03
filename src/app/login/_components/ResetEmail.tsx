@@ -9,6 +9,7 @@ import {
   UseFormRegister,
 } from 'react-hook-form';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   register: UseFormRegister<EmailFormValues>;
@@ -51,13 +52,14 @@ const ResetEmail = ({
           </div>
         </div>
         <div className="flex justify-center mt-4">
-          <button
+          <PrimaryButton
             type="submit"
             disabled={!isValid || isSubmitting}
-            className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+            className="w-60 h-11"
+            variant="primary"
           >
             認証メールを送信ボタン
-          </button>
+          </PrimaryButton>
         </div>
       </div>
     </form>

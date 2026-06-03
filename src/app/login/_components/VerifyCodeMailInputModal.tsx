@@ -10,6 +10,7 @@ import {
 import { VerifyCodeFormValues } from '@/app/login/_typs/VerifyCodeFormValues';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import ModalDescriptionText from './ModalDescriptionText';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   handleSubmitOtp: UseFormHandleSubmit<VerifyCodeFormValues>;
@@ -63,13 +64,14 @@ const VerifyCodeMailInputModal = ({
         </div>
 
         <div className="flex items-center justify-center mb-2">
-          <button
+          <PrimaryButton
             type="submit"
             disabled={!otpValid || otpSubmit} //バリデーション表示,送信中はtureになる→true時はボタン無効
-            className={`w-60 h-11 rounded-2xl bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!otpValid || otpSubmit ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+            className="w-60 h-11"
+            variant="primary"
           >
             確認する
-          </button>
+          </PrimaryButton>
         </div>
         <div className="flex justify-center items-center">
           <button

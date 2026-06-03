@@ -18,9 +18,8 @@ const toggleStatus = async (
   current: boolean, // ← isFav 現在の状態（お気に入りかどうか / 作ったことあるか）
   key: StatusKey, // ← "isFavorite" どのステータスを更新するか
   mutate: KeyedMutator<RecipeData[]>, // ← mutate を引数で受け取る
+  token: string | null,
 ) => {
-  const { token } = useSupabaseSession();
-
   // UIの先行更新（optimistic update）
   mutate((recipes: RecipeData[] | undefined) => {
     //このrecipesは/api/recipesから取ってきたキャッシュデータ

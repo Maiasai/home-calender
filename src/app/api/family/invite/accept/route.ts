@@ -10,11 +10,19 @@ export const POST = async (request: NextRequest) => {
     const user = await requireUser(request);
     const body = await request.json();
 
-    const dbUser = await prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
+    const [dbUser, invite] = await Promise.all([
+      prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+      }),
+
+      prisma.familyInvite.findUnique({
+        where: {
+          id: body.inviteId,
+        },
+      }),
+    ]);
 
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
@@ -22,11 +30,6 @@ export const POST = async (request: NextRequest) => {
         { status: 400 },
       );
     }
-    const invite = await prisma.familyInvite.findUnique({
-      where: {
-        id: body.inviteId,
-      },
-    });
 
     if (!invite) {
       return NextResponse.json(
@@ -38,13 +41,6 @@ export const POST = async (request: NextRequest) => {
     if (invite.email !== dbUser.email) {
       return NextResponse.json(
         { message: 'この招待を承認する権限がありません' },
-        { status: 403 },
-      );
-    }
-
-    if (invite.status !== 'PENDING') {
-      return NextResponse.json(
-        { message: 'この招待はすでに処理されています' },
         { status: 403 },
       );
     }
@@ -68,12 +64,10 @@ export const POST = async (request: NextRequest) => {
         },
       }),
 
-      prisma.familyInvite.update({
+      //招待中テーブルから削除
+      prisma.familyInvite.delete({
         where: {
           id: invite.id,
-        },
-        data: {
-          status: 'ACCEPTED',
         },
       }),
     ]);

@@ -14,6 +14,7 @@ import { truncateRecipeTitle } from '@/utils/format';
 import { UiMealType } from '../_typs/UiMealType';
 import { getMealIcon } from '../_utils/getMealIcon';
 import { useSupabaseSession } from '../_hooks/useSupabaseSession';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   onSelect: (step: MealModalStep) => void;
@@ -114,39 +115,32 @@ const MealModal = ({
     <>
       <div className="flex flex-col">
         <div className="flex justify-end w-full mb-2">
-          <button
+          <PrimaryButton
             onClick={onSubmit}
             disabled={isDisabled}
-            className={`transition
-              ${isDisabled ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+            className="w-[80px] h-[30px]"
+            variant="primary"
           >
-            <Image
-              src="/images/create.png"
-              alt="登録ボタン"
-              width={70}
-              height={70}
-            />
-          </button>
+            登録
+          </PrimaryButton>
         </div>
 
         <div className="flex items-center gap-2 ml-auto">
-          <button onClick={() => onSelect('customize')}>
-            <Image
-              src="/images/customize.png"
-              alt="カスタマイズ"
-              width={100}
-              height={70}
-            />
-          </button>
+          <PrimaryButton
+            onClick={() => onSelect('customize')}
+            className="flex items-center justify-center gap-1 w-[114px] h-[34px] "
+            variant="secondary"
+          >
+            カスタマイズ
+          </PrimaryButton>
 
-          <button onClick={() => onSelect('recipeSelect')}>
-            <Image
-              src="/images/selectfromrecipe.png"
-              alt="レシピから選択"
-              width={120}
-              height={70}
-            />
-          </button>
+          <PrimaryButton
+            onClick={() => onSelect('recipeSelect')}
+            className="w-[130px] h-[30px]"
+            variant="primary"
+          >
+            ＋レシピから選択
+          </PrimaryButton>
         </div>
       </div>
       {hasUnselected && (

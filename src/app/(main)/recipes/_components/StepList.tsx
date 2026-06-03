@@ -6,6 +6,7 @@ import ErrorMessage from './ErrorMessage';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import Image from 'next/image';
 import DeleteIcon from '@/app/components/image/deleteicon';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 export type Step = {
   recipestep: string;
@@ -65,13 +66,14 @@ const StepList = ({ fields, append, remove, register, errors }: Props) => {
 
       {fields.length < 20 && ( //最大数超えたら追加ボタンを非表示
         <div className="flex justify-center">
-          <button
+          <PrimaryButton
             type="button"
             onClick={() => append({ recipestep: '' })}
-            className="w-[150px] h-[30px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
+            className="w-[150px] h-[30px]"
+            variant="primary"
           >
             ＋手順を追加
-          </button>
+          </PrimaryButton>
         </div>
       )}
     </div>

@@ -8,9 +8,15 @@ type Props = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   handleLogout: () => Promise<void>;
+  hasUnread?: boolean;
 };
 
-export const Hamburger = ({ open, setOpen, handleLogout }: Props) => {
+export const Hamburger = ({
+  open,
+  setOpen,
+  handleLogout,
+  hasUnread,
+}: Props) => {
   //メニュー開いた時、メニュー外スクロール不可にする
   useBodyScrollLock({ open });
 
@@ -50,9 +56,12 @@ export const Hamburger = ({ open, setOpen, handleLogout }: Props) => {
           <Link
             href="/notifications"
             onClick={() => setOpen(false)}
-            className="w-full ml-3 border-b"
+            className="relative inline-flex items-center border-b ml-3"
           >
             通知一覧
+            {hasUnread && (
+              <span className="ml-2 w-2 h-2 bg-red-500 rounded-full" />
+            )}
           </Link>
           <Link
             href="/home"

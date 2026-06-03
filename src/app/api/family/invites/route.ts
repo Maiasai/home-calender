@@ -32,7 +32,6 @@ export const GET = async (request: NextRequest) => {
     const formatted: InvitesType[] = invites.map((m) => ({
       id: m.id,
       email: m.email,
-      status: m.status,
       createdAt: m.createdAt,
     }));
     return NextResponse.json(formatted, { status: 200 });

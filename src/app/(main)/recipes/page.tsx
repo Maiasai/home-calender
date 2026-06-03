@@ -117,11 +117,6 @@ const RecipesPage = () => {
         {/* カテゴリ絞り込み※クリック時にセット */}
         <CategoryFilterButtons category={category} setCategory={setCategory} />
 
-        {/* 検索結果ない場合 */}
-        {!isLoading && recipes?.length === 0 && (
-          <p className="text-center mt-4">該当のレシピがありませんでした</p>
-        )}
-
         {/* 一括操作モード */}
         {isBulkMode && (
           <div className="flex items-center mb-5 gap-3">
@@ -159,6 +154,11 @@ const RecipesPage = () => {
               </button>
             </div>
           </div>
+        )}
+
+        {/* 検索結果ない場合 */}
+        {!isLoading && recipes?.length === 0 && (
+          <p className="text-center mt-10">該当のレシピがありませんでした</p>
         )}
 
         {/* レシピカード */}

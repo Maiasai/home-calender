@@ -26,7 +26,6 @@ export const GET = async (request: NextRequest) => {
     const data = await prisma.familyInvite.findMany({
       where: {
         email: dbUser.email,
-        status: 'PENDING',
       },
       include: {
         family: {
@@ -41,9 +40,7 @@ export const GET = async (request: NextRequest) => {
       id: m.id,
       familyId: m.familyId,
       email: m.email,
-      status: m.status,
       createdAt: m.family.createdAt,
-      name: m.family.name,
       nickname: m.family.owner.nickname ?? '',
     }));
 

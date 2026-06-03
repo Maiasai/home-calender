@@ -15,6 +15,7 @@ import ErrorMessage from './ErrorMessage';
 import Image from 'next/image';
 import DeleteIcon from '@/app/components/image/deleteicon';
 import { UnitData } from '@/app/api/units/route';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   //このコンポーネントが親から受け取る「データと関数の一覧」
@@ -147,14 +148,15 @@ const IngredientList = ({
 
       {fields.length < 20 && ( //最大数超えたら追加ボタンを非表示
         <div className="flex justify-center">
-          <button
+          <PrimaryButton
             type="button"
             disabled={fields.length >= MAX_INGREDIENTS}
             onClick={() => append({ name: '', unitId: '' })} //amountの型定義を?にすることでonClickに記載をしない（項目自体は必須だが、初期値を""で書けないため）
-            className="w-[148px] h-[30px] rounded-lg bg-orange-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-orange-600 active:scale-95 active:shadow-sm"
+            className="w-[148px] h-[30px] mb-2"
+            variant="primary"
           >
             ＋材料を追加
-          </button>
+          </PrimaryButton>
         </div>
       )}
 

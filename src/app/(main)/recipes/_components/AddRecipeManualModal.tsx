@@ -17,6 +17,7 @@ import { RecipeModalStep } from '../_types/RecipeModalStep';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import { RecipeData } from '../_types/RecipeTypes';
 import { KeyedMutator } from 'swr';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   onClose: () => void;
@@ -177,13 +178,14 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
           </div>
 
           <div className="flex justify-center mb-6">
-            <button
+            <PrimaryButton
               type="submit" //このボタンが押されたらフォームを送信する
               disabled={!isValid || isSubmitting} //バリデーション表示,送信中はtureになる→true時はボタン無効
-              className={`w-[160px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`}
+              variant="primary"
+              className="w-[160px] h-[30px]"
             >
               レシピを登録する
-            </button>
+            </PrimaryButton>
           </div>
         </form>
       </div>
