@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import requireUser from '@/lib/auth';
 import { RecipeCategory } from '@/generated/prisma';
 import { CreatePostRequestBody } from './_types/CreatePostRequestBody';
+import { createNotification } from '@/lib/notification';
 
 export const runtime = 'nodejs';
 
@@ -131,41 +132,39 @@ export const GET = async (request: NextRequest) => {
 //レシピ新規作成
 
 export const POST = async (request: NextRequest) => {
-  try {
-    const user = await requireUser(request);
-    const dbUser = await prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
-    const userId = user.id;
+  const user = await requireUser(request);
+  const dbUser = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+  const userId = user.id;
 
-    const body: CreatePostRequestBody = await request.json();
-    const {
-      title,
-      memo,
-      servings,
-      thumbnailImageUrl,
-      ingredients,
-      steps,
-      category,
-    } = body;
+  const body: CreatePostRequestBody = await request.json();
+  const {
+    title,
+    memo,
+    servings,
+    thumbnailImageUrl,
+    ingredients,
+    steps,
+    category,
+  } = body;
 
-    if (!body.title) {
-      return NextResponse.json(
-        { message: ' タイトルは必須です ' },
-        { status: 400 },
-      );
-    }
+  if (!body.title) {
+    return NextResponse.json(
+      { message: ' タイトルは必須です ' },
+      { status: 400 },
+    );
+  }
 
-    if (!dbUser?.activeFamilyId) {
-      return NextResponse.json(
-        { message: 'family not found' },
-        { status: 404 },
-      );
-    }
+  if (!dbUser?.activeFamilyId) {
+    return NextResponse.json({ message: 'family not found' }, { status: 404 });
+  }
+  const activeFamilyId = dbUser.activeFamilyId;
 
-    const recipedata = await prisma.recipe.create({
+  const recipedata = await prisma.$transaction(async (tx) => {
+    const recipe = await tx.recipe.create({
       //テーブル操作。データベースに保存する処理
       data: {
         title,
@@ -180,7 +179,7 @@ export const POST = async (request: NextRequest) => {
         },
         family: {
           connect: {
-            id: dbUser.activeFamilyId, //所属family
+            id: activeFamilyId, //所属family
           },
         },
       },
@@ -194,7 +193,7 @@ export const POST = async (request: NextRequest) => {
 
         if (!ingre.name || !ingre.unitId) continue;
 
-        await prisma.recipeIngredient.create({
+        await tx.recipeIngredient.create({
           //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
           data: {
             quantityText: ingre.amount ?? 0,
@@ -236,7 +235,7 @@ export const POST = async (request: NextRequest) => {
     if (steps?.length) {
       for (let index = 0; index < steps.length; index++) {
         const step = steps[index];
-        await prisma.recipeStep.create({
+        await tx.recipeStep.create({
           data: {
             instructionText: step.recipestep,
 
@@ -249,6 +248,14 @@ export const POST = async (request: NextRequest) => {
         });
       }
     }
+    return recipe;
+  });
+  try {
+    await createNotification({
+      familyId: recipedata.familyId,
+      actorUserId: user.id,
+      type: 'RECIPE_CREATED',
+    });
 
     return NextResponse.json({ recipeId: recipedata.id }, { status: 200 });
   } catch (error) {

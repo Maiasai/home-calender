@@ -10,12 +10,15 @@ import { useUserProfile } from './home/_hooks/useUserProfile';
 import { Hamburger } from './hamburger';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/featcher';
-import { NotificationsType } from './notifications/_typs/NotificationsType';
+import { InviteNotificationsType } from './notifications/_typs/InviteNotificationsType';
 
 const Header = () => {
   const [open, setOpen] = useState(false); //ハンバーガーメニュー用
 
-  const { data } = useSWR<NotificationsType[]>('/api/notifications', fetcher);
+  const { data } = useSWR<InviteNotificationsType[]>(
+    '/api/notifications',
+    fetcher,
+  );
   const hasUnread = data && data.length > 0; //未読判定用
 
   const router = useRouter();

@@ -1,10 +1,12 @@
 //通知取得API
 
+import { InviteNotificationsType } from '@/app/(main)/notifications/_typs/InviteNotificationsType';
 import { NotificationsType } from '@/app/(main)/notifications/_typs/NotificationsType';
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
+//招待通知API
 export const GET = async (request: NextRequest) => {
   try {
     //今ログインしている人を取得
@@ -23,7 +25,7 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
-    const data = await prisma.familyInvite.findMany({
+    const invitedata = await prisma.familyInvite.findMany({
       where: {
         email: dbUser.email,
       },
@@ -36,7 +38,27 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
-    const formatted: NotificationsType[] = data.map((m) => ({
+    const notification = await prisma.notification.findMany({
+      where: {
+        familyId: dbUser.activeFamilyId,
+        actorUserId: { not: dbUser.id },
+      },
+      include: {
+        actorUser: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const nformatted: NotificationsType[] = notification.map((n) => ({
+      id: n.id,
+      familyId: n.familyId,
+      actorUserId: n.actorUserId,
+      type: n.type,
+      createdAt: n.createdAt,
+      nickname: n.actorUser.nickname ?? '',
+    }));
+
+    const formatted: InviteNotificationsType[] = invitedata.map((m) => ({
       id: m.id,
       familyId: m.familyId,
       email: m.email,
@@ -44,7 +66,10 @@ export const GET = async (request: NextRequest) => {
       nickname: m.family.owner.nickname ?? '',
     }));
 
-    return NextResponse.json(formatted, { status: 200 });
+    return NextResponse.json(
+      { invites: formatted, notifications: nformatted },
+      { status: 200 },
+    );
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(

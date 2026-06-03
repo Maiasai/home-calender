@@ -38,11 +38,11 @@ const SearchBar = ({
             placeholder="料理名、食材でさがす"
           />
           <Image
-            src="/images/searchIcon.png"
+            src="/images/search_24.png"
             alt="検索アイコン"
-            className="absolute left-3 top-1/2 -translate-y-1/2 block"
-            width={15}
-            height={15}
+            className="absolute left-2 top-1/2 -translate-y-1/2 block"
+            width={20}
+            height={20}
           />
         </div>
       </div>
