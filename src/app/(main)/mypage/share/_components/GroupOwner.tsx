@@ -176,7 +176,7 @@ const GroupOwner = ({
                     <PrimaryButton
                       type="button"
                       onClick={handleAdd}
-                      className="w-[80px] h-[30px]"
+                      className="w-[80px] h-[30px] mb-2"
                       variant="primary"
                     >
                       追加

@@ -297,6 +297,8 @@ const List = () => {
                                   })
                                 }
                               >
+                                <option value="">未選択</option>
+
                                 {units.map((unit) => (
                                   <option key={unit.id} value={unit.id}>
                                     {unit?.name}
