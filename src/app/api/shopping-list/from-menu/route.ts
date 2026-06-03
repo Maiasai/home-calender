@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { ShoppingItemResponse } from '../_types/ShoppingItemResponse';
 import { UpdateShoppingData } from '../_types/UpdateShoppingData';
+import { createNotification } from '@/lib/notification';
 
 export const GET = async (request: NextRequest) => {
   try {
@@ -44,6 +45,11 @@ export const GET = async (request: NextRequest) => {
       sortOrder: item.sortOrder,
       unit: item.unit ?? null,
     }));
+    await createNotification({
+      familyId: dbUser.activeFamilyId,
+      actorUserId: user.id,
+      type: 'SHOPPING_CREATED',
+    });
 
     return NextResponse.json(formatted, { status: 200 });
   } catch (error) {

@@ -6,7 +6,6 @@ import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-//招待通知API
 export const GET = async (request: NextRequest) => {
   try {
     //今ログインしている人を取得
@@ -65,6 +64,12 @@ export const GET = async (request: NextRequest) => {
       createdAt: m.family.createdAt,
       nickname: m.family.owner.nickname ?? '',
     }));
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        notificationLastViewedAt: new Date(),
+      },
+    });
 
     return NextResponse.json(
       { invites: formatted, notifications: nformatted },

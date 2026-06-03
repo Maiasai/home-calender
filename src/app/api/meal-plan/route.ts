@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { MealRequestBodyEdit } from '@/app/(main)/home/_typs/MealRequestBodyEdit';
 import { MealId } from '@/app/(main)/home/_typs/MealId';
 import { MealRequestBody } from '@/app/(main)/home/_typs/MealRequestBody';
+import { createNotification } from '@/lib/notification';
 
 //献立取得
 export const GET = async (request: NextRequest) => {
@@ -84,27 +85,35 @@ export const POST = async (request: NextRequest) => {
         { status: 404 },
       );
     }
+    const activeFamilyId = dbUser.activeFamilyId;
 
-    const mealplan = await prisma.menu.create({
-      data: {
-        //dataは　CREATE/UPDATE用
-        userId,
-        familyId: dbUser.activeFamilyId,
-        date: date,
-        menuRecipes: {
-          create: recipes.map((r) => ({
-            mealType: r.mealType,
-            position: r.position,
-            recipe: {
-              connect: {
-                id: r.recipeId,
+    const mealplandata = await prisma.$transaction(async (tx) => {
+      const mealplan = await tx.menu.create({
+        data: {
+          //dataは　CREATE/UPDATE用
+          userId,
+          familyId: activeFamilyId,
+          date: date,
+          menuRecipes: {
+            create: recipes.map((r) => ({
+              mealType: r.mealType,
+              position: r.position,
+              recipe: {
+                connect: {
+                  id: r.recipeId,
+                },
               },
-            },
-          })),
+            })),
+          },
         },
-      },
+      });
+      await createNotification({
+        familyId: mealplan.familyId,
+        actorUserId: user.id,
+        type: 'MENU_CREATED',
+      });
     });
-    return NextResponse.json(mealplan, { status: 200 });
+    return NextResponse.json(mealplandata, { status: 200 });
   } catch (error) {
     console.error('API ERROR:', error);
 
@@ -134,11 +143,13 @@ export const PUT = async (request: NextRequest) => {
       );
     }
 
+    const activeFamilyId = dbUser.activeFamilyId;
+
     const exists = await prisma.menu.findFirst({
       where: {
         id: body.id,
         userId: user.id,
-        familyId: dbUser.activeFamilyId,
+        familyId: activeFamilyId,
       },
     });
 
@@ -149,19 +160,26 @@ export const PUT = async (request: NextRequest) => {
       );
     }
 
-    const data = await prisma.menuRecipe.deleteMany({
-      where: { menuId: body.id },
-    });
+    const mealEditData = await prisma.$transaction(async (tx) => {
+      await tx.menuRecipe.deleteMany({
+        where: { menuId: body.id },
+      });
 
-    const newdata = await prisma.menuRecipe.createMany({
-      data: body.recipes.map((r) => ({
-        menuId: body.id,
-        recipeId: r.recipeId,
-        mealType: r.mealType,
-        position: r.position,
-      })),
+      const newdata = await tx.menuRecipe.createMany({
+        data: body.recipes.map((r) => ({
+          menuId: body.id,
+          recipeId: r.recipeId,
+          mealType: r.mealType,
+          position: r.position,
+        })),
+      });
+      await createNotification({
+        familyId: activeFamilyId,
+        actorUserId: user.id,
+        type: 'MENU_UPDATED',
+      });
     });
-    return NextResponse.json(newdata, { status: 200 });
+    return NextResponse.json(mealEditData, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
   }

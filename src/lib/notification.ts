@@ -2,10 +2,16 @@
 
 import { prisma } from './prisma';
 
-type CreateNotificationProps = {
+export type CreateNotificationProps = {
   familyId: string;
   actorUserId: string;
-  type: 'RECIPE_CREATED' | 'RECIPE_UPDATED' | 'MENU_CREATED' | 'MENU_UPDATED';
+  type:
+    | 'RECIPE_CREATED'
+    | 'RECIPE_UPDATED'
+    | 'MENU_CREATED'
+    | 'MENU_UPDATED'
+    | 'SHOPPING_CREATED'
+    | 'SHOPPING_UPDATED';
 };
 
 export const createNotification = async ({

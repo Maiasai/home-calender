@@ -15,6 +15,17 @@ export type NotificationsResponse = {
   notifications: NotificationsType[];
 };
 
+const typesName = {
+  RECIPE_CREATED: 'レシピを登録',
+  RECIPE_UPDATED: 'レシピを更新',
+
+  MENU_CREATED: '献立を作成',
+  MENU_UPDATED: '献立を更新',
+
+  SHOPPING_CREATED: '買い物リストを作成',
+  SHOPPING_UPDATED: '買い物リストを更新',
+};
+
 const Notifications = () => {
   const { token } = useSupabaseSession();
   const { data, error, mutate } = useSWR<NotificationsResponse>(
@@ -144,22 +155,34 @@ const Notifications = () => {
                   通知はありません
                 </p>
               )}
-              {notifications.map((n: NotificationsType) => (
-                <div
-                  key={n.id}
-                  className="border rounded-lg p-4 shadow-sm bg-white"
-                >
-                  <h1 className="font=bold">招待通知</h1>
-                  <div className="relative">
-                    <p className="font-semibold mb-3 ml-6">
-                      {n.nickname}さんが{n.type}しました
-                    </p>
-                    {hasUnreadNonfications && (
-                      <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
-                    )}
+              {notifications.map((n: NotificationsType) => {
+                const date = new Date(n.createdAt);
+                const displayDate = date.toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
+
+                return (
+                  <div
+                    key={n.id}
+                    className="border rounded-lg p-4 shadow-sm bg-white"
+                  >
+                    <div className="relative">
+                      <p className="ml-6">{displayDate}</p>
+                      <p className="flex items-center font-semibold ml-8">
+                        {n.nickname}さんが{typesName[n.type]}しました
+                      </p>
+
+                      {hasUnreadNonfications && (
+                        <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

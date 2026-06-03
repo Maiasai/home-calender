@@ -77,6 +77,7 @@ model User {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now())
+  notificationLastViewedAt DateTime?//通知既読判定用
 
   activeFamily Family? @relation("ActiveFamily", fields: [activeFamilyId], references: [id])
   homeFamily Family? @relation("HomeFamily", fields: [homeFamilyId], references: [id])
