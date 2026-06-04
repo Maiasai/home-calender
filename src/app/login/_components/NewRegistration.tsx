@@ -31,7 +31,7 @@ type Props = {
   isSubmittingsign: boolean;
   loading: boolean;
   setLoading: (v: boolean) => void;
-  googleUserEmail?: string | null; //	? をつけると 親が渡さなくてもエラーにならない。null は supabase でユーザーがいない場合に null が入る可能性があるため
+  isGoogleUser: boolean;
 };
 
 const NewRegistration = ({
@@ -45,36 +45,10 @@ const NewRegistration = ({
   isSubmittingsign,
   loading,
   setLoading,
-  googleUserEmail,
+  isGoogleUser,
 }: Props) => {
   const { token } = useSupabaseSession();
   const router = useRouter();
-
-  const [isGoogleUser, setIsGoogleUser] = useState<boolean | null>(null);
-  const [isLoadingProvider, setIsLoadingProvider] = useState(true);
-
-  //初回レンダー時　パスワード欄表示見え防止
-  useEffect(() => {
-    if (isGoogleUser === null) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [isGoogleUser]);
-
-  // Google 連携ユーザーならパスワード欄を非表示
-  useEffect(() => {
-    const checkProvider = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      setIsGoogleUser(user?.app_metadata.provider === 'google');
-      setIsLoadingProvider(false);
-    };
-
-    checkProvider();
-  }, []);
 
   //認証済みかチェック
   useEffect(() => {
