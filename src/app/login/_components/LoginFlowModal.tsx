@@ -60,7 +60,6 @@ const LoginFlowModal = ({
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    console.log('signup param:', searchParams.get('signup'));
 
     //今いるURLに ?signup=1 がなければ、何もしない
     if (searchParams.get('signup') !== '1') return;
@@ -72,7 +71,6 @@ const LoginFlowModal = ({
       provider: 'google' | 'email';
       isGoogleUser: boolean;
     };
-    console.log('parsed authResult:', authResult);
 
     setIsGoogleUser(authResult.isGoogleUser); //Googleユーザーかどうかをstateに
     setStep('newregistration');

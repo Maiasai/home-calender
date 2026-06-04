@@ -91,7 +91,6 @@ const MealModal = ({
         mode === 'edit' ? { ...basePayload, id: targetMeal!.id } : basePayload;
       //「!」→targetMeal は null でも undefined でもないと自分が保証するという意味
 
-      console.log('① fetch前');
       const res = await fetch('/api/meal-plan', {
         method: mode === 'edit' ? 'PUT' : 'POST',
         headers: {
@@ -104,11 +103,8 @@ const MealModal = ({
       if (!res.ok) {
         throw new Error('保存失敗');
       }
-      console.log('③ mutate前');
       await mutate();
-      console.log('④ mutate後');
       onClose(); //成功時
-      console.log('⑤ onClose後');
     } catch (error) {
       console.error(error);
     }

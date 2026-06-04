@@ -200,7 +200,6 @@ export const PUT = async (request: NextRequest) => {
     });
     const body: UpdateShoppingData = await request.json();
 
-    console.log('body', body);
     if (!body.id) {
       return NextResponse.json({ message: 'idが必要です' }, { status: 400 });
     }

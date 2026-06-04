@@ -42,7 +42,8 @@ const EmailChange = () => {
 
       {
         //確認メールのリンクを押した後、どこへ戻すかを指定
-        emailRedirectTo: 'http://localhost:3000/mypage/email?emailChanged=true',
+        emailRedirectTo:
+          '${process.env.NEXT_PUBLIC_APP_URL}/mypage/email?emailChanged=true',
       },
     );
 
