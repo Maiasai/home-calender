@@ -268,7 +268,7 @@ const LoginFlowModal = ({
           </>
         )}
         {loading && (
-          <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-white/100 flex items-center justify-center z-50">
             <span className="text-gray-700 font-medium text-lg">処理中…</span>
           </div>
         )}

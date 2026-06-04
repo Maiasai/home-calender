@@ -173,11 +173,6 @@ export const PUT = async (request: NextRequest) => {
           position: r.position,
         })),
       });
-      await createNotification({
-        familyId: activeFamilyId,
-        actorUserId: user.id,
-        type: 'MENU_UPDATED',
-      });
     });
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

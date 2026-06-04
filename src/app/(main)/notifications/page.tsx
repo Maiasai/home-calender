@@ -22,7 +22,6 @@ const typesName = {
   RECIPE_UPDATED: 'レシピを更新',
 
   MENU_CREATED: '献立を作成',
-  MENU_UPDATED: '献立を更新',
 
   SHOPPING_CREATED: '買い物リストを作成',
   SHOPPING_UPDATED: '買い物リストを更新',

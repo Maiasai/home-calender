@@ -9,7 +9,6 @@ export type CreateNotificationProps = {
     | 'RECIPE_CREATED'
     | 'RECIPE_UPDATED'
     | 'MENU_CREATED'
-    | 'MENU_UPDATED'
     | 'SHOPPING_CREATED'
     | 'SHOPPING_UPDATED';
 };
