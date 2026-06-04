@@ -8,11 +8,13 @@ import { InviteNotificationsType } from './_typs/InviteNotificationsType';
 import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteRequest';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { NotificationsType } from './_typs/NotificationsType';
+import { useEffect, useState } from 'react';
 
 //返ってくる通知の型をオブジェクトに
 export type NotificationsResponse = {
   invites: InviteNotificationsType[];
   notifications: NotificationsType[];
+  hasUnread: boolean;
 };
 
 const typesName = {
@@ -33,11 +35,23 @@ const Notifications = () => {
     fetcher,
   );
 
+  useEffect(() => {
+    fetch('/api/notifications/read', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }, [token]);
+
+  const [visibleCount, setVisibleCount] = useState(10); //表示件数管理用
+
   const invites = data?.invites ?? [];
   const notifications = data?.notifications ?? [];
 
   const hasUnreadInvite = invites.length > 0; //未読判定用
-  const hasUnreadNonfications = notifications.length > 0; //未読判定用
+  const hasUnreadNonfications = data?.hasUnread; //未読判定用
 
   ////招待通知//////////////
   //参加処理
@@ -155,36 +169,45 @@ const Notifications = () => {
                   通知はありません
                 </p>
               )}
-              {notifications.map((n: NotificationsType) => {
-                const date = new Date(n.createdAt);
-                const displayDate = date.toLocaleDateString('ja-JP', {
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                });
 
-                return (
-                  <div
-                    key={n.id}
-                    className="border rounded-lg p-4 shadow-sm bg-white"
-                  >
-                    <div className="relative">
-                      <p className="ml-6">{displayDate}</p>
-                      <p className="flex items-center font-semibold ml-8">
-                        {n.nickname}さんが{typesName[n.type]}しました
-                      </p>
+              {notifications
+                .slice(0, visibleCount)
+                .map((n: NotificationsType) => {
+                  const date = new Date(n.createdAt);
+                  const displayDate = date.toLocaleDateString('ja-JP', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  });
 
-                      {hasUnreadNonfications && (
-                        <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
-                      )}
+                  return (
+                    <div
+                      key={n.id}
+                      className="border rounded-lg p-4 shadow-sm bg-white"
+                    >
+                      <div className="relative">
+                        <p className="ml-6">{displayDate}</p>
+                        <p className="flex items-center font-semibold ml-8">
+                          {n.nickname}さんが{typesName[n.type]}しました
+                        </p>
+
+                        {hasUnreadNonfications && (
+                          <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
+
+          {notifications.length > visibleCount && (
+            <button onClick={() => setVisibleCount((prev) => prev + 10)}>
+              もっと見る
+            </button>
+          )}
         </div>
       </div>
     </div>

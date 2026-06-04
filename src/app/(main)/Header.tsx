@@ -21,7 +21,7 @@ const Header = () => {
   const notifications = data?.notifications ?? [];
 
   const hasUnreadInvite = invites.length > 0; //未読判定用
-  const hasUnreadNonfications = notifications.length > 0; //未読判定用
+  const hasUnreadNonfications = data?.hasUnread; //未読判定用
 
   const router = useRouter();
 

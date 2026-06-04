@@ -64,15 +64,15 @@ export const GET = async (request: NextRequest) => {
       createdAt: m.family.createdAt,
       nickname: m.family.owner.nickname ?? '',
     }));
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        notificationLastViewedAt: new Date(),
-      },
-    });
+
+    const NewDate = dbUser?.notificationLastViewedAt;
+
+    const hasUnread = !NewDate
+      ? nformatted.length > 0
+      : nformatted.some((f) => f.createdAt > NewDate);
 
     return NextResponse.json(
-      { invites: formatted, notifications: nformatted },
+      { invites: formatted, notifications: nformatted, hasUnread },
       { status: 200 },
     );
   } catch (error) {
