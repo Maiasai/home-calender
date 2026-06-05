@@ -65,11 +65,22 @@ export const GET = async (request: NextRequest) => {
       nickname: m.family.owner?.nickname ?? '',
     }));
 
-    const NewDate = dbUser?.notificationLastViewedAt;
+    const lastViewedAt = dbUser?.notificationLastViewedAt;
 
-    const hasUnread = !NewDate
+    const hasInvite = formatted.length > 0;
+
+    const hasUnreadNotification = !lastViewedAt //lastViewedAtがなかったら左辺を返す。
       ? nformatted.length > 0
-      : nformatted.some((f) => f.createdAt > NewDate);
+      : nformatted.some((f) => f.createdAt > lastViewedAt);
+
+    const hasUnread = hasInvite || hasUnreadNotification; //どちらかならtrue
+
+    await prisma.user.update({
+      where: { id: dbUser.id },
+      data: {
+        notificationLastViewedAt: new Date(),
+      },
+    });
 
     return NextResponse.json(
       { invites: formatted, notifications: nformatted, hasUnread },

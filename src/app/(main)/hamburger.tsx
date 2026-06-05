@@ -61,7 +61,7 @@ export const Hamburger = ({
             className="relative inline-flex items-center border-b ml-3"
           >
             通知一覧
-            {(hasUnreadInvite || hasUnreadNonfications) && (
+            {hasUnreadNonfications && (
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
             )}
           </Link>

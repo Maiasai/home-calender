@@ -8,7 +8,7 @@ import { InviteNotificationsType } from './_typs/InviteNotificationsType';
 import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteRequest';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { NotificationsType } from './_typs/NotificationsType';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 //返ってくる通知の型をオブジェクトに
 export type NotificationsResponse = {
@@ -34,23 +34,10 @@ const Notifications = () => {
     fetcher,
   );
 
-  useEffect(() => {
-    fetch('/api/notifications/read', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  }, [token]);
-
   const [visibleCount, setVisibleCount] = useState(10); //表示件数管理用
 
   const invites = data?.invites ?? [];
   const notifications = data?.notifications ?? [];
-
-  const hasUnreadInvite = invites.length > 0; //未読判定用
-  const hasUnreadNonfications = data?.hasUnread; //未読判定用
 
   ////招待通知//////////////
   //参加処理
@@ -145,9 +132,6 @@ const Notifications = () => {
                         辞退
                       </button>
                     </div>
-                    {hasUnreadInvite && (
-                      <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
-                    )}
                   </div>
                 </div>
               ))}
@@ -191,10 +175,6 @@ const Notifications = () => {
                         <p className="flex items-center font-semibold ml-8">
                           {n.nickname}さんが{typesName[n.type]}しました
                         </p>
-
-                        {hasUnreadNonfications && (
-                          <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
-                        )}
                       </div>
                     </div>
                   );

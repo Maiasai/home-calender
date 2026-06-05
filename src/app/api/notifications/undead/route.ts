@@ -1,13 +1,12 @@
-//通知一覧を開いた時に開いた日付を更新するだけのAPI
+//ヘッダー　未読アイコン用　hasUnread返す用のみ
 
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const POST = async (request: NextRequest) => {
+export const GET = async (request: NextRequest) => {
   try {
     const user = await requireUser(request);
-
     const dbUser = await prisma.user.findUnique({
       where: {
         id: user.id,
@@ -21,15 +20,23 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        notificationLastViewedAt: new Date(),
+    const lastViewedAt = dbUser.notificationLastViewedAt;
+
+    const data = await prisma.notification.findMany({
+      where: {
+        familyId: dbUser.activeFamilyId,
+        actorUserId: { not: dbUser.id }, //意味）actorUserId が dbUser.id ではない通知
       },
     });
-    return NextResponse.json({ message: 'success' }, { status: 200 });
+
+    const hasUnread = !lastViewedAt
+      ? data?.length > 0
+      : data.some((form) => form.createdAt > lastViewedAt);
+
+    return NextResponse.json({ hasUnread }, { status: 200 });
   } catch (error) {
     console.log('error', error);
+    console.log('GET /api/notifications error:', error);
     return NextResponse.json(
       { message: 'サーバーエラーが発生しました' },
       { status: 500 },

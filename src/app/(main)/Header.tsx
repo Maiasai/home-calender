@@ -17,10 +17,7 @@ const Header = () => {
   const [open, setOpen] = useState(false); //ハンバーガーメニュー用
 
   const { data } = useSWR<NotificationsResponse>('/api/notifications', fetcher);
-  const invites = data?.invites ?? [];
-  const notifications = data?.notifications ?? [];
 
-  const hasUnreadInvite = invites.length > 0; //未読判定用
   const hasUnreadNonfications = data?.hasUnread; //未読判定用
 
   const router = useRouter();
@@ -49,7 +46,7 @@ const Header = () => {
                     width={30}
                     height={20}
                   />
-                  {(hasUnreadInvite || hasUnreadNonfications) && (
+                  {hasUnreadNonfications && (
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
                   )}
                 </Link>
@@ -72,7 +69,6 @@ const Header = () => {
             open={open}
             setOpen={setOpen}
             handleLogout={handleLogout}
-            hasUnreadInvite={hasUnreadInvite}
             hasUnreadNonfications={hasUnreadNonfications}
           />
 
