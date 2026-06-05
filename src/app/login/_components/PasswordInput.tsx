@@ -19,7 +19,10 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
 
   return (
     <div>
-      <div className="relative mb-2 mt-10">
+      <div className="flex items-center justify-center mb-2 text-base mt-8 font-semibold">
+        <label>パスワードを作成</label>
+      </div>
+      <div className="relative mb-2">
         <input
           type={showPassword ? 'text' : 'password'}
           {...registersign('password', {

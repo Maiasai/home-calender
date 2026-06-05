@@ -90,20 +90,22 @@ const RecipeCard = ({
             <FavoriteButton
               recipeId={recipe.id}
               isFavorite={isFav}
-              onToggle={(id, current) =>
+              onToggle={(id, current) => {
+                if (isBulkMode) return;
                 //③FavoriteButtonからきた「recipeId,isFavorite」が「id, current」に入って
                 //toggleStatusが実行
-                toggleStatus(id, current, 'isFavorite', mutate, token)
-              }
+                toggleStatus(id, current, 'isFavorite', mutate, token);
+              }}
             />
 
             <CookedButton
               recipeId={recipe.id}
               isCooked={isCoo}
-              onToggle={() =>
+              onToggle={() => {
+                if (isBulkMode) return;
                 //toggleStatusがDB更新を担当
-                toggleStatus(recipe.id, isCoo, 'hasCooked', mutate, token)
-              }
+                toggleStatus(recipe.id, isCoo, 'hasCooked', mutate, token);
+              }}
             />
           </div>
         </div>

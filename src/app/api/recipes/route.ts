@@ -120,7 +120,7 @@ export const GET = async (request: NextRequest) => {
 
     return NextResponse.json(recipeget, { status: 200 });
   } catch (error) {
-    console.error(error);
+    console.log('GET /api/recipes error:', error);
 
     return NextResponse.json(
       { message: 'サーバーエラーが発生しました' },

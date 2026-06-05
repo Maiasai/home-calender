@@ -254,7 +254,7 @@ const LoginFlowModal = ({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-20 ">
       {/* 中央の箱 */}
-      <div className="bg-white p-6 rounded w-[500px] h-[500px] overflow-auto text-left relative z-20">
+      <div className="bg-white p-6 rounded w-[500px] h-[590px] overflow-auto text-left relative z-20 m-2">
         {/* 新規登録またはログイン */}
         {step === 'select' && (
           <>

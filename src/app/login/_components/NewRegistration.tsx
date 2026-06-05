@@ -175,7 +175,7 @@ const NewRegistration = ({
               <ErrorMessage error={errorssign.nickname} />
             )}
           </div>
-          <p className="whitespace-pre-line text-xs mb-16 pl-2">
+          <p className="whitespace-pre-line text-xs mb-6 pl-2">
             {`※10文字以内にする必要があります
             ※プロフィールに表示され、他のユーザーが閲覧できます。`}
           </p>

@@ -21,7 +21,6 @@ type Options = {
 type AuthProvider = 'google' | 'email' | null;
 
 export const useAuthCallback = () => {
-  const { token } = useSupabaseSession();
   const router = useRouter();
 
   //options→関数をまとめて渡すためのオブジェクト
@@ -52,6 +51,8 @@ export const useAuthCallback = () => {
         user?.app_metadata?.provider === 'google' ||
         (Array.isArray(authProviders) && authProviders.includes('google'));
 
+      const provider: AuthProvider = isGoogleUser ? 'google' : 'email';
+
       if (userError || !user) {
         //「エラーがある」または「ユーザーが取得できなかった」とき
         router.push('/');
@@ -65,7 +66,7 @@ export const useAuthCallback = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
         body: JSON.stringify({
           id: user.id,
@@ -81,8 +82,6 @@ export const useAuthCallback = () => {
           Authorization: `Bearer ${session?.access_token}`,
         },
       });
-
-      const provider: AuthProvider = isGoogleUser ? 'google' : 'email';
 
       //意味）もし onAuthComplete が渡されてたら、その関数を今ここで実行する
       options?.onAuthComplete?.({
