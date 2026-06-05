@@ -12,7 +12,6 @@ import {
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { parseFraction } from './parseFraction';
 import ErrorMessage from './ErrorMessage';
-import Image from 'next/image';
 import DeleteIcon from '@/app/components/image/deleteicon';
 import { UnitData } from '@/app/api/units/route';
 import PrimaryButton from '@/components/button/PrimaryButton';
@@ -59,7 +58,7 @@ const IngredientList = ({
             })}
           ></input>
 
-          <label>人分</label>
+          <label className="ml-2">人分</label>
         </div>
       </div>
       <ErrorMessage error={errors.servings} />
@@ -67,8 +66,8 @@ const IngredientList = ({
       {fields.map((field, index) => (
         <div key={field.id}>
           {/* 材料名 */}
-          <div className="flex flex-col md:flex-row gap-x-2 py-4">
-            <div className="flex mb-2">
+          <div className="flex flex-col md:flex-row gap-x-3 py-2">
+            <div className="flex">
               {index >= 1 && (
                 <button
                   type="button"
@@ -80,57 +79,67 @@ const IngredientList = ({
                 </button>
               )}
 
-              <input
-                className="w-[150px] px-2 py-1 border-b"
-                {...register(`ingredients.${index}.name`, {
-                  validate: (value, formValues) => {
-                    const row = formValues.ingredients[index];
+              <div className="flec flex-col">
+                <input
+                  className="w-[280px] px-2 py-1 border-b mb-1"
+                  {...register(`ingredients.${index}.name`, {
+                    maxLength: {
+                      value: 15,
+                      message: '材料名は15文字以内で入力してください',
+                    },
+                    validate: (value, formValues) => {
+                      const row = formValues.ingredients[index];
 
-                    // 何か入力されてるなら必須
-                    if (row.amount || row.unitId) {
-                      return value?.trim() ? true : '材料名を入力してください';
-                    }
+                      // 何か入力されてるなら必須
+                      if (row.amount || row.unitId) {
+                        return value?.trim()
+                          ? true
+                          : '材料名を入力してください';
+                      }
 
-                    return true; // 空行はOK
-                  },
-                })}
-                placeholder="材料名"
-              />
-              <div className="pl-2">
-                <ErrorMessage error={errors.ingredients?.[index]?.name} />
+                      return true; // 空行はOK
+                    },
+                  })}
+                  placeholder="材料名"
+                />
+                <div className="pl-2">
+                  <ErrorMessage error={errors.ingredients?.[index]?.name} />
+                </div>
               </div>
             </div>
 
             {/* 量 */}
             <div className="flex items-center">
-              <input
-                type="text" // 1/2 入力できるようにするため
-                className="w-[150px] px-2  py-1 border-b"
-                {...register(`ingredients.${index}.amount`, {
-                  min: { value: 0, message: '0以上で入力してください' },
-                  max: { value: 500, message: '500以下で入力してください' },
-                  pattern: /^(\d+(\.\d+)?|\d+\/\d+)$/,
+              <div className="flec flex-col">
+                <input
+                  type="text" // 1/2 入力できるようにするため
+                  className="w-[150px] px-2 py-1 border-b mb-1"
+                  {...register(`ingredients.${index}.amount`, {
+                    min: { value: 0, message: '0以上で入力してください' },
+                    max: { value: 500, message: '500以下で入力してください' },
+                    pattern: /^(\d+(\.\d+)?|\d+\/\d+)$/,
 
-                  //入力欄からフォーカスが外れたとき に発火するイベント
-                  onBlur: (e) => {
-                    //onBlurは用意している標準イベント.(register内では自動推論の為、型指定不要)
-                    const value = e.currentTarget.value; //この onBlur が登録されている input 要素,value→ユーザーが入力した文字列を取得
-                    const parsed = parseFraction(value); //数値に変換する関数を通す。
-                    //ingredients配列のindex番目のamountのみをsetValueで更新
-                    setValue(`ingredients.${index}.amount`, parsed, {
-                      shouldValidate: true,
-                    }); //shouldValidate→指定したフォームフィールドの値を更新→更新後バリデーション実行
-                  },
-                })}
-                placeholder="例: 0.5 または 1/2"
-              />
-              <div className="pl-2">
-                <ErrorMessage error={errors.ingredients?.[index]?.amount} />
+                    //入力欄からフォーカスが外れたとき に発火するイベント
+                    onBlur: (e) => {
+                      //onBlurは用意している標準イベント.(register内では自動推論の為、型指定不要)
+                      const value = e.currentTarget.value; //この onBlur が登録されている input 要素,value→ユーザーが入力した文字列を取得
+                      const parsed = parseFraction(value); //数値に変換する関数を通す。
+                      //ingredients配列のindex番目のamountのみをsetValueで更新
+                      setValue(`ingredients.${index}.amount`, parsed, {
+                        shouldValidate: true,
+                      }); //shouldValidate→指定したフォームフィールドの値を更新→更新後バリデーション実行
+                    },
+                  })}
+                  placeholder="例: 0.5 または 1/2"
+                />
+                <div className="pl-2">
+                  <ErrorMessage error={errors.ingredients?.[index]?.amount} />
+                </div>
               </div>
 
               {/* 単位 */}
               <select
-                className="w-[90px] px-2 py-1 border-b"
+                className="w-[90px] px-2 py-1 border-b mb-4 ml-1"
                 {...register(`ingredients.${index}.unitId`)}
               >
                 <option value="">未選択</option>

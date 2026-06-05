@@ -116,10 +116,8 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
       alert('レシピを登録しました！');
       reset(); //成功したら入力欄をクリア
 
-      await mutate();
-      setPreviewUrl('');
-      setCategory('');
       onClose();
+      await mutate();
     } catch (err: any) {
       console.error(err.message);
     } finally {
@@ -173,7 +171,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
           </div>
 
           {/* メモ */}
-          <div className="flex items-center h-[150px] gap-6 bg-white m-5 p-4 rounded-lg">
+          <div className="flex items-center h-[200px] gap-6 bg-white m-5 p-4 rounded-lg">
             <MemoForm registerMemo={register} />
           </div>
 

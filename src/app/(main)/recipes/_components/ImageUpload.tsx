@@ -72,10 +72,10 @@ const ImageUpload = ({
             type="file" //④画像押下→ファイル選択ダイアログを出すために②③を経由している
             accept="image/*"
             className="hidden"
-            onChange={(e) => {
+            onChange={async (e) => {
               //⑤ユーザーがファイル選択した瞬間に動く
               field.onChange(e); //RHFへの値が変わった通知
-              handleImageChange({ event: e, setValue, setPreviewUrl });
+              await handleImageChange({ event: e, setValue, setPreviewUrl });
               //⑥画像取得、プレビュー作成、プレビューURL更新
             }}
           />

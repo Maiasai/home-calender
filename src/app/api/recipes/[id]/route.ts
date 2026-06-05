@@ -62,28 +62,48 @@ export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const user = await requireUser(request); //Supabaseが特定したログインユーザーがここに来る
-  const dbUser = await prisma.user.findUnique({
-    where: {
-      id: user.id,
-    },
-  });
+  try {
+    const user = await requireUser(request); //Supabaseが特定したログインユーザーがここに来る
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
 
-  if (!dbUser?.activeFamilyId) {
-    return NextResponse.json({ message: 'family not found' }, { status: 404 });
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
+    const activeFid = dbUser.activeFamilyId;
+
+    await prisma.$transaction(async (tx) => {
+      await tx.userRecipeStatus.deleteMany({
+        where: { recipeId: params.id },
+      });
+      await tx.recipeIngredient.deleteMany({
+        where: { recipeId: params.id },
+      });
+      await tx.recipeStep.deleteMany({
+        where: { recipeId: params.id },
+      });
+      const result = await tx.recipe.deleteMany({
+        where: { id: params.id, familyId: activeFid },
+      });
+
+      if (result.count === 0) {
+        throw new Error('削除対象のレシピが見つかりません');
+      }
+    });
+    return NextResponse.json({ message: '削除しました' });
+  } catch (error) {
+    console.log('DELETE recipe error', error);
+    return NextResponse.json(
+      { message: '削除中にエラーが発生しました' },
+      { status: 500 },
+    );
   }
-
-  const result = await prisma.recipe.deleteMany({
-    where: {
-      //この2つの条件に一致するレコードだけ削除
-      id: params.id,
-      familyId: dbUser.activeFamilyId, //家族共有データだけ取る
-    }, //そのデータの持ち主かをチェック
-  });
-
-  if (result.count === 0)
-    return NextResponse.json({ message: '削除できません' }, { status: 404 });
-  return NextResponse.json({ message: '削除しました' });
 };
 
 //レシピ編集API
@@ -226,7 +246,7 @@ export const PUT = async (
 
         if (!step.recipestep?.trim()) continue;
 
-        await prisma.recipeStep.create({
+        await tx.recipeStep.create({
           data: {
             instructionText: step.recipestep,
             sortOrder: i,
@@ -237,13 +257,14 @@ export const PUT = async (
           },
         });
       }
+
       await createNotification({
         familyId: recipe.familyId,
         actorUserId: user.id,
         type: 'RECIPE_UPDATED',
       });
+      return recipe;
     });
-
     return NextResponse.json(recipedata, { status: 200 });
   } catch (error) {
     console.error('PUT ERROR:', error);

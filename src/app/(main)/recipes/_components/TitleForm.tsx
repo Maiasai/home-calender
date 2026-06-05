@@ -56,7 +56,7 @@ const TitleForm = <T extends FieldValues>({
           <Image
             src="/images/pencil01.png"
             alt="レシピ名入力右アイコン"
-            className="w-4 h-4 opacity-60"
+            className="w-4 h-4 opacity-60 mt-2 ml-2"
             width={20}
             height={20}
           />

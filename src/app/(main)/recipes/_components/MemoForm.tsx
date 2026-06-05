@@ -14,7 +14,7 @@ const MemoForm = <T extends FieldValues>({ registerMemo }: Props<T>) => {
       <label>メモ</label>
 
       <textarea
-        className="w-full border p-2 py-1 rounded-lg"
+        className="w-full border p-2 rounded-lg h-[150px]"
         {...registerMemo('memo' as Path<T>, {
           maxLength: {
             value: 1000,
