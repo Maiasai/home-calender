@@ -45,11 +45,6 @@ export const GET = async (request: NextRequest) => {
       sortOrder: item.sortOrder,
       unit: item.unit ?? null,
     }));
-    await createNotification({
-      familyId: dbUser.activeFamilyId,
-      actorUserId: user.id,
-      type: 'SHOPPING_CREATED',
-    });
 
     return NextResponse.json(formatted, { status: 200 });
   } catch (error) {
@@ -177,6 +172,11 @@ export const POST = async (request: NextRequest) => {
         }
       }),
     );
+    await createNotification({
+      familyId: dbUser.activeFamilyId,
+      actorUserId: user.id,
+      type: 'SHOPPING_UPDATED',
+    });
 
     return NextResponse.json(
       { message: '買い物リスト追加完了' },

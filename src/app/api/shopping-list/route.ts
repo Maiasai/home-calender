@@ -4,7 +4,6 @@ import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { CreateShoppingItem } from './_types/CreateShoppingItem';
-import { createNotification } from '@/lib/notification';
 
 export const POST = async (request: NextRequest) => {
   try {
@@ -45,11 +44,7 @@ export const POST = async (request: NextRequest) => {
         sortOrder: (maxSortOrder._max.sortOrder ?? -1) + 1, //ソート番号を付与
       },
     });
-    await createNotification({
-      familyId: dbUser.activeFamilyId,
-      actorUserId: user.id,
-      type: 'SHOPPING_UPDATED',
-    });
+
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.log(error);

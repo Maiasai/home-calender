@@ -41,13 +41,13 @@ const Calender = ({
     <div>
       {/* 月切り替え */}
       <div className="flex justify-between items-center mb-4">
-        <button onClick={prevMonth}>
+        <button onClick={prevMonth} className="ml-2">
           <ChevronLeft />
         </button>
         <h2 className="text-lg font-bold">
           {year}年 {month + 1}月
         </h2>
-        <button onClick={nextMonth}>
+        <button onClick={nextMonth} className="mr-2">
           <ChevronRight />
         </button>
       </div>

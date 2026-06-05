@@ -54,7 +54,7 @@ export const GET = async (request: NextRequest) => {
       actorUserId: n.actorUserId,
       type: n.type,
       createdAt: n.createdAt,
-      nickname: n.actorUser.nickname ?? '',
+      nickname: n.actorUser?.nickname ?? '',
     }));
 
     const formatted: InviteNotificationsType[] = invitedata.map((m) => ({
@@ -62,7 +62,7 @@ export const GET = async (request: NextRequest) => {
       familyId: m.familyId,
       email: m.email,
       createdAt: m.family.createdAt,
-      nickname: m.family.owner.nickname ?? '',
+      nickname: m.family.owner?.nickname ?? '',
     }));
 
     const NewDate = dbUser?.notificationLastViewedAt;
@@ -77,6 +77,7 @@ export const GET = async (request: NextRequest) => {
     );
   } catch (error) {
     console.log('error', error);
+    console.log('GET /api/notifications error:', error);
     return NextResponse.json(
       { message: 'サーバーエラーが発生しました' },
       { status: 500 },

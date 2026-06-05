@@ -27,7 +27,7 @@ const NutritionResultView = ({ result, onClose, displayDate }: Props) => {
   const vegetableColor = levelColorMap[result.vegetable];
 
   return (
-    <div className="absolute bg-gray-100 md:w-[600px] max-h-[90vh] overflow-y-auto rounded-xl">
+    <div className="absolute bg-gray-100 md:w-[600px] max-h-[100vh] overflow-y-auto rounded-xl m-2">
       <div className="flex flex-col m-2">
         <div className="relative">
           <CloseButton onClose={onClose} />
