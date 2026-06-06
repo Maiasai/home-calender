@@ -34,6 +34,11 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
+    //trim()→前後の空白を削除
+    //split→"キャベツ にんじん".split(/\s+/)が["キャベツ", "にんじん"]なる
+    //filter(Boolean)→でから文字捨ててる
+    const keywords = keyword?.trim().split(/\s+/).filter(Boolean) ?? [];
+
     const recipeget = await prisma.recipe.findMany({
       //レシピテーブル全件を取得
       where: {
@@ -41,12 +46,12 @@ export const GET = async (request: NextRequest) => {
 
         //条件があるときだけ以下追加
         //レシピ名検索
-        ...(keyword && {
-          OR: [
+        ...(keywords.length > 0 && {
+          OR: keywords?.flatMap((word) => [
             //OR[{条件1},{条件2},]→レシピ名or材料名
             {
               title: {
-                contains: keyword,
+                contains: word,
                 mode: 'insensitive',
               },
             },
@@ -57,14 +62,14 @@ export const GET = async (request: NextRequest) => {
                   //「1つでも条件に合うものがあればOK」
                   ingredient: {
                     name: {
-                      contains: keyword,
+                      contains: word,
                       mode: 'insensitive',
                     },
                   },
                 },
               },
             },
-          ],
+          ]),
         }),
 
         //カテゴリ絞り込み

@@ -22,7 +22,6 @@ import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import ErrorMessage from './_components/ErrorMessage';
-import { error } from 'console';
 
 const RecipesPage = () => {
   const { token } = useSupabaseSession();
