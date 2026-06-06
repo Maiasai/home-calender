@@ -41,6 +41,7 @@ const RecipeEdit = ({ params }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get('from');
+  const date = searchParams.get('date');
 
   const [category, setCategory] = useState<'' | RecipeCategory>(''); //表示で""（未選択）必要なためユニオン型で記載
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -172,7 +173,13 @@ const RecipeEdit = ({ params }: Props) => {
       //成功だった場合
       const d = await res.json();
       alert('レシピを更新しました！');
-      router.push(`/recipes/${recipe.id}`); //成功したら詳細に戻る
+      if (from === 'calendar' && date) {
+        router.push(`/recipes/${id}?from=calendar&date=${date}`);
+      } else if (from === 'calendar') {
+        router.push(`/recipes/${id}?from=calendar`);
+      } else {
+        router.push(`/recipes/${id}`);
+      }
     } catch (err: any) {
       console.error(err.message);
     }
@@ -184,7 +191,9 @@ const RecipeEdit = ({ params }: Props) => {
       const ok = confirm('変更が破棄されますがよろしいですか？');
       if (!ok) return;
     }
-    if (from === 'calendar') {
+    if (from === 'calendar' && date) {
+      router.push(`/recipes/${id}?from=calendar&date=${date}`);
+    } else if (from === 'calendar') {
       router.push(`/recipes/${id}?from=calendar`);
     } else {
       router.push(`/recipes/${id}`);

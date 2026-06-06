@@ -27,6 +27,7 @@ const RecipeDetail = ({ params }: Props) => {
 
   const searchParams = useSearchParams();
   const from = searchParams.get('from');
+  const date = searchParams.get('date');
 
   const {
     data: recipe,
@@ -70,7 +71,9 @@ const RecipeDetail = ({ params }: Props) => {
 
   //編集画面へ遷移
   const editRecipe = async (id: string) => {
-    if (from === 'calendar') {
+    if (from === 'calendar' && date) {
+      router.push(`/recipes/${id}/edit?from=calendar&date=${date}`);
+    } else if (from === 'calendar') {
       router.push(`/recipes/${id}/edit?from=calendar`);
     } else {
       router.push(`/recipes/${id}/edit`);
@@ -79,7 +82,9 @@ const RecipeDetail = ({ params }: Props) => {
 
   //戻るボタンの処理
   const handleBack = () => {
-    if (from === 'calendar') {
+    if (from === 'calendar' && date) {
+      router.push(`/home?date=${date}`);
+    } else if (from === 'calendar') {
       router.push('/home');
     } else {
       router.push('/recipes');

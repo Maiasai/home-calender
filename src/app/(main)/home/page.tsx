@@ -17,6 +17,7 @@ import { useSupabaseSession } from './_hooks/useSupabaseSession';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import { ErrorMessage } from '@/components/ErrorMessage';
+import { useSearchParams } from 'next/navigation';
 
 const TopPage = () => {
   const { token } = useSupabaseSession();
@@ -29,12 +30,16 @@ const TopPage = () => {
 
   const today = new Date(); //今日の日付を取得
 
+  const searchParams = useSearchParams();
+  const dateParam = searchParams.get('date');
+  //ユーザーがクリックした日を管理（上で取得したtodayを入れることで初期値を本日）
+  const initialDate = dateParam ? new Date(dateParam) : today; //もしURLに date があるならその date を Date型に変換して使う
+  const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
+
   //今表示している月を管理(Dateは「日付の箱」)※このstateは、今表示している月
   const [currentMonth, setCurrentMonth] = useState(
-    new Date(today.getFullYear(), today.getMonth(), 1), //年月を取得しこの形になる　→ new Dateで今の月の1日を作成(2026, 2, 1)
+    new Date(initialDate.getFullYear(), initialDate.getMonth(), 1), //年月を取得しこの形になる　→ new Dateで今の月の1日を作成(2026, 2, 1)
   );
-  //ユーザーがクリックした日を管理（上で取得したtodayを入れることで初期値を本日）
-  const [selectedDate, setSelectedDate] = useState<Date>(today);
 
   //今表示しているカレンダーの情報を取得
   const year = currentMonth.getFullYear(); //年を取得
