@@ -35,6 +35,7 @@ const titles = {
 };
 
 type CheckEmailResult = {
+  //ログイン前判断材料
   exists: boolean;
   authProvider: 'EMAIL' | 'GOOGLE' | null;
 };
@@ -50,11 +51,33 @@ const LoginFlowModal = ({
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(''); //verifyCode ステップや signup ステップでも email を参照するため用
-  const [googleUserEmail, setGoogleUserEmail] = useState<string | null>(null); //Google
+  const [authUser, setAuthUser] = useState<any>(null);
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
 
   const [mode, setMode] = useState<Mode>('normal');
 
   const router = useRouter();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    //今いるURLに ?signup=1 がなければ、何もしない
+    if (searchParams.get('signup') !== '1') return;
+
+    const result = sessionStorage.getItem('authResult'); //ブラウザに一時保存していたデータ取得
+    if (!result) return;
+
+    const authResult = JSON.parse(result) as {
+      provider: 'google' | 'email';
+      isGoogleUser: boolean;
+    };
+
+    setIsGoogleUser(authResult.isGoogleUser); //Googleユーザーかどうかをstateに
+    setStep('newregistration');
+    setLoginModalOpen(true);
+
+    sessionStorage.removeItem('authResult'); //removeItemは一回使ったら消す処理
+  }, [setLoginModalOpen]);
 
   //モードリセット用
   useEffect(() => {
@@ -62,26 +85,6 @@ const LoginFlowModal = ({
       setMode('normal');
     }
   }, [step]);
-
-  //Googleで続ける場合チェック用
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await supabase.auth.getUser();
-      const user = res.data?.user;
-      setGoogleUserEmail(user?.email ?? null);
-    };
-    fetchUser();
-  }, []);
-
-  //①Googleで続ける→Supabase OAuth にリダイレクト
-  //②新規登録が必要な場合コールバックページでトップに戻すと同時に URL にフラグを付与→ モーダル内で新規登録フォームを開く
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.get('signup') === '1') {
-      setStep('newregistration'); // 新規登録ステップに
-      setLoginModalOpen(true); // モーダル開く
-    }
-  }, [setLoginModalOpen, setStep]);
 
   //Email管理用
   const {
@@ -236,13 +239,6 @@ const LoginFlowModal = ({
     setLoginModalOpen(true);
   };
 
-  //URLに ?signup があれば自動でモーダルを開く（Googleで続けた場合のみ）
-  useEffect(() => {
-    if (window.location.search.includes('signup')) {
-      openSignupModal();
-    }
-  }, []);
-
   //パスワードリセットモーダル検知
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -258,7 +254,7 @@ const LoginFlowModal = ({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-20 ">
       {/* 中央の箱 */}
-      <div className="bg-white p-6 rounded w-[500px] h-[500px] overflow-auto text-left relative z-20">
+      <div className="bg-white p-6 rounded w-[500px] h-[590px] overflow-auto text-left relative z-20 m-2">
         {/* 新規登録またはログイン */}
         {step === 'select' && (
           <>
@@ -268,7 +264,7 @@ const LoginFlowModal = ({
           </>
         )}
         {loading && (
-          <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-white/100 flex items-center justify-center z-50">
             <span className="text-gray-700 font-medium text-lg">処理中…</span>
           </div>
         )}
@@ -338,7 +334,7 @@ const LoginFlowModal = ({
                   isSubmittingsign={isSubmittingsign}
                   loading={loading}
                   setLoading={setLoading}
-                  googleUserEmail={googleUserEmail}
+                  isGoogleUser={isGoogleUser}
                 />
               </div>
             </div>

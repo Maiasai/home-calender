@@ -1,5 +1,6 @@
 //通知取得API
 
+import { InviteNotificationsType } from '@/app/(main)/notifications/_typs/InviteNotificationsType';
 import { NotificationsType } from '@/app/(main)/notifications/_typs/NotificationsType';
 import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -23,7 +24,7 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
-    const data = await prisma.familyInvite.findMany({
+    const invitedata = await prisma.familyInvite.findMany({
       where: {
         email: dbUser.email,
       },
@@ -36,17 +37,58 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
-    const formatted: NotificationsType[] = data.map((m) => ({
+    const notification = await prisma.notification.findMany({
+      where: {
+        familyId: dbUser.activeFamilyId,
+        actorUserId: { not: dbUser.id },
+      },
+      include: {
+        actorUser: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const nformatted: NotificationsType[] = notification.map((n) => ({
+      id: n.id,
+      familyId: n.familyId,
+      actorUserId: n.actorUserId,
+      type: n.type,
+      createdAt: n.createdAt,
+      nickname: n.actorUser?.nickname ?? '',
+    }));
+
+    const formatted: InviteNotificationsType[] = invitedata.map((m) => ({
       id: m.id,
       familyId: m.familyId,
       email: m.email,
       createdAt: m.family.createdAt,
-      nickname: m.family.owner.nickname ?? '',
+      nickname: m.family.owner?.nickname ?? '',
     }));
 
-    return NextResponse.json(formatted, { status: 200 });
+    const lastViewedAt = dbUser?.notificationLastViewedAt;
+
+    const hasInvite = formatted.length > 0;
+
+    const hasUnreadNotification = !lastViewedAt //lastViewedAtがなかったら左辺を返す。
+      ? nformatted.length > 0
+      : nformatted.some((f) => f.createdAt > lastViewedAt);
+
+    const hasUnread = hasInvite || hasUnreadNotification; //どちらかならtrue
+
+    await prisma.user.update({
+      where: { id: dbUser.id },
+      data: {
+        notificationLastViewedAt: new Date(),
+      },
+    });
+
+    return NextResponse.json(
+      { invites: formatted, notifications: nformatted, hasUnread },
+      { status: 200 },
+    );
   } catch (error) {
     console.log('error', error);
+    console.log('GET /api/notifications error:', error);
     return NextResponse.json(
       { message: 'サーバーエラーが発生しました' },
       { status: 500 },

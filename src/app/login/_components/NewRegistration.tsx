@@ -31,7 +31,7 @@ type Props = {
   isSubmittingsign: boolean;
   loading: boolean;
   setLoading: (v: boolean) => void;
-  googleUserEmail?: string | null; //	? をつけると 親が渡さなくてもエラーにならない。null は supabase でユーザーがいない場合に null が入る可能性があるため
+  isGoogleUser: boolean;
 };
 
 const NewRegistration = ({
@@ -45,36 +45,10 @@ const NewRegistration = ({
   isSubmittingsign,
   loading,
   setLoading,
-  googleUserEmail,
+  isGoogleUser,
 }: Props) => {
   const { token } = useSupabaseSession();
   const router = useRouter();
-
-  const [isGoogleUser, setIsGoogleUser] = useState<boolean | null>(null);
-  const [isLoadingProvider, setIsLoadingProvider] = useState(true);
-
-  //初回レンダー時　パスワード欄表示見え防止
-  useEffect(() => {
-    if (isGoogleUser === null) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [isGoogleUser]);
-
-  // Google 連携ユーザーならパスワード欄を非表示
-  useEffect(() => {
-    const checkProvider = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      setIsGoogleUser(user?.app_metadata.provider === 'google');
-      setIsLoadingProvider(false);
-    };
-
-    checkProvider();
-  }, []);
 
   //認証済みかチェック
   useEffect(() => {
@@ -201,7 +175,7 @@ const NewRegistration = ({
               <ErrorMessage error={errorssign.nickname} />
             )}
           </div>
-          <p className="whitespace-pre-line text-xs mb-16 pl-2">
+          <p className="whitespace-pre-line text-xs mb-6 pl-2">
             {`※10文字以内にする必要があります
             ※プロフィールに表示され、他のユーザーが閲覧できます。`}
           </p>
@@ -222,7 +196,7 @@ const NewRegistration = ({
           <p className="whitespace-pre-line text-center text-xs">
             登録することで、{''}
             <a
-              href="/login/terms"
+              href="/terms"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 underline hover:text-blue-700"
@@ -232,7 +206,7 @@ const NewRegistration = ({
             {''}
             および{''}
             <a
-              href="/login/privacy"
+              href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 underline hover:text-blue-700"

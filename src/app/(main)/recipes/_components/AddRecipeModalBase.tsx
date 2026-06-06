@@ -59,7 +59,9 @@ const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
           <AddRecipeSelect onSelect={setStep} /> //モーダルにsetStep という関数をonSelectという名前で渡してる
         )}
 
-        {step === 'URL' && <AddRecipeUrlModal onClose={onClose} step={step} />}
+        {step === 'URL' && (
+          <AddRecipeUrlModal onClose={onClose} step={step} mutate={mutate} />
+        )}
 
         {step === 'MANUAL' && (
           <AddRecipeManualModal onClose={onClose} step={step} mutate={mutate} />

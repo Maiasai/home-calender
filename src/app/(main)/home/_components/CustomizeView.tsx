@@ -6,6 +6,7 @@ import { SelectedRecipe } from '../_typs/SelectedRecipe';
 import Image from 'next/image';
 import { truncateRecipeTitle } from '@/utils/format';
 import { UiMealType } from '../_typs/UiMealType';
+import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   selectedRecipes: SelectedRecipe[];
@@ -70,20 +71,15 @@ const CustomizeView = ({
     <>
       <div className="flex flex-col gap-4">
         <div className="flex flex-row w-full justify-end">
-          <button
+          <PrimaryButton
             type="button"
             onClick={handleSave}
             disabled={isDisabled}
-            className={`transition
-              ${isDisabled ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+            className="w-[80px] h-[30px]"
+            variant="primary"
           >
-            <Image
-              src="/images/save.png"
-              alt="保存ボタン"
-              width={70}
-              height={50}
-            />
-          </button>
+            保存
+          </PrimaryButton>
         </div>
 
         <div className="flex items-center justify-center w-full mt-10">
@@ -100,7 +96,7 @@ const CustomizeView = ({
         {selectedRecipes?.map((recipe) => (
           <div key={recipe.id} className="flex items-center gap-4">
             {/* 画像 */}
-            <div className="w-[100px] h-[70px] relative overflow-hidden rounded-lg">
+            <div className="w-[130px] h-[80px] relative shrink-0 overflow-hidden rounded-lg">
               <Image
                 src={recipe.thumbnailUrl || '/images/noImage.jpg'}
                 alt="レシピ画像"

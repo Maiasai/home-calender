@@ -44,6 +44,7 @@ export const POST = async (request: NextRequest) => {
         sortOrder: (maxSortOrder._max.sortOrder ?? -1) + 1, //ソート番号を付与
       },
     });
+
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.log(error);

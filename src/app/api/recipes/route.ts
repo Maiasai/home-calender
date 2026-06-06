@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import requireUser from '@/lib/auth';
 import { RecipeCategory } from '@/generated/prisma';
 import { CreatePostRequestBody } from './_types/CreatePostRequestBody';
+import { createNotification } from '@/lib/notification';
 
 export const runtime = 'nodejs';
 
@@ -119,7 +120,7 @@ export const GET = async (request: NextRequest) => {
 
     return NextResponse.json(recipeget, { status: 200 });
   } catch (error) {
-    console.error(error);
+    console.log('GET /api/recipes error:', error);
 
     return NextResponse.json(
       { message: 'サーバーエラーが発生しました' },
@@ -141,6 +142,7 @@ export const POST = async (request: NextRequest) => {
     const userId = user.id;
 
     const body: CreatePostRequestBody = await request.json();
+
     const {
       title,
       memo,
@@ -164,91 +166,101 @@ export const POST = async (request: NextRequest) => {
         { status: 404 },
       );
     }
+    const activeFamilyId = dbUser.activeFamilyId;
 
-    const recipedata = await prisma.recipe.create({
-      //テーブル操作。データベースに保存する処理
-      data: {
-        title,
-        memo,
-        servings,
-        thumbnailUrl: thumbnailImageUrl,
-        category: category ?? RecipeCategory.UNCLASSIFIED, //enumの場合はそのまま記載
-        sourceType: 'MANUAL',
-        updatedByUserId: user.id,
-        ownerUser: {
-          connect: { id: userId }, //誰が作ったか。ownerUser を createに渡す※Recipe.ownerUserId = userId
-        },
-        family: {
-          connect: {
-            id: dbUser.activeFamilyId, //所属family
+    const recipedata = await prisma.$transaction(async (tx) => {
+      const recipe = await tx.recipe.create({
+        //テーブル操作。データベースに保存する処理
+        data: {
+          title,
+          memo,
+          servings,
+          thumbnailUrl: thumbnailImageUrl,
+          category: category ?? RecipeCategory.UNCLASSIFIED, //enumの場合はそのまま記載
+          sourceType: 'MANUAL',
+          updatedByUserId: user.id,
+          ownerUser: {
+            connect: { id: userId }, //誰が作ったか。ownerUser を createに渡す※Recipe.ownerUserId = userId
+          },
+          family: {
+            connect: {
+              id: activeFamilyId, //所属family
+            },
           },
         },
-      },
+      });
+
+      //材料を作成
+      //①index を 0 から始めて、ingredients.length 未満の間、1ずつ増やす（材料を1つずつDBに保存するため）
+      if (ingredients?.length) {
+        for (let index = 0; index < ingredients.length; index++) {
+          const ingre = ingredients[index]; //②ingredients の中の 1つを取り出してingre という名前の箱にindexごとに入れる　*ingreの中に全ての材料が入るわけではない。
+
+          if (!ingre.name || !ingre.unitId) continue;
+
+          await tx.recipeIngredient.create({
+            //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
+            data: {
+              quantityText: ingre.amount ?? 0,
+              sortOrder: index,
+
+              recipe: {
+                //recipeIngredientのrecipe(本来はrecipeIdをrecipe.idと接続したいが、connectが書けるのはリレーションのみだからrecipeと書く。)
+                connect: {
+                  //　内部的には「recipeId = recipe.id」となっている
+                  id: recipe.id,
+                }, //recipe.id→前にcreateしたrecipeの戻り値からきてる。※　新しく作ったrecipeのid　→　recipe = {id: "ckabc123",title: "カレー",...}
+              },
+
+              ingredient: {
+                connectOrCreate: {
+                  where: {
+                    name: ingre.name,
+                  },
+                  //ingredientテーブルに新しい材料を作って、 同時にその ingredientId を RecipeIngredient に入れる
+                  create: {
+                    name: ingre.name,
+                    normalizedName: ingre.name,
+                  },
+                },
+              },
+              unit: {
+                //unitはすでにDBに存在しているためconnect
+                connect: {
+                  id: ingre.unitId, //フロントでユーザーが選択した単位は、idでやり取りされる
+                },
+              },
+              //既に存在するもの→connect、新しく作るもの→create
+            },
+          });
+        }
+      }
+
+      //手順を作成
+      if (steps?.length) {
+        for (let index = 0; index < steps.length; index++) {
+          const step = steps[index];
+          await tx.recipeStep.create({
+            data: {
+              instructionText: step.recipestep,
+
+              sortOrder: index,
+              stepNumber: index + 1,
+              recipe: {
+                connect: { id: recipe.id }, //connect→既存のレコードと紐づけるという意味
+              },
+            },
+          });
+        }
+      }
+      return recipe;
     });
 
-    //材料を作成
-    //①index を 0 から始めて、ingredients.length 未満の間、1ずつ増やす（材料を1つずつDBに保存するため）
-    if (ingredients?.length) {
-      for (let index = 0; index < ingredients.length; index++) {
-        const ingre = ingredients[index]; //②ingredients の中の 1つを取り出してingre という名前の箱にindexごとに入れる　*ingreの中に全ての材料が入るわけではない。
-
-        if (!ingre.name || !ingre.unitId) continue;
-
-        await prisma.recipeIngredient.create({
-          //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
-          data: {
-            quantityText: ingre.amount ?? 0,
-            sortOrder: index,
-
-            recipe: {
-              //recipeIngredientのrecipe(本来はrecipeIdをrecipe.idと接続したいが、connectが書けるのはリレーションのみだからrecipeと書く。)
-              connect: {
-                //　内部的には「recipeId = recipedata.id」となっている
-                id: recipedata.id,
-              }, //recipedata.id→前にcreateしたrecipeの戻り値からきてる。※　新しく作ったrecipeのid　→　recipedata = {id: "ckabc123",title: "カレー",...}
-            },
-
-            ingredient: {
-              connectOrCreate: {
-                where: {
-                  name: ingre.name,
-                },
-                //ingredientテーブルに新しい材料を作って、 同時にその ingredientId を RecipeIngredient に入れる
-                create: {
-                  name: ingre.name,
-                  normalizedName: ingre.name,
-                },
-              },
-            },
-            unit: {
-              //unitはすでにDBに存在しているためconnect
-              connect: {
-                id: ingre.unitId, //フロントでユーザーが選択した単位は、idでやり取りされる
-              },
-            },
-            //既に存在するもの→connect、新しく作るもの→create
-          },
-        });
-      }
-    }
-
-    //手順を作成
-    if (steps?.length) {
-      for (let index = 0; index < steps.length; index++) {
-        const step = steps[index];
-        await prisma.recipeStep.create({
-          data: {
-            instructionText: step.recipestep,
-
-            sortOrder: index,
-            stepNumber: index + 1,
-            recipe: {
-              connect: { id: recipedata.id }, //connect→既存のレコードと紐づけるという意味
-            },
-          },
-        });
-      }
-    }
+    await createNotification({
+      familyId: recipedata.familyId,
+      actorUserId: user.id,
+      type: 'RECIPE_CREATED',
+    });
 
     return NextResponse.json({ recipeId: recipedata.id }, { status: 200 });
   } catch (error) {

@@ -9,6 +9,10 @@ export const fetcher = async (url: string) => {
 
   const token = session?.access_token;
 
+  if (!token) {
+    throw new Error('tokenがありません');
+  }
+
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,

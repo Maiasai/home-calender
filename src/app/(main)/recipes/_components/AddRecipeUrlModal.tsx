@@ -14,13 +14,16 @@ import { RecipeModalStep } from '../_types/RecipeModalStep';
 import UrlForm from './UrlForm';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { KeyedMutator } from 'swr';
+import { RecipeData } from '../_types/RecipeTypes';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
+  mutate: KeyedMutator<RecipeData[]>;
 };
 
-const AddRecipeUrlModal = ({ onClose, step }: Props) => {
+const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
   const { token } = useSupabaseSession();
 
   const [category, setCategory] = useState<RecipeCategory | ''>('');
@@ -62,10 +65,10 @@ const AddRecipeUrlModal = ({ onClose, step }: Props) => {
       });
 
       const recipe = await res.json();
-      router.push(`/recipes/${recipe.id}`);
+      router.push(`/recipes/`);
 
       onClose();
-      setCategory('');
+      await mutate();
     } catch (err: any) {
       console.error(err.message);
     } finally {
@@ -98,7 +101,7 @@ const AddRecipeUrlModal = ({ onClose, step }: Props) => {
           </div>
 
           {/* メモ */}
-          <div className="flex items-center h-[140px] gap-6 bg-white m-5 p-4 rounded-lg">
+          <div className="flex items-center h-[200px] gap-6 bg-white m-5 p-4 rounded-lg">
             <MemoForm registerMemo={register} />
           </div>
 

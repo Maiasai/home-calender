@@ -4,19 +4,42 @@
 import { fetcher } from '@/lib/featcher';
 import useSWR from 'swr';
 import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
-import { NotificationsType } from './_typs/NotificationsType';
+import { InviteNotificationsType } from './_typs/InviteNotificationsType';
 import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteRequest';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { NotificationsType } from './_typs/NotificationsType';
+import { useState } from 'react';
+
+//返ってくる通知の型をオブジェクトに
+export type NotificationsResponse = {
+  invites: InviteNotificationsType[];
+  notifications: NotificationsType[];
+  hasUnread: boolean;
+};
+
+const typesName = {
+  RECIPE_CREATED: 'レシピを登録',
+  RECIPE_UPDATED: 'レシピを更新',
+
+  MENU_CREATED: '献立を作成',
+
+  SHOPPING_CREATED: '買い物リストを作成',
+  SHOPPING_UPDATED: '買い物リストを更新',
+};
 
 const Notifications = () => {
   const { token } = useSupabaseSession();
-  const { data, error, mutate } = useSWR<NotificationsType[]>(
+  const { data, error, mutate } = useSWR<NotificationsResponse>(
     '/api/notifications',
     fetcher,
   );
 
-  const hasUnread = data && data.length > 0; //未読判定用
+  const [visibleCount, setVisibleCount] = useState(10); //表示件数管理用
 
+  const invites = data?.invites ?? [];
+  const notifications = data?.notifications ?? [];
+
+  ////招待通知//////////////
   //参加処理
   const Join = async (inviteId: string) => {
     try {
@@ -70,40 +93,101 @@ const Notifications = () => {
     <div className="max-w-3xl mx-auto">
       <nav className="flex justify-center border-b-2 max mb-8">通知リスト</nav>
 
-      <div className="p-2">
-        {data?.length === 0 && (
-          <p className="text-center text-gray-500">通知はありません</p>
-        )}
-
-        {data?.map((d: NotificationsType) => (
-          <div key={d.id} className="border rounded-lg p-4 shadow-sm">
-            <div className="relative">
-              <p className="font-semibold mb-3 ml-6">
-                {d.nickname}さんから招待が届いています
-              </p>
-              {/* クリックで招待レコードのIDが呼ばれる */}
-              <div className="flex gap-3 ml-6">
-                <PrimaryButton
-                  onClick={() => Join(d.id)}
-                  className="w-[80px] h-[25px]"
-                  variant="primary"
-                >
-                  参加
-                </PrimaryButton>
-
-                <button
-                  onClick={() => onCancel({ id: d.id })}
-                  className="w-[80px] h-[25px] rounded-lg bg-red-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-red-600 active:scale-95 active:shadow-sm"
-                >
-                  辞退
-                </button>
-              </div>
-              {hasUnread && (
-                <span className="absolute -top-1 --1 w-3 h-3 bg-red-500 rounded-full" />
+      <div className="mb-10">
+        <div className="bg-gray-200 p-1 rounded-lg shadow-sm">
+          <div className="flex flex-col rounded-lg">
+            <h1 className="flex justify-center font-bold shadow-sm bg-white rounded-lg p-1 m-2">
+              招待通知
+            </h1>
+            <div className="p-2">
+              {invites.length === 0 && (
+                <p className="text-center rounded-lg p-10 shadow-sm bg-white my-2">
+                  通知はありません
+                </p>
               )}
+
+              {invites.map((d: InviteNotificationsType) => (
+                <div
+                  key={d.id}
+                  className="border rounded-lg p-4 shadow-sm bg-white"
+                >
+                  <div className="relative">
+                    <p className="font-semibold mb-3 ml-6">
+                      {d.nickname}さんから招待が届いています
+                    </p>
+                    {/* クリックで招待レコードのIDが呼ばれる */}
+                    <div className="flex gap-3 ml-6">
+                      <PrimaryButton
+                        onClick={() => Join(d.id)}
+                        className="w-[80px] h-[25px]"
+                        variant="primary"
+                      >
+                        参加
+                      </PrimaryButton>
+
+                      <button
+                        onClick={() => onCancel({ id: d.id })}
+                        className="w-[80px] h-[25px] rounded-lg bg-red-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-red-600 active:scale-95 active:shadow-sm"
+                      >
+                        辞退
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
+        </div>
+      </div>
+
+      <div className="bg-gray-200 p-1 rounded-lg shadow-sm">
+        <div className="flex flex-col rounded-lg">
+          <h1 className="flex justify-center font-bold shadow-sm bg-white rounded-lg p-1 m-2">
+            更新通知
+          </h1>
+          <div>
+            <div className="p-2">
+              {notifications.length === 0 && (
+                <p className="text-center rounded-lg p-10 shadow-sm bg-white my-2">
+                  通知はありません
+                </p>
+              )}
+
+              {notifications
+                .slice(0, visibleCount)
+                .map((n: NotificationsType) => {
+                  const date = new Date(n.createdAt);
+                  const displayDate = date.toLocaleDateString('ja-JP', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  });
+
+                  return (
+                    <div
+                      key={n.id}
+                      className="border rounded-lg p-4 shadow-sm bg-white"
+                    >
+                      <div className="relative">
+                        <p className="ml-6">{displayDate}</p>
+                        <p className="flex items-center font-semibold ml-8">
+                          {n.nickname}さんが{typesName[n.type]}しました
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+
+          {notifications.length > visibleCount && (
+            <button onClick={() => setVisibleCount((prev) => prev + 10)}>
+              もっと見る
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

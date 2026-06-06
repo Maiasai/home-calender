@@ -103,7 +103,7 @@ const ChangePassword = () => {
 
       {data.authProvider === 'EMAIL' ? (
         <form onSubmit={handleSubmit(handleResetPassword)}>
-          <div className="flex flex-col max-w-md mx-auto mb-6">
+          <div className="flex flex-col max-w-md mx-auto mb-3">
             <div className="relative w-full max-w-[400px]">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -123,7 +123,7 @@ const ChangePassword = () => {
                   },
                 })}
                 placeholder="現在のパスワードを入力"
-                className="w-full border px-2 py-1 pr-10 rounded"
+                className="w-full border px-2 py-1 pr-10 rounded placeholder:text-sm"
               />
               <button
                 type="button"
@@ -137,8 +137,8 @@ const ChangePassword = () => {
                       : '/images/eye-slash-solid-full.svg'
                   }
                   alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={22}
-                  height={22}
+                  width={20}
+                  height={20}
                 />
               </button>
             </div>
@@ -149,7 +149,7 @@ const ChangePassword = () => {
             </div>
           </div>
 
-          <div className="flex flex-col max-w-md mx-auto mb-6">
+          <div className="flex flex-col max-w-md mx-auto mb-4">
             <div className="relative w-full max-w-[400px]">
               <input
                 //パスワード表示切り替えの実装（ここでpsswordにするとHTMLが自動で⚫︎⚫︎⚫︎⚫︎表示にしてくれる）
@@ -170,7 +170,7 @@ const ChangePassword = () => {
                   },
                 })}
                 placeholder="新しいパスワードを入力"
-                className="w-full border px-2 py-1 pr-10 rounded"
+                className="w-full border px-2 py-1 pr-10 rounded placeholder:text-sm"
               />
               <button
                 type="button"
@@ -184,8 +184,8 @@ const ChangePassword = () => {
                       : '/images/eye-slash-solid-full.svg'
                   }
                   alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={22}
-                  height={22}
+                  width={20}
+                  height={20}
                 />
               </button>
             </div>
@@ -195,7 +195,7 @@ const ChangePassword = () => {
               )}
             </div>
             <p className="whitespace-pre-line text-xs pl-2">
-              {`※8文字以上にする必要があります`}
+              {`※6文字以上12文字以内にする必要があります`}
             </p>
           </div>
 
@@ -209,7 +209,7 @@ const ChangePassword = () => {
                     value === password || 'パスワードが一致しません',
                 })}
                 placeholder="新しいパスワードを入力（確認）"
-                className="w-full border px-2 py-1 pr-10 rounded"
+                className="w-full border px-2 py-1 pr-10 rounded placeholder:text-sm"
               />
               <button
                 type="button"
@@ -223,8 +223,8 @@ const ChangePassword = () => {
                       : '/images/eye-slash-solid-full.svg'
                   }
                   alt={showConfirm ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={22}
-                  height={22}
+                  width={20}
+                  height={20}
                 />
               </button>
             </div>
@@ -234,7 +234,7 @@ const ChangePassword = () => {
               )}
             </div>
             <p className="whitespace-pre-line text-xs mb-2 pl-2">
-              {`※8文字以上にする必要があります`}
+              {`※6文字以上12文字以内にする必要があります`}
             </p>
           </div>
 

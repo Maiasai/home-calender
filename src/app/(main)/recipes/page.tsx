@@ -83,6 +83,7 @@ const RecipesPage = () => {
   //モーダル外 スクロール防止
   useBodyScrollLock({ open: RecipeModalOpen });
 
+  if (!recipes) return <p>読み込み中...</p>;
   if (isError) return <p>エラーが発生しました...</p>;
 
   return (

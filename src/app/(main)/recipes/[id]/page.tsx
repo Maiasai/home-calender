@@ -11,6 +11,7 @@ import PageTitle from '../styles/PageTitle';
 import type { RecipeDetail } from '../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { supabase } from '@/lib/supabase';
 //RecipeDetail→typeを自動生成するコンポーネントのため、ここで明示的にtypeとしておく
 
 type Props = {
@@ -43,7 +44,26 @@ const RecipeDetail = ({ params }: Props) => {
 
   //レシピ削除
   const deleteRecipe = async (id: string) => {
-    await fetch(`/api/recipes/${id}`, { method: 'DELETE' });
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      console.log('tokenがありません');
+
+      return;
+    }
+    const res = await fetch(`/api/recipes/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      console.log('削除失敗 status:', res.status);
+      console.log('削除失敗 error:', error);
+      return;
+    }
     router.push('/recipes');
   };
 
@@ -131,7 +151,7 @@ const RecipeDetail = ({ params }: Props) => {
               <h2 className="text-lg font-semibold mb-3">材料</h2>
             </div>
 
-            <h3 className="text-base font-semibold mb-3">
+            <h3 className="text-base font-semibold mb-3 ml-2">
               {recipe.servings}人分
             </h3>
 
@@ -140,13 +160,13 @@ const RecipeDetail = ({ params }: Props) => {
               {recipe.recipeIngredients.map((ingredientdata) => (
                 <li key={ingredientdata.id}>
                   {/* 材料名 */}
-                  <div className="flex items-center py-1 px-2 gap-4">
-                    <div className="border-b w-3/4">
+                  <div className="flex items-center py-2 px-3 gap-8">
+                    <div className="border-b w-3/4 mb-2">
                       {ingredientdata.ingredient.name}
                     </div>
 
                     {/* 量と単位 */}
-                    <div className="border-b w-1/4">
+                    <div className="border-b w-1/4  mb-2">
                       {ingredientdata.quantityText}
                       {ingredientdata.unit?.name}
                     </div>
@@ -165,7 +185,7 @@ const RecipeDetail = ({ params }: Props) => {
               {recipe.recipeSteps.map((recipestep) => (
                 <li key={recipestep.id}>
                   <div className="flex py-1 px-2 border-b">
-                    <div className="mr-2">{recipestep.stepNumber}</div>
+                    <div className="mx-1">{recipestep.stepNumber}</div>
                     {recipestep.instructionText}
                   </div>
                 </li>
@@ -176,7 +196,7 @@ const RecipeDetail = ({ params }: Props) => {
           {/* メモ */}
           <div>
             <h2 className="text-lg font-semibold pb-5">メモ</h2>
-            <p className="border-b">{recipe.memo}</p>
+            <p className="border-b  ml-2">{recipe.memo}</p>
           </div>
         </div>
 

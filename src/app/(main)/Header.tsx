@@ -10,13 +10,15 @@ import { useUserProfile } from './home/_hooks/useUserProfile';
 import { Hamburger } from './hamburger';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/featcher';
-import { NotificationsType } from './notifications/_typs/NotificationsType';
+
+import { NotificationsResponse } from './notifications/page';
 
 const Header = () => {
   const [open, setOpen] = useState(false); //ハンバーガーメニュー用
 
-  const { data } = useSWR<NotificationsType[]>('/api/notifications', fetcher);
-  const hasUnread = data && data.length > 0; //未読判定用
+  const { data } = useSWR<NotificationsResponse>('/api/notifications', fetcher);
+
+  const hasUnreadNonfications = data?.hasUnread; //未読判定用
 
   const router = useRouter();
 
@@ -44,7 +46,7 @@ const Header = () => {
                     width={30}
                     height={20}
                   />
-                  {hasUnread && (
+                  {hasUnreadNonfications && (
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
                   )}
                 </Link>
@@ -67,7 +69,7 @@ const Header = () => {
             open={open}
             setOpen={setOpen}
             handleLogout={handleLogout}
-            hasUnread={hasUnread}
+            hasUnreadNonfications={hasUnreadNonfications}
           />
 
           <div className="pt-4 ml-10 space-x-10 hidden md:block">

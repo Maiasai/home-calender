@@ -75,6 +75,7 @@ const VerifyCodeMailInputModal = ({
         </div>
         <div className="flex justify-center items-center">
           <button
+            type="button"
             className="text-xs mt-2 border-b"
             onClick={() => sendOtp(email)}
           >

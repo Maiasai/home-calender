@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { ShoppingItemResponse } from '../_types/ShoppingItemResponse';
 import { UpdateShoppingData } from '../_types/UpdateShoppingData';
+import { createNotification } from '@/lib/notification';
 
 export const GET = async (request: NextRequest) => {
   try {
@@ -171,6 +172,11 @@ export const POST = async (request: NextRequest) => {
         }
       }),
     );
+    await createNotification({
+      familyId: dbUser.activeFamilyId,
+      actorUserId: user.id,
+      type: 'SHOPPING_UPDATED',
+    });
 
     return NextResponse.json(
       { message: '買い物リスト追加完了' },
@@ -194,7 +200,6 @@ export const PUT = async (request: NextRequest) => {
     });
     const body: UpdateShoppingData = await request.json();
 
-    console.log('body', body);
     if (!body.id) {
       return NextResponse.json({ message: 'idが必要です' }, { status: 400 });
     }

@@ -24,7 +24,7 @@ const RecipeCardSimple = ({ recipe, selectedRecipes, toggleSelect }: Props) => {
     <div
       className={`
         cursor-pointer
-        ${isSelected ? 'border-orange-300 border-2 rounded-lg p-0.5' : ''}
+        ${isSelected ? 'border-orange-300 border-2 rounded-3xl p-2' : ''}
       `}
     >
       <div

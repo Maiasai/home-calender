@@ -5,6 +5,7 @@ import requireUser from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { RecipeCategory, RecipeSourceType } from '@/generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { createNotification } from '@/lib/notification';
 
 //左辺→分割代入、右辺→型指定（idはstrigですと言ってるだけ）　　{params} : { params : {id:string}}
 export const GET = async (
@@ -61,28 +62,48 @@ export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const user = await requireUser(request); //Supabaseが特定したログインユーザーがここに来る
-  const dbUser = await prisma.user.findUnique({
-    where: {
-      id: user.id,
-    },
-  });
+  try {
+    const user = await requireUser(request); //Supabaseが特定したログインユーザーがここに来る
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
 
-  if (!dbUser?.activeFamilyId) {
-    return NextResponse.json({ message: 'family not found' }, { status: 404 });
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
+    const activeFid = dbUser.activeFamilyId;
+
+    await prisma.$transaction(async (tx) => {
+      await tx.userRecipeStatus.deleteMany({
+        where: { recipeId: params.id },
+      });
+      await tx.recipeIngredient.deleteMany({
+        where: { recipeId: params.id },
+      });
+      await tx.recipeStep.deleteMany({
+        where: { recipeId: params.id },
+      });
+      const result = await tx.recipe.deleteMany({
+        where: { id: params.id, familyId: activeFid },
+      });
+
+      if (result.count === 0) {
+        throw new Error('削除対象のレシピが見つかりません');
+      }
+    });
+    return NextResponse.json({ message: '削除しました' });
+  } catch (error) {
+    console.log('DELETE recipe error', error);
+    return NextResponse.json(
+      { message: '削除中にエラーが発生しました' },
+      { status: 500 },
+    );
   }
-
-  const result = await prisma.recipe.deleteMany({
-    where: {
-      //この2つの条件に一致するレコードだけ削除
-      id: params.id,
-      familyId: dbUser.activeFamilyId, //家族共有データだけ取る
-    }, //そのデータの持ち主かをチェック
-  });
-
-  if (result.count === 0)
-    return NextResponse.json({ message: '削除できません' }, { status: 404 });
-  return NextResponse.json({ message: '削除しました' });
 };
 
 //レシピ編集API
@@ -150,94 +171,101 @@ export const PUT = async (
       return NextResponse.json({ message: 'not found' }, { status: 404 });
     }
 
-    const recipe = await prisma.recipe.update({
-      where: {
-        id: params.id, //URLから取得したレシピのID
-      },
+    const recipedata = await prisma.$transaction(async (tx) => {
+      const recipe = await tx.recipe.update({
+        where: {
+          id: params.id, //URLから取得したレシピのID
+        },
 
-      data: {
-        title: body.title,
-        memo: body.memo,
-        servings: body.servings,
-        thumbnailUrl: body.thumbnailImageUrl ?? null,
-        category: body.category ?? RecipeCategory.UNCLASSIFIED,
-        sourceType: body.sourceType,
-        updatedByUserId: user.id,
-        sourceUrl: body.sourceUrl,
-      },
-      include: {
-        recipeIngredients: true,
-        recipeSteps: true,
-      },
-    });
-
-    //材料は一旦全部削除
-    await prisma.recipeIngredient.deleteMany({
-      where: { recipeId: params.id },
-    });
-
-    //再度生成
-    for (let i = 0; i < body.ingredients.length; i++) {
-      //配列のi番目を取り出す
-      const ing = body.ingredients[i];
-      //空の行は個々にSKIP
-      const isEmpty = !ing.name && !ing.amount && !ing.unitId;
-
-      if (isEmpty) continue;
-
-      await prisma.recipeIngredient.create({
         data: {
-          quantityText: ing.amount ?? null,
-          sortOrder: i,
+          title: body.title,
+          memo: body.memo,
+          servings: body.servings,
+          thumbnailUrl: body.thumbnailImageUrl ?? null,
+          category: body.category ?? RecipeCategory.UNCLASSIFIED,
+          sourceType: body.sourceType,
+          updatedByUserId: user.id,
+          sourceUrl: body.sourceUrl,
+        },
+        include: {
+          recipeIngredients: true,
+          recipeSteps: true,
+        },
+      });
 
-          recipe: {
-            connect: { id: params.id },
-          },
+      //材料は一旦全部削除
+      await tx.recipeIngredient.deleteMany({
+        where: { recipeId: params.id },
+      });
 
-          ingredient: {
-            connectOrCreate: {
-              where: {
-                name: ing.name,
-              },
-              create: {
-                name: ing.name,
-                normalizedName: ing.name,
+      //再度生成
+      for (let i = 0; i < body.ingredients.length; i++) {
+        //配列のi番目を取り出す
+        const ing = body.ingredients[i];
+        //空の行は個々にSKIP
+        const isEmpty = !ing.name && !ing.amount && !ing.unitId;
+
+        if (isEmpty) continue;
+
+        await tx.recipeIngredient.create({
+          data: {
+            quantityText: ing.amount ?? null,
+            sortOrder: i,
+
+            recipe: {
+              connect: { id: params.id },
+            },
+
+            ingredient: {
+              connectOrCreate: {
+                where: {
+                  name: ing.name,
+                },
+                create: {
+                  name: ing.name,
+                  normalizedName: ing.name,
+                },
               },
             },
+            unit: ing.unitId
+              ? {
+                  connect: { id: ing.unitId },
+                }
+              : undefined,
           },
-          unit: ing.unitId
-            ? {
-                connect: { id: ing.unitId },
-              }
-            : undefined,
-        },
-      });
-    }
-    console.log('BEFORE CREATE ING');
+        });
+      }
 
-    //手順も全部削除
-    await prisma.recipeStep.deleteMany({
-      where: { recipeId: params.id },
+      //手順も全部削除
+      await tx.recipeStep.deleteMany({
+        where: { recipeId: params.id },
+      });
+
+      for (let i = 0; i < body.steps.length; i++) {
+        const step = body.steps[i];
+
+        if (!step.recipestep?.trim()) continue;
+
+        await tx.recipeStep.create({
+          data: {
+            instructionText: step.recipestep,
+            sortOrder: i,
+            stepNumber: i + 1,
+            recipe: {
+              connect: { id: params.id },
+            },
+          },
+        });
+      }
+
+      await createNotification({
+        familyId: recipe.familyId,
+        actorUserId: user.id,
+        type: 'RECIPE_UPDATED',
+      });
+      return recipe;
     });
-
-    for (let i = 0; i < body.steps.length; i++) {
-      const step = body.steps[i];
-
-      if (!step.recipestep?.trim()) continue;
-
-      await prisma.recipeStep.create({
-        data: {
-          instructionText: step.recipestep,
-          sortOrder: i,
-          stepNumber: i + 1,
-          recipe: {
-            connect: { id: params.id },
-          },
-        },
-      });
-    }
-
-    return NextResponse.json(recipe, { status: 200 });
+    return NextResponse.json(recipedata, { status: 200 });
   } catch (error) {
     console.error('PUT ERROR:', error);
     return NextResponse.json(

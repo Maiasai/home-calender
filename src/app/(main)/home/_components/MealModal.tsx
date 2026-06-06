@@ -103,7 +103,6 @@ const MealModal = ({
       if (!res.ok) {
         throw new Error('保存失敗');
       }
-
       await mutate();
       onClose(); //成功時
     } catch (error) {
@@ -125,7 +124,7 @@ const MealModal = ({
           </PrimaryButton>
         </div>
 
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex items-center gap-2 ml-auto mb-2">
           <PrimaryButton
             onClick={() => onSelect('customize')}
             className="flex items-center justify-center gap-1 w-[114px] h-[34px] "
@@ -167,28 +166,28 @@ const MealModal = ({
           const icon = getMealIcon(category);
 
           return (
-            <div key={category}>
-              {icon && ( //アイコンある時だけ表示
-                <Image
-                  src={icon}
-                  alt="カテゴリアイコン"
-                  className="w-6 h-6 my-2"
-                  width={20}
-                  height={20}
-                />
-              )}
+            <div className="flex flex-col p-2">
+              <div key={category}>
+                {icon && ( //アイコンある時だけ表示
+                  <Image
+                    src={icon}
+                    alt="カテゴリアイコン"
+                    className="mb-2"
+                    width={25}
+                    height={25}
+                  />
+                )}
 
-              {/* レシピ画像とタイトル */}
-              <div className="flex flex-col gap-4">
+                {/* レシピ画像とタイトル */}
                 {recipesInCategory?.map((r) => (
-                  <div key={r.id} className="flex items-center gap-6">
+                  <div key={r.id} className="flex items-center gap-3 mb-3">
                     {/* 画像 */}
-                    <div className="w-24 h-16 overflow-hidden relative">
+                    <div className="w-[130px] h-[80px] overflow-hidden relative shrink-0 rounded-lg">
                       <Image
                         src={r.thumbnailUrl ?? '/images/noImage.jpg'}
                         alt="画像"
                         fill
-                        className="object-cover rounded-lg"
+                        className="object-cover"
                       />
                     </div>
 

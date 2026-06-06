@@ -16,19 +16,22 @@ export const MealSection = ({ items, iconSrc, iconAlt }: Props) => {
   return (
     <>
       {items.map((item) => (
-        <div key={item.id} className="flex items-center text-sm gap-x-2 mb-4">
-          <div>
+        <div key={item.id} className="flex items-center text-sm gap-x-2 mb-4 ">
+          <div className="shink-0">
             <Image
               src={iconSrc}
               alt={iconAlt}
-              width={20}
-              height={20}
-              className="mr-1"
+              width={30}
+              height={30}
+              className="object-contain"
             />{' '}
           </div>
 
-          <Link href={`/recipes/${item.id}?from=calendar`} className="block">
-            <div className="relative  w-[180px] h-[120px]  overflow-hidden rounded">
+          <Link
+            href={`/recipes/${item.id}?from=calendar`}
+            className="block shink-0"
+          >
+            <div className="relative  w-[150px] h-[100px]  overflow-hidden rounded-md">
               <Image
                 src={item.thumbnailUrl ?? '/images/noImage.jpg'}
                 alt={item.title}
@@ -38,7 +41,10 @@ export const MealSection = ({ items, iconSrc, iconAlt }: Props) => {
             </div>
           </Link>
 
-          <Link href={`/recipes/${item.id}?from=calendar`} className="block">
+          <Link
+            href={`/recipes/${item.id}?from=calendar`}
+            className="flex-1 min-w-0 break-words"
+          >
             {item.title}
           </Link>
         </div>

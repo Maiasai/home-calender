@@ -65,6 +65,7 @@ const MailInputModal = ({
           <PrimaryButton
             disabled={!isValid || isSubmitting} //バリデーション表示,送信中はtureになる→true時はボタン無効
             className="w-60 h-11"
+            type="submit"
             variant="primary"
           >
             次へ

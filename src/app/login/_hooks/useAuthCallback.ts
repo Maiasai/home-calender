@@ -13,10 +13,14 @@ type Options = {
   onSignupOpen?: () => void;
   setLoading?: (v: boolean) => void;
   onLoginSuccess?: () => void;
+  onAuthComplete?: (data: {
+    provider: AuthProvider;
+    isGoogleUser: boolean;
+  }) => void;
 };
+type AuthProvider = 'google' | 'email' | null;
 
 export const useAuthCallback = () => {
-  const { token } = useSupabaseSession();
   const router = useRouter();
 
   //options→関数をまとめて渡すためのオブジェクト
@@ -40,7 +44,14 @@ export const useAuthCallback = () => {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
-      //②supabaseがGoogleログインのコードをセッションに変換→これによってログイン状態になる
+
+      const authProviders = user?.app_metadata?.providers;
+
+      const isGoogleUser =
+        user?.app_metadata?.provider === 'google' ||
+        (Array.isArray(authProviders) && authProviders.includes('google'));
+
+      const provider: AuthProvider = isGoogleUser ? 'google' : 'email';
 
       if (userError || !user) {
         //「エラーがある」または「ユーザーが取得できなかった」とき
@@ -55,7 +66,7 @@ export const useAuthCallback = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
         body: JSON.stringify({
           id: user.id,
@@ -63,13 +74,19 @@ export const useAuthCallback = () => {
           provider: user.app_metadata?.provider,
         }),
       });
-      console.log('token', token);
+
       //④DBにユーザーいるか確認
       const res = await fetch('/api/users/me', {
         credentials: 'include',
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
         },
+      });
+
+      //意味）もし onAuthComplete が渡されてたら、その関数を今ここで実行する
+      options?.onAuthComplete?.({
+        provider: provider,
+        isGoogleUser,
       });
 
       const data: GetMeResponse = await res.json();
