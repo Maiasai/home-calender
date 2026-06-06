@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: 'Internal Server Error' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }

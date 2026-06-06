@@ -22,6 +22,9 @@ export const PUT = async (request: NextRequest) => {
     return NextResponse.json({ message: 'email sync ok' }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };

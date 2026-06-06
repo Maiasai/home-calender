@@ -255,6 +255,11 @@ const GroupOwner = ({
                   })
                 )}
               </div>
+              <div className="mb-8 rounded-lg bg-orange-50 px-4 py-3 text-xs text-gray-700 leading-relaxed">
+                <p>※「作ったことある」は、家族みんなで確認できます。</p>
+
+                <p>※「お気に入り」は、自分だけの設定として保存されます。</p>
+              </div>
             </>
           ) : (
             <div className="text-sm sm:whitespace-normal whitespace-pre-line text-gray-600 mb-14">

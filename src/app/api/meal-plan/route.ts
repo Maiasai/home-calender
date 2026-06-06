@@ -118,7 +118,7 @@ export const POST = async (request: NextRequest) => {
     console.error('API ERROR:', error);
 
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }
@@ -180,7 +180,10 @@ export const PUT = async (request: NextRequest) => {
     });
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };
 
@@ -200,6 +203,9 @@ export const DELETE = async (request: NextRequest) => {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };

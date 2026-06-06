@@ -54,7 +54,7 @@ export const POST = async (req: NextRequest) => {
     //想定外エラー
     console.error(error);
     return NextResponse.json(
-      { message: 'Internal Server Error' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }

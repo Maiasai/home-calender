@@ -21,7 +21,10 @@ export const GET = async (request: NextRequest) => {
     });
 
     if (!result) {
-      return NextResponse.json({ message: 'user not found' }, { status: 404 });
+      return NextResponse.json(
+        { message: 'ユーザーが見つかりませんでした' },
+        { status: 404 },
+      );
     }
 
     const response: UserResponseType = {
@@ -34,6 +37,9 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     console.log('エラー内容', error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };

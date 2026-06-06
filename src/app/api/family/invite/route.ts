@@ -49,7 +49,7 @@ export const POST = async (request: NextRequest) => {
       });
       if (existingMember) {
         return NextResponse.json(
-          { message: 'already a member' },
+          { message: '既に参加済みのメンバーです' },
           { status: 400 },
         );
       }
@@ -79,7 +79,7 @@ export const POST = async (request: NextRequest) => {
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }
@@ -161,7 +161,7 @@ export const DELETE = async (request: NextRequest) => {
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }

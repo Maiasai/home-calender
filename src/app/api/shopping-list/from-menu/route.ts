@@ -49,7 +49,10 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json(formatted, { status: 200 });
   } catch (error) {
     console.error('エラー内容', error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };
 
@@ -184,7 +187,10 @@ export const POST = async (request: NextRequest) => {
     );
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };
 
@@ -247,7 +253,10 @@ export const PUT = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };
 

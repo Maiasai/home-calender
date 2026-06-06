@@ -54,6 +54,9 @@ export const PATCH = async (
     });
     return NextResponse.json(result, { status: 200 });
   } catch {
-    return NextResponse.json({ message: '失敗しました' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };

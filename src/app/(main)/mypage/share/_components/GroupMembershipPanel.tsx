@@ -56,6 +56,11 @@ const GroupMembershipPanel = ({
           グループから退出
         </button>
       </div>
+      <div className="mb-8 rounded-lg bg-orange-50 px-4 py-3 text-xs text-gray-700 leading-relaxed mt-20">
+        <p>※「作ったことある」は、家族みんなで確認できます。</p>
+
+        <p>※「お気に入り」は、自分だけの設定として保存されます。</p>
+      </div>
     </div>
   );
 };

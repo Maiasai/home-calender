@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     console.error('bulk delete error:', err);
 
     return NextResponse.json(
-      { message: 'Internal server error', error: err },
+      { message: 'エラーが発生しました', error: err },
       { status: 500 },
     );
   }

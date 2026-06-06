@@ -44,7 +44,7 @@ export const GET = async (request: NextRequest) => {
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }
@@ -121,7 +121,7 @@ export const DELETE = async (request: NextRequest) => {
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }
