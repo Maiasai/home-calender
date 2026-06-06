@@ -40,6 +40,8 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
   const {
     register,
     setValue,
+    getValues,
+    trigger,
     handleSubmit,
     control,
     formState: { errors, isValid, isSubmitting },
@@ -151,6 +153,8 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
               errors={errors}
               setValue={setValue}
               units={units}
+              getValues={getValues}
+              trigger={trigger}
             />
           </div>
 

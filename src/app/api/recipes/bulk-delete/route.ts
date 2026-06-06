@@ -23,6 +23,10 @@ export async function POST(req: Request) {
       where: { recipeId: { in: ids } },
     });
 
+    await prisma.menuRecipe.deleteMany({
+      where: { recipeId: { in: ids } },
+    });
+
     // 最後に Recipe を削除
     await prisma.recipe.deleteMany({
       where: { id: { in: ids } },

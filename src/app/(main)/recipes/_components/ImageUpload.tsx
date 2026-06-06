@@ -74,7 +74,6 @@ const ImageUpload = ({
             className="hidden"
             onChange={async (e) => {
               //⑤ユーザーがファイル選択した瞬間に動く
-              field.onChange(e); //RHFへの値が変わった通知
               await handleImageChange({ event: e, setValue, setPreviewUrl });
               //⑥画像取得、プレビュー作成、プレビューURL更新
             }}

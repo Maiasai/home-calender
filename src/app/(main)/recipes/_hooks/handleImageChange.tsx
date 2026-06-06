@@ -24,6 +24,7 @@ const handleImageChange = async ({ event, setValue, setPreviewUrl }: Props) => {
   const originalFile = event.target.files?.[0]; //ユーザーが選択したファイルを取得
   if (!originalFile) return;
 
+  console.log('originalFile', originalFile);
   try {
     const file = await convertHeicToJpeg(originalFile);
 
@@ -54,6 +55,8 @@ const handleImageChange = async ({ event, setValue, setPreviewUrl }: Props) => {
     const publicUrl = await supabase.storage
       .from('post_thumbnail') //supabage Storageのpost_thumbnailというパケットにあるdata.pathファイルの外部アクセスURLをくださいと指示
       .getPublicUrl(data.path).data.publicUrl;
+
+    console.log('publicUrl ', publicUrl);
 
     //③formの値を管理
     setValue('thumbnailImageUrl', publicUrl);

@@ -195,8 +195,13 @@ const List = () => {
         </button>
 
         <div className="flex flex-col justify-between items-center mb-4 p-1">
-          {/* リスト */}
           <div className="w-full mx-auto max-w-sm md:max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
+            {groupedItems.length === 0 && (
+              <p className="p-8 flex justify-center">
+                買い物リストがありません
+              </p>
+            )}
+            {/* リスト */}
             <DndContext
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}

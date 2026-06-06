@@ -257,7 +257,6 @@ export const PUT = async (
           },
         });
       }
-
       await createNotification({
         familyId: recipe.familyId,
         actorUserId: user.id,

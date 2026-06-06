@@ -63,8 +63,6 @@ const RecipeDetail = ({ params }: Props) => {
     });
     if (!res.ok) {
       const error = await res.json();
-      console.log('削除失敗 status:', res.status);
-      console.log('削除失敗 error:', error);
       return;
     }
     router.push('/recipes');
@@ -72,7 +70,11 @@ const RecipeDetail = ({ params }: Props) => {
 
   //編集画面へ遷移
   const editRecipe = async (id: string) => {
-    router.push(`/recipes/${id}/edit`); //遷移なのでrouter.pushでOK
+    if (from === 'calendar') {
+      router.push(`/recipes/${id}/edit?from=calendar`);
+    } else {
+      router.push(`/recipes/${id}/edit`);
+    } //遷移なのでrouter.pushでOK
   };
 
   //戻るボタンの処理
@@ -132,90 +134,94 @@ const RecipeDetail = ({ params }: Props) => {
           />
         </div>
 
-        {/* タイトル */}
-        <nav className="w-full text-xl mt-3 font-semibold">{recipe.title}</nav>
+        <div className="mx-2">
+          {/* タイトル */}
+          <nav className="w-full text-xl mt-3 font-semibold">
+            {recipe.title}
+          </nav>
 
-        {/* カテゴリと最終更新日 */}
-        <div className="flex justify-between mt-3">
-          <label>
-            <CategoryBadge category={recipe.category} />
-          </label>
+          {/* カテゴリと最終更新日 */}
+          <div className="flex justify-between mt-3">
+            <label>
+              <CategoryBadge category={recipe.category} />
+            </label>
 
-          <label className="flex items-center">
-            最終更新日：
-            {new Date(recipe.updatedAt).toLocaleDateString('ja-JP')}
-          </label>
-        </div>
+            <label className="flex items-center">
+              最終更新日：
+              {new Date(recipe.updatedAt).toLocaleDateString('ja-JP')}
+            </label>
+          </div>
 
-        <div className="flex flex-col space-y-10 mt-10 mb-10">
-          {/* 材料 */}
-          <div className="mb-4">
-            <div>
-              <h2 className="text-lg font-semibold mb-3">材料</h2>
+          <div className="flex flex-col space-y-10 mt-10 mb-10">
+            {/* 材料 */}
+            <div className="mb-4">
+              <div>
+                <h2 className="text-lg font-semibold mb-3">材料</h2>
+              </div>
+
+              <h3 className="text-base font-semibold mb-3 ml-2">
+                {recipe.servings}人分
+              </h3>
+
+              {/* 材料名  ※li使う場合はulで囲う */}
+              <ul>
+                {recipe.recipeIngredients.map((ingredientdata) => (
+                  <li key={ingredientdata.id}>
+                    {/* 材料名 */}
+                    <div className="flex items-center py-2 px-3 gap-8">
+                      <div className="border-b w-3/4 mb-2">
+                        {ingredientdata.ingredient.name}
+                      </div>
+
+                      {/* 量と単位 */}
+                      <div className="border-b w-1/4  mb-2">
+                        {ingredientdata.quantityText}
+                        {ingredientdata.unit?.name}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <h3 className="text-base font-semibold mb-3 ml-2">
-              {recipe.servings}人分
-            </h3>
+            {/* 作り方 */}
+            <div>
+              <h2 className="text-lg font-semibold mb-4">作り方</h2>
 
-            {/* 材料名  ※li使う場合はulで囲う */}
-            <ul>
-              {recipe.recipeIngredients.map((ingredientdata) => (
-                <li key={ingredientdata.id}>
-                  {/* 材料名 */}
-                  <div className="flex items-center py-2 px-3 gap-8">
-                    <div className="border-b w-3/4 mb-2">
-                      {ingredientdata.ingredient.name}
+              {/* 作り方内容 */}
+              <ul>
+                {recipe.recipeSteps.map((recipestep) => (
+                  <li key={recipestep.id}>
+                    <div className="flex py-1 px-2 border-b mb-4">
+                      <div className="mx-1">{recipestep.stepNumber}</div>
+                      {recipestep.instructionText}
                     </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-                    {/* 量と単位 */}
-                    <div className="border-b w-1/4  mb-2">
-                      {ingredientdata.quantityText}
-                      {ingredientdata.unit?.name}
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            {/* メモ */}
+            <div>
+              <h2 className="text-lg font-semibold pb-5">メモ</h2>
+              <p className="border-b  ml-2">{recipe.memo}</p>
+            </div>
           </div>
 
-          {/* 作り方 */}
-          <div>
-            <h2 className="text-lg font-semibold">作り方</h2>
-
-            {/* 作り方内容 */}
-            <ul>
-              {recipe.recipeSteps.map((recipestep) => (
-                <li key={recipestep.id}>
-                  <div className="flex py-1 px-2 border-b">
-                    <div className="mx-1">{recipestep.stepNumber}</div>
-                    {recipestep.instructionText}
-                  </div>
-                </li>
-              ))}
-            </ul>
+          {/* hrefは→ string | undefinedしか許さないため、return前でreturn nullを実施*/}
+          <div className="flex justify-center">
+            {recipe.sourceType === 'URL' && recipe.sourceUrl && (
+              <a
+                href={recipe.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <PrimaryButton className="w-[159px] h-[34px]" variant="primary">
+                  レシピサイトを開く
+                </PrimaryButton>
+              </a>
+            )}
           </div>
-
-          {/* メモ */}
-          <div>
-            <h2 className="text-lg font-semibold pb-5">メモ</h2>
-            <p className="border-b  ml-2">{recipe.memo}</p>
-          </div>
-        </div>
-
-        {/* hrefは→ string | undefinedしか許さないため、return前でreturn nullを実施*/}
-        <div className="flex justify-center">
-          {recipe.sourceType === 'URL' && recipe.sourceUrl && (
-            <a
-              href={recipe.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <PrimaryButton className="w-[159px] h-[34px]" variant="primary">
-                レシピサイトを開く
-              </PrimaryButton>
-            </a>
-          )}
         </div>
       </div>
     </div>

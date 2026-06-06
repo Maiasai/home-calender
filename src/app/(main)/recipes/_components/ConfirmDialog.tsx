@@ -2,6 +2,7 @@
 
 'use client';
 
+import PrimaryButton from '@/components/button/PrimaryButton';
 import Modal from '@/components/Modal';
 
 type Props = {
@@ -30,16 +31,21 @@ const ConfirmDialog = ({
       <p className="text-sm mb-5">{message}</p>
 
       <div className="flex justify-end gap-3">
-        <button onClick={onCancel} className="px-3 py-1 border rounded">
+        <PrimaryButton
+          onClick={onCancel}
+          className="w-[90px] h-[40px]"
+          variant="third"
+        >
           キャンセル
-        </button>
+        </PrimaryButton>
 
-        <button
+        <PrimaryButton
           onClick={onConfirm}
-          className="px-3 py-1 bg-red-500 text-white rounded"
+          className="w-[80px] h-[40px]"
+          variant="danger"
         >
           削除
-        </button>
+        </PrimaryButton>
       </div>
     </Modal>
   );

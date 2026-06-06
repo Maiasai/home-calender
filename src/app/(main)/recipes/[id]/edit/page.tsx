@@ -9,7 +9,7 @@ import { RecipeCategory } from '@/generated/prisma';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import useSWR from 'swr';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSupabaseSession } from '../../../home/_hooks/useSupabaseSession';
 import { RecipeFormValues } from '../../_types/RecipeFormValues';
 import PageTitle from '../../styles/PageTitle';
@@ -39,6 +39,8 @@ type PutRecipeRequest = RecipeFormValues & {
 const RecipeEdit = ({ params }: Props) => {
   const { token } = useSupabaseSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
 
   const [category, setCategory] = useState<'' | RecipeCategory>(''); //表示で""（未選択）必要なためユニオン型で記載
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -48,6 +50,8 @@ const RecipeEdit = ({ params }: Props) => {
   const {
     register,
     setValue,
+    getValues,
+    trigger,
     handleSubmit,
     control,
     formState: { errors, isValid, isDirty, isSubmitting },
@@ -180,8 +184,11 @@ const RecipeEdit = ({ params }: Props) => {
       const ok = confirm('変更が破棄されますがよろしいですか？');
       if (!ok) return;
     }
-    if (!recipe) return;
-    router.push(`/recipes/${recipe.id}`);
+    if (from === 'calendar') {
+      router.push(`/recipes/${id}?from=calendar`);
+    } else {
+      router.push(`/recipes/${id}`);
+    }
   };
 
   if (error) return <p>エラーが発生しました</p>;
@@ -239,6 +246,8 @@ const RecipeEdit = ({ params }: Props) => {
               errors={errors}
               setValue={setValue}
               units={units}
+              getValues={getValues}
+              trigger={trigger}
             />
 
             {/* 手順 (必須) */}
