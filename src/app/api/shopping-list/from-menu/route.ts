@@ -175,7 +175,7 @@ export const POST = async (request: NextRequest) => {
     await createNotification({
       familyId: dbUser.activeFamilyId,
       actorUserId: user.id,
-      type: 'SHOPPING_UPDATED',
+      type: 'SHOPPING_CREATED',
     });
 
     return NextResponse.json(
@@ -233,7 +233,17 @@ export const PUT = async (request: NextRequest) => {
       },
       data: updateData,
     });
-
+    if (result.count === 0) {
+      return NextResponse.json(
+        { message: '更新対象が見つかりません' },
+        { status: 404 },
+      );
+    }
+    await createNotification({
+      familyId: dbUser.activeFamilyId,
+      actorUserId: user.id,
+      type: 'SHOPPING_UPDATED',
+    });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.log(error);

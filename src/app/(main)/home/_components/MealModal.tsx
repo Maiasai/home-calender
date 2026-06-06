@@ -101,9 +101,13 @@ const MealModal = ({
       });
 
       if (!res.ok) {
+        const errorData = await res.json();
+
+        console.error('保存失敗:', res.status, errorData);
         throw new Error('保存失敗');
       }
       await mutate();
+      alert('献立を更新しました');
       onClose(); //成功時
     } catch (error) {
       console.error(error);

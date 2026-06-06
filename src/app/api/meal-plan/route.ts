@@ -148,7 +148,6 @@ export const PUT = async (request: NextRequest) => {
     const exists = await prisma.menu.findFirst({
       where: {
         id: body.id,
-        userId: user.id,
         familyId: activeFamilyId,
       },
     });
@@ -160,7 +159,7 @@ export const PUT = async (request: NextRequest) => {
       );
     }
 
-    const mealEditData = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       await tx.menuRecipe.deleteMany({
         where: { menuId: body.id },
       });
@@ -173,6 +172,11 @@ export const PUT = async (request: NextRequest) => {
           position: r.position,
         })),
       });
+    });
+    await createNotification({
+      familyId: activeFamilyId,
+      actorUserId: user.id,
+      type: 'MENU_UPDATED',
     });
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

@@ -112,7 +112,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
 
       //成功だった場合
       const d = await res.json();
-      alert('レシピを登録しました！');
+      alert('レシピを登録しました');
       reset(); //成功したら入力欄をクリア
 
       onClose();
