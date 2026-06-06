@@ -10,6 +10,8 @@ export interface RecipeData {
   title: string;
   userRecipeStatus?: {
     isFavorite: boolean;
+  }[];
+  familyRecipeStatus?: {
     hasCooked: boolean;
   }[];
   category: RecipeCategory;

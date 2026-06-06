@@ -32,7 +32,7 @@ const RecipeCard = ({
   //ここで「このレシピはお気に入り/作ったことある済みか？」を true / false に変換している
   //　※　!!undefinedは「false」にしてる
   const isFav = !!recipe.userRecipeStatus?.[0]?.isFavorite; //!!→返ってくるものをbooleanに変換できる。undefinedの可能性もあるため、ここでfalseにしてる
-  const isCoo = !!recipe.userRecipeStatus?.[0]?.hasCooked;
+  const isCoo = !!recipe.familyRecipeStatus?.[0]?.hasCooked;
 
   const imageSrc =
     recipe.thumbnailUrl && recipe.thumbnailUrl.trim() !== ''

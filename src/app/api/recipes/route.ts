@@ -91,9 +91,9 @@ export const GET = async (request: NextRequest) => {
 
         //作ったもの絞り込み
         ...(isCooked === 'true' && {
-          userRecipeStatus: {
+          familyRecipeStatus: {
             some: {
-              userId: user.id,
+              familyId: dbUser.activeFamilyId,
               hasCooked: true,
             },
           },
@@ -117,6 +117,13 @@ export const GET = async (request: NextRequest) => {
           },
           select: {
             isFavorite: true,
+          },
+        },
+        familyRecipeStatus: {
+          where: {
+            familyId: dbUser.activeFamilyId,
+          },
+          select: {
             hasCooked: true,
           },
         },

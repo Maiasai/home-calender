@@ -14,6 +14,9 @@ export async function POST(req: Request) {
     await prisma.userRecipeStatus.deleteMany({
       where: { recipeId: { in: ids } },
     });
+    await prisma.familyRecipeStatus.deleteMany({
+      where: { recipeId: { in: ids } },
+    });
 
     await prisma.recipeIngredient.deleteMany({
       where: { recipeId: { in: ids } },

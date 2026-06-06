@@ -141,6 +141,7 @@ model Recipe {
 
   //お気に入りテーブルとのリレーション
   userRecipeStatus UserRecipeStatus[] 
+  familyRecipeStatus FamilyRecipeStatus[] 
 
   //献立カレンダーとのリレーション
   menuRecipes MenuRecipe[]
@@ -197,7 +198,6 @@ model UserRecipeStatus {
   recipeId  String   @db.Uuid
 
   isFavorite       Boolean @default(false)//お気に入り
-  hasCooked        Boolean @default(false)//作ったことある
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -207,6 +207,26 @@ model UserRecipeStatus {
 
   @@unique([userId, recipeId]) // userId と recipeId の組み合わせは1つしか存在しない
   @@map("user_recipe_status")
+}
+
+model FamilyRecipeStatus {
+
+  id        String   @id @default(uuid()) @db.Uuid
+  familyId  String   @db.Uuid
+  recipeId  String   @db.Uuid
+
+  hasCooked Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([familyId, recipeId])
+
+  @@map("family_recipe_status")
+
 }
 
 //その日の献立を渡すテーブル
@@ -274,6 +294,7 @@ model Family {
   menus Menu[]
   shoppingItems ShoppingItem[]
   notificatios Notification[]
+  familyRecipeStatus FamilyRecipeStatus[] 
 
   //誰がこのグループのオーナーか
   owner User @relation("FamilyOwner",fields: [ownerUserId],references: [id])
