@@ -14,6 +14,9 @@ import { Meal } from './_typs/Meal';
 import Image from 'next/image';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 import { useSupabaseSession } from './_hooks/useSupabaseSession';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import { ErrorMessage } from '@/components/ErrorMessage';
 
 const TopPage = () => {
   const { token } = useSupabaseSession();
@@ -69,7 +72,7 @@ const TopPage = () => {
   const monthdata = currentMonth.toLocaleDateString('sv-SE').slice(0, 7);
 
   //URLが変わると、その範囲の月の献立が自動取得される
-  const { data, mutate } = useSWR<MonthData>(
+  const { data, mutate, isLoading, error } = useSWR<MonthData>(
     `/api/home?month=${monthdata}`,
     fetcher,
   ); //url変えるものではない。APIを叩くための文字列
@@ -146,10 +149,9 @@ const TopPage = () => {
   //モーダル外 スクロール防止
   useBodyScrollLock({ open: modalOpen });
 
-  if (!data)
-    return (
-      <div className="flex items-center justify-center mt-10">loading...</div>
-    );
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto sm:p-2">

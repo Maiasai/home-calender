@@ -29,8 +29,6 @@ type Props = {
   errorssign: FieldErrors<SignupData>;
   isValidsign: boolean;
   isSubmittingsign: boolean;
-  loading: boolean;
-  setLoading: (v: boolean) => void;
   isGoogleUser: boolean;
 };
 
@@ -43,8 +41,6 @@ const NewRegistration = ({
   errorssign,
   isValidsign,
   isSubmittingsign,
-  loading,
-  setLoading,
   isGoogleUser,
 }: Props) => {
   const { token } = useSupabaseSession();
@@ -83,8 +79,6 @@ const NewRegistration = ({
         router.push('/home');
         return;
       }
-
-      setLoading(false);
     };
 
     checkUser();
@@ -99,8 +93,6 @@ const NewRegistration = ({
 
   //登録処理
   const onSubmit = async (data: SignupData) => {
-    setLoading(true);
-
     // ① Supabaseにパスワード登録(メールアドレスから登録した場合のみ)
     if (data.password) {
       const { error } = await supabase.auth.updateUser({
@@ -120,7 +112,6 @@ const NewRegistration = ({
         }
         alert('パスワード設定に失敗しました');
         alert(error.message);
-        setLoading(false);
         return;
       }
     }
@@ -139,8 +130,6 @@ const NewRegistration = ({
       credentials: 'include',
       body: JSON.stringify(payload),
     });
-
-    setLoading(false);
 
     if (!res.ok) {
       alert('登録に失敗しました');
@@ -222,7 +211,7 @@ const NewRegistration = ({
             className="w-60 h-11"
             variant="primary"
           >
-            登録
+            {isSubmittingsign ? '登録中...' : '登録'}
           </PrimaryButton>
 
           <button

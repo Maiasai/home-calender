@@ -12,6 +12,8 @@ import { supabase } from '@/lib/supabase';
 import { useSearchParams } from 'next/navigation';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
 
 const EmailChange = () => {
   const { token } = useSupabaseSession();
@@ -25,7 +27,10 @@ const EmailChange = () => {
   });
 
   const searchParams = useSearchParams();
-  const { data, error } = useSWR<UserResponseType>(`/api/mypage/`, fetcher);
+  const { data, error, isLoading } = useSWR<UserResponseType>(
+    `/api/mypage/`,
+    fetcher,
+  );
 
   //Emailマスク表示
   const maskEmail = (mail: string) => {
@@ -89,8 +94,9 @@ const EmailChange = () => {
     syncEmail();
   }, [searchParams]);
 
-  if (!data) return <div>loading...</div>;
-  if (error) return <div>エラーが発生しました</div>;
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto">

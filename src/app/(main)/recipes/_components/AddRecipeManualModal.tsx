@@ -36,7 +36,6 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
   const [category, setCategory] = useState<RecipeCategory | ''>('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [units, setUnits] = useState<UnitData[]>([]); //ここで選択肢を管理
-  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -84,8 +83,6 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
   }, []); //[]の意味：画面が初回表示された時だけ実行
 
   const onSubmit = async (data: RecipeFormValues) => {
-    setLoading(true);
-
     //useStateとuseFormの値をsubmit時にpayloadで合体
     const payload: CreateRecipeRequest = {
       ...data, //useFormの値(フォームに入力された値)
@@ -120,8 +117,6 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
       await mutate();
     } catch (err: any) {
       console.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -182,7 +177,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
               variant="primary"
               className="w-[160px] h-[30px]"
             >
-              レシピを登録する
+              {isSubmitting ? 'レシピ登録中' : 'レシピを登録する'}
             </PrimaryButton>
           </div>
         </form>

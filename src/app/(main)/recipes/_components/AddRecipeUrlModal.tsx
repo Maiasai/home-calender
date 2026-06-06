@@ -27,7 +27,6 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
   const { token } = useSupabaseSession();
 
   const [category, setCategory] = useState<RecipeCategory | ''>('');
-  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const {
@@ -45,8 +44,6 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
   });
 
   const onSubmit = async (data: CreateRecipeByUrlRequest) => {
-    setLoading(true);
-
     const payload: CreateRecipeByUrlRequest = {
       title: data.title,
       sourceUrl: data.sourceUrl,
@@ -71,8 +68,6 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
       await mutate();
     } catch (err: any) {
       console.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -112,7 +107,7 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
               className="w-[160px] h-[30px] "
               variant="primary"
             >
-              レシピを登録する
+              {isSubmitting ? 'レシピ登録中' : 'レシピを登録する'}
             </PrimaryButton>
           </div>
         </form>

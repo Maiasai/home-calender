@@ -19,6 +19,10 @@ import RecipeCard from './_components/RecipeCard';
 import ConfirmDialog from './_components/ConfirmDialog';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import ErrorMessage from './_components/ErrorMessage';
+import { error } from 'console';
 
 const RecipesPage = () => {
   const { token } = useSupabaseSession();
@@ -83,8 +87,9 @@ const RecipesPage = () => {
   //モーダル外 スクロール防止
   useBodyScrollLock({ open: RecipeModalOpen });
 
-  if (!recipes) return <p>読み込み中...</p>;
-  if (isError) return <p>エラーが発生しました...</p>;
+  if (isLoading) return <Loading />;
+  if (!recipes) return <Empty />;
+  if (isError) return <ErrorMessage />;
 
   return (
     <>

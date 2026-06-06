@@ -12,6 +12,9 @@ import type { RecipeDetail } from '../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { supabase } from '@/lib/supabase';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import ErrorMessage from '../_components/ErrorMessage';
 //RecipeDetail→typeを自動生成するコンポーネントのため、ここで明示的にtypeとしておく
 
 type Props = {
@@ -33,9 +36,9 @@ const RecipeDetail = ({ params }: Props) => {
   //ここでdata→fetchで取ったデータ
   //error→エラー情報　isLoading→取得中かどうか
 
-  if (isLoading) return <p>読み込み中...</p>; //取得してすぐ→"RecipeDetail | undefined" 読み込み中の間にRecipeDetailになる
-  if (error) return <p>エラー</p>;
-  if (!recipe) return <p>データがありません</p>;
+  if (isLoading) return <Loading />;
+  if (!recipe) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   const imageSrc =
     recipe.thumbnailUrl && recipe.thumbnailUrl.trim() !== ''

@@ -24,6 +24,7 @@ import { Mode } from '../_typs/mode';
 import { InputEmailData } from '../_typs/InputEmailData';
 import PageHeader from '@/app/(main)/recipes/_components/PageHeader';
 import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
 const titles = {
   email: 'メールアドレスを入力',
@@ -263,11 +264,7 @@ const LoginFlowModal = ({
             <LoginSelectModal setStep={setStep} />
           </>
         )}
-        {loading && (
-          <div className="absolute inset-0 bg-white/100 flex items-center justify-center z-50">
-            <span className="text-gray-700 font-medium text-lg">処理中…</span>
-          </div>
-        )}
+        {isSubmitting && <LoadingOverlay />}
 
         {/* メールアドレス入力 */}
         {step === 'email' && (
@@ -332,8 +329,6 @@ const LoginFlowModal = ({
                   errorssign={errorssign}
                   isValidsign={isValidsign}
                   isSubmittingsign={isSubmittingsign}
-                  loading={loading}
-                  setLoading={setLoading}
                   isGoogleUser={isGoogleUser}
                 />
               </div>
@@ -364,8 +359,6 @@ const LoginFlowModal = ({
                   errorssign={errorssign}
                   isValidsign={isValidsign}
                   isSubmittingsign={isSubmittingsign}
-                  loading={loading}
-                  setLoading={setLoading}
                   email={email}
                 />
               </div>

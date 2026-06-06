@@ -23,6 +23,7 @@ import { RecipeDetail } from '../../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import UrlForm from '../../_components/UrlForm';
+import { Loading } from '@/components/Loading';
 
 type Props = {
   params: { id: string };
@@ -42,7 +43,6 @@ const RecipeEdit = ({ params }: Props) => {
   const [category, setCategory] = useState<'' | RecipeCategory>(''); //表示で""（未選択）必要なためユニオン型で記載
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [units, setUnits] = useState<UnitData[]>([]); //ここで選択肢を管理
-  const [loading, setLoading] = useState<boolean>(false);
 
   //編集ロジックまわり②useFormが初期化
   const {
@@ -137,8 +137,6 @@ const RecipeEdit = ({ params }: Props) => {
 
   //レシピ更新
   const onSubmit = async (data: RecipeFormValues) => {
-    setLoading(true); //フォーム送信中
-
     if (!recipe) return;
 
     //useStateとuseFormの値をsubmit時にpayloadで合体
@@ -173,8 +171,6 @@ const RecipeEdit = ({ params }: Props) => {
       router.push(`/recipes/${recipe.id}`); //成功したら詳細に戻る
     } catch (err: any) {
       console.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -189,7 +185,7 @@ const RecipeEdit = ({ params }: Props) => {
   };
 
   if (error) return <p>エラーが発生しました</p>;
-  if (isLoading) return <p>読み込み中...</p>; //API から recipe を取得中の状態
+  if (isLoading) return <Loading />; //API から recipe を取得中の状態
   if (!data) return <p>データが見つかりませんでした</p>;
 
   return (
@@ -211,7 +207,7 @@ const RecipeEdit = ({ params }: Props) => {
             disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
             className={`w-[100px] h-[30px] rounded-lg bg-orange-500 text-white font-medium shadow-md transition-all duration-150 active:scale-95 active:translate-y-[1px] ${!isValid || isSubmitting ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:bg-orange-600'}`} //バリデーションエラーあり OR 送信中ならグレーアウト
           >
-            更新
+            {isSubmitting ? '更新中...' : '更新'}
           </button>
         </div>
 

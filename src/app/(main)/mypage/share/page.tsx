@@ -18,6 +18,9 @@ import { MembersTyps } from '@/app/api/family/_typs/MembersTyps';
 import GroupMembershipPanel from './_components/GroupMembershipPanel';
 import GroupOwner from './_components/GroupOwner';
 import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteRequest';
+import { Loading } from '@/components/Loading';
+import { ErrorMessage } from '@/components/ErrorMessage';
+import { Empty } from '@/components/Empty';
 
 const Share = () => {
   const { token } = useSupabaseSession();
@@ -28,12 +31,14 @@ const Share = () => {
 
   const {
     data: owner,
+    isLoading: ownerisLoading,
     error: ownerError,
     mutate: mutateowner,
   } = useSWR<OwnerType>('/api/family/me', fetcher); //グループのオーナー　取得
 
   const {
     data: invites,
+    isLoading: invitesisLoading,
     error: invitesError,
     mutate: mutateInvites,
   } = useSWR<InvitesType[]>('/api/family/invites', fetcher); //招待済みメンバー　取得
@@ -58,9 +63,13 @@ const Share = () => {
 
   const {
     data: members,
+    isLoading: membersisLoading,
     error: membersError,
     mutate: mutateMembers,
   } = useSWR<MembersTyps[]>('/api/family/members', fetcher); //参加済みメンバー　取得
+
+  const isLoading = ownerisLoading || invitesisLoading || membersisLoading;
+  const isError = ownerError || invitesError || membersError;
 
   //招待送信処理
   const onSubmit = async (data: EmailInviteType) => {
@@ -144,6 +153,10 @@ const Share = () => {
     setSyncEnabled(next);
     await mutateowner();
   };
+
+  if (isLoading) return <Loading />;
+  if (!owner) return <Empty />;
+  if (isError) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto">

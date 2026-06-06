@@ -10,6 +10,8 @@ import ErrorMessage from '../../recipes/_components/ErrorMessage';
 import { NickNameType } from './_type/NickNameType';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
 
 const NickName = () => {
   const { token } = useSupabaseSession();
@@ -25,7 +27,10 @@ const NickName = () => {
   });
 
   //②SWRで取得
-  const { data, error } = useSWR<UserResponseType>(`/api/mypage/`, fetcher);
+  const { data, isLoading, error } = useSWR<UserResponseType>(
+    `/api/mypage/`,
+    fetcher,
+  );
 
   //③data取得できたら発動（resetがフォーム全体の値を入れ直してくれる）
   useEffect(() => {
@@ -64,8 +69,9 @@ const NickName = () => {
     }
   };
 
-  if (!data) return <div>loading...</div>; //！　SWR の undefined 対策
-  if (error) return <div>エラーが発生しました</div>;
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto">

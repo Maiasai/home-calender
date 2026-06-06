@@ -9,6 +9,9 @@ import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteR
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { NotificationsType } from './_typs/NotificationsType';
 import { useState } from 'react';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import { ErrorMessage } from '@/components/ErrorMessage';
 
 //返ってくる通知の型をオブジェクトに
 export type NotificationsResponse = {
@@ -29,7 +32,7 @@ const typesName = {
 
 const Notifications = () => {
   const { token } = useSupabaseSession();
-  const { data, error, mutate } = useSWR<NotificationsResponse>(
+  const { data, isLoading, error, mutate } = useSWR<NotificationsResponse>(
     '/api/notifications',
     fetcher,
   );
@@ -88,6 +91,10 @@ const Notifications = () => {
     }
     await mutate();
   };
+
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto">

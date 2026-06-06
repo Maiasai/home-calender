@@ -5,9 +5,15 @@ import React from 'react';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/featcher';
 import { LoginMethodType } from '../email/_type/LoginMethodType';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import { ErrorMessage } from '@/components/ErrorMessage';
 
 const LoginMethod = () => {
-  const { data, error } = useSWR<LoginMethodType>(`/api/mypage/`, fetcher);
+  const { data, isLoading, error } = useSWR<LoginMethodType>(
+    `/api/mypage/`,
+    fetcher,
+  );
 
   //Emailマスク表示
   const maskEmail = (mail: string) => {
@@ -15,8 +21,9 @@ const LoginMethod = () => {
     return `${name.slice(0, 2)}***@${domain}`;
   };
 
-  if (!data) return <div>loading...</div>;
-  if (error) return <div>エラーが発生しました</div>;
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto">

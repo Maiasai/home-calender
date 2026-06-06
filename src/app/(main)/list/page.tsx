@@ -20,6 +20,9 @@ import SortableItem from './_components/SortableItem';
 import { GroupedItem } from './_typs/GroupedItem';
 import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import { ErrorMessage } from '@/components/ErrorMessage';
 
 const List = () => {
   const { token } = useSupabaseSession();
@@ -29,7 +32,7 @@ const List = () => {
 
   //メモ）mutate→最新データを再取得（サーバーと再同期）
   //メモ）onBlur→入力欄からフォーカスが外れた瞬間に発火するイベント
-  const { data, mutate, isLoading } = useSWR<Shoppinglist[]>(
+  const { data, mutate, isLoading, error } = useSWR<Shoppinglist[]>(
     '/api/shopping-list/from-menu',
     fetcher,
   );
@@ -162,6 +165,10 @@ const List = () => {
     });
     mutate();
   };
+
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto">
