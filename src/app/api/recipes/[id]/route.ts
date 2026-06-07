@@ -76,20 +76,51 @@ export const DELETE = async (
         { status: 404 },
       );
     }
-    const activeFid = dbUser.activeFamilyId;
+    const activeFamilyId = dbUser.activeFamilyId;
 
     await prisma.$transaction(async (tx) => {
       await tx.userRecipeStatus.deleteMany({
         where: { recipeId: params.id },
       });
+      await tx.familyRecipeStatus.deleteMany({
+        where: { recipeId: params.id },
+      });
+
       await tx.recipeIngredient.deleteMany({
         where: { recipeId: params.id },
       });
       await tx.recipeStep.deleteMany({
         where: { recipeId: params.id },
       });
+      await tx.menuRecipe.deleteMany({
+        where: { recipeId: params.id },
+      });
       const result = await tx.recipe.deleteMany({
-        where: { id: params.id, familyId: activeFid },
+        where: {
+          id: params.id,
+
+          familyId: activeFamilyId,
+        },
+      });
+
+      if (result.count === 0) {
+        throw new Error('削除対象のレシピが見つかりません');
+      }
+      await tx.menu.deleteMany({
+        where: {
+          familyId: activeFamilyId,
+          menuRecipes: {
+            none: {},
+          },
+        },
+      });
+      await tx.ingredient.deleteMany({
+        where: {
+          familyId: activeFamilyId,
+          recipeIngredients: {
+            none: {},
+          },
+        },
       });
 
       if (result.count === 0) {

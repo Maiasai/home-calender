@@ -23,49 +23,53 @@ export async function POST(request: NextRequest) {
     //フロントで fetch した際の selectedIds が ids としてサーバーに届く
     const { ids } = await request.json(); // string[]が期待
 
+    const activeid = dbUser.activeFamilyId;
+
     // 外部キー制約に引っかからないように、まず関連テーブルを削除
     // deleteMany + whereで配列のIDに該当する全レコードを削除
-    await prisma.userRecipeStatus.deleteMany({
-      where: { recipeId: { in: ids } },
-    });
-    await prisma.familyRecipeStatus.deleteMany({
-      where: { recipeId: { in: ids } },
-    });
+    await prisma.$transaction(async (tx) => {
+      await tx.userRecipeStatus.deleteMany({
+        where: { recipeId: { in: ids } },
+      });
+      await tx.familyRecipeStatus.deleteMany({
+        where: { recipeId: { in: ids } },
+      });
 
-    await prisma.recipeIngredient.deleteMany({
-      where: { recipeId: { in: ids } },
-    });
+      await tx.recipeIngredient.deleteMany({
+        where: { recipeId: { in: ids } },
+      });
 
-    await prisma.recipeStep.deleteMany({
-      where: { recipeId: { in: ids } },
-    });
+      await tx.recipeStep.deleteMany({
+        where: { recipeId: { in: ids } },
+      });
 
-    await prisma.menuRecipe.deleteMany({
-      where: { recipeId: { in: ids } },
-    });
-    await prisma.menu.deleteMany({
-      where: {
-        familyId: dbUser.activeFamilyId,
-        menuRecipes: {
-          none: {},
+      await tx.menuRecipe.deleteMany({
+        where: { recipeId: { in: ids } },
+      });
+      await tx.menu.deleteMany({
+        where: {
+          familyId: activeid,
+          menuRecipes: {
+            none: {},
+          },
         },
-      },
-    });
+      });
 
-    // どのレシピにも使われていない材料マスタを削除
+      // どのレシピにも使われていない材料マスタを削除
 
-    await prisma.ingredient.deleteMany({
-      where: {
-        familyId: dbUser.activeFamilyId,
-        recipeIngredients: {
-          none: {},
+      await tx.ingredient.deleteMany({
+        where: {
+          familyId: activeid,
+          recipeIngredients: {
+            none: {},
+          },
         },
-      },
-    });
+      });
 
-    // 最後に Recipe を削除
-    await prisma.recipe.deleteMany({
-      where: { id: { in: ids } },
+      // 最後に Recipe を削除
+      await tx.recipe.deleteMany({
+        where: { id: { in: ids } },
+      });
     });
 
     return NextResponse.json<ApiOkResponse>({ ok: true });
