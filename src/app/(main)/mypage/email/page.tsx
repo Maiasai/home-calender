@@ -47,8 +47,7 @@ const EmailChange = () => {
 
       {
         //確認メールのリンクを押した後、どこへ戻すかを指定
-        emailRedirectTo:
-          '${process.env.NEXT_PUBLIC_APP_URL}/mypage/email?emailChanged=true',
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/mypage/email?emailChanged=true`,
       },
     );
 
@@ -74,12 +73,23 @@ const EmailChange = () => {
 
         if (!authEmail) return;
 
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        const accessToken = session?.access_token;
+
+        if (!accessToken) {
+          console.log('access token not found');
+
+          return;
+        }
         //Prisma(DB)へ同期
         await fetch('/api/sync-email', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             email: authEmail,
