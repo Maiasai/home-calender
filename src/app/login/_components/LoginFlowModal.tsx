@@ -202,7 +202,7 @@ const LoginFlowModal = ({
     //パスワードリセットメール送信
     await supabase.auth.resetPasswordForEmail(email, {
       //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
-      redirectTo: `${window.location.origin}/?reset=1`,
+      redirectTo: `${window.location.origin}/?reset=1`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
     });
 
     alert(
@@ -240,15 +240,37 @@ const LoginFlowModal = ({
     setLoginModalOpen(true);
   };
 
-  //パスワードリセットモーダル検知
+  //パスワードリセットモーダル検知(ページを開いたときに自動で走る)
+  //※セッションは再設定メールリンクを踏んだときに、supabaseが本人確認して発行してくれてる。
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const handleResetPasswordLink = async () => {
+      //ページ開かれたらURLに code か reset=1 があるか見る
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const reset = params.get('reset');
 
-    if (params.get('reset') === '1') {
+      if (!code && reset !== '1') return;
+
+      //0.5秒だけまつ
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      //今すでにSupabaseが持っているセッションを取り出す
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        alert(
+          '認証情報が確認できません。もう一度パスワード再設定メールから開いてください。',
+        );
+        return;
+      }
       setStep('resetPassword');
       setLoginModalOpen(true);
-    }
-  }, []);
+    };
+    //この関数をこれで動かす
+    handleResetPasswordLink();
+  }, [setLoginModalOpen]);
 
   if (!open) return null;
 

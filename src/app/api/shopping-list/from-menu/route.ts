@@ -131,7 +131,6 @@ export const POST = async (request: NextRequest) => {
 
     let globalIndex = 0;
 
-    console.dir(mealData, { depth: null });
     const data = mealData.menuRecipes.flatMap((item) =>
       item.recipe.recipeIngredients
         .filter((ing) => ing.ingredient?.name?.trim())
@@ -144,6 +143,7 @@ export const POST = async (request: NextRequest) => {
         })),
     );
 
+    console.log('data', data);
     await Promise.all(
       data.map(async (item) => {
         const existing = await prisma.shoppingItem.findFirst({

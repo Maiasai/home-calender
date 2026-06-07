@@ -160,16 +160,8 @@ export const PUT = async (
         { status: 404 },
       );
     }
-    const target = await prisma.recipe.findFirst({
-      where: {
-        id: params.id,
-        familyId: dbUser.activeFamilyId,
-      },
-    });
 
-    if (!target) {
-      return NextResponse.json({ message: 'not found' }, { status: 404 });
-    }
+    const activeFamilyId = dbUser.activeFamilyId;
 
     const recipedata = await prisma.$transaction(async (tx) => {
       const recipe = await tx.recipe.update({
@@ -202,28 +194,31 @@ export const PUT = async (
       for (let i = 0; i < body.ingredients.length; i++) {
         //配列のi番目を取り出す
         const ing = body.ingredients[i];
-        //空の行は個々にSKIP
-        const isEmpty = !ing.name && !ing.amount && !ing.unitId;
 
-        if (isEmpty) continue;
+        const displayName = ing.name?.trim();
+        const normalizedName = displayName?.toLowerCase();
+
+        if (!displayName || !normalizedName || !ing.unitId) continue;
 
         await tx.recipeIngredient.create({
           data: {
             quantityText: ing.amount ?? null,
             sortOrder: i,
-
             recipe: {
               connect: { id: params.id },
             },
-
             ingredient: {
               connectOrCreate: {
                 where: {
-                  name: ing.name,
+                  familyId_normalizedName: {
+                    familyId: activeFamilyId,
+                    normalizedName,
+                  },
                 },
                 create: {
-                  name: ing.name,
-                  normalizedName: ing.name,
+                  familyId: activeFamilyId,
+                  name: displayName,
+                  normalizedName,
                 },
               },
             },
@@ -235,6 +230,15 @@ export const PUT = async (
           },
         });
       }
+      // どのレシピからも使われなくなったIngredientだけ削除
+      await tx.ingredient.deleteMany({
+        where: {
+          familyId: activeFamilyId,
+          recipeIngredients: {
+            none: {},
+          },
+        },
+      });
 
       //手順も全部削除
       await tx.recipeStep.deleteMany({

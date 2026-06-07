@@ -207,8 +207,10 @@ export const POST = async (request: NextRequest) => {
       if (ingredients?.length) {
         for (let index = 0; index < ingredients.length; index++) {
           const ingre = ingredients[index]; //②ingredients の中の 1つを取り出してingre という名前の箱にindexごとに入れる　*ingreの中に全ての材料が入るわけではない。
+          const displayName = ingre.name?.trim();
+          const normalizedName = displayName?.toLowerCase();
 
-          if (!ingre.name || !ingre.unitId) continue;
+          if (!displayName || !normalizedName || !ingre.unitId) continue;
 
           await tx.recipeIngredient.create({
             //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
@@ -227,12 +229,17 @@ export const POST = async (request: NextRequest) => {
               ingredient: {
                 connectOrCreate: {
                   where: {
-                    name: ingre.name,
+                    //familyId + normalizedName の組み合わせで探す
+                    familyId_normalizedName: {
+                      familyId: activeFamilyId,
+                      normalizedName,
+                    },
                   },
                   //ingredientテーブルに新しい材料を作って、 同時にその ingredientId を RecipeIngredient に入れる
                   create: {
-                    name: ingre.name,
-                    normalizedName: ingre.name,
+                    familyId: activeFamilyId,
+                    name: displayName, //表示用
+                    normalizedName,
                   },
                 },
               },

@@ -100,7 +100,9 @@ model User {
 
 model Ingredient {
   id             String @id @default(uuid()) @db.Uuid
+  familyId     String @db.Uuid @map("family_id")
   name           String @unique
+  
   normalizedName String   @map("normalized_name")
 
   nutritionCategory NutritionCategory?
@@ -110,9 +112,11 @@ model Ingredient {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
   // relations
   recipeIngredients RecipeIngredient[]
 
+  @@unique([familyId, normalizedName])
   @@map("ingredients")
 }
 
@@ -291,6 +295,7 @@ model Family {
   activeUsers User[] @relation("ActiveFamily")
   homeUsers   User[] @relation("HomeFamily")
   recipes Recipe[]
+  ingredient Ingredient[] 
   menus Menu[]
   shoppingItems ShoppingItem[]
   notificatios Notification[]

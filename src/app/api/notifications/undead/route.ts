@@ -36,7 +36,6 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({ hasUnread }, { status: 200 });
   } catch (error) {
     console.log('error', error);
-    console.log('GET /api/notifications error:', error);
     return NextResponse.json(
       { message: 'エラーが発生しました' },
       { status: 500 },

@@ -1,13 +1,27 @@
 //一括削除用API
 
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { ApiOkResponse } from '../../_types/ApiOkResponse';
+import requireUser from '@/lib/auth';
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const user = await requireUser(request);
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
     //フロントで fetch した際の selectedIds が ids としてサーバーに届く
-    const { ids } = await req.json(); // string[]が期待
+    const { ids } = await request.json(); // string[]が期待
 
     // 外部キー制約に引っかからないように、まず関連テーブルを削除
     // deleteMany + whereで配列のIDに該当する全レコードを削除
@@ -28,6 +42,25 @@ export async function POST(req: Request) {
 
     await prisma.menuRecipe.deleteMany({
       where: { recipeId: { in: ids } },
+    });
+    await prisma.menu.deleteMany({
+      where: {
+        familyId: dbUser.activeFamilyId,
+        menuRecipes: {
+          none: {},
+        },
+      },
+    });
+
+    // どのレシピにも使われていない材料マスタを削除
+
+    await prisma.ingredient.deleteMany({
+      where: {
+        familyId: dbUser.activeFamilyId,
+        recipeIngredients: {
+          none: {},
+        },
+      },
     });
 
     // 最後に Recipe を削除
