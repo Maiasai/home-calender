@@ -170,8 +170,8 @@ const MealModal = ({
           const icon = getMealIcon(category);
 
           return (
-            <div className="flex flex-col p-2">
-              <div key={category}>
+            <div key={category} className="flex flex-col p-2">
+              <div>
                 {icon && ( //アイコンある時だけ表示
                   <Image
                     src={icon}

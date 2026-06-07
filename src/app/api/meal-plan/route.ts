@@ -32,7 +32,6 @@ export const GET = async (request: NextRequest) => {
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
         { message: 'family not found' },
-
         { status: 404 },
       );
     }
