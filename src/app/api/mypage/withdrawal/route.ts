@@ -25,28 +25,41 @@ export const DELETE = async (request: NextRequest) => {
       },
     });
 
-    if (!dbUser?.activeFamilyId) {
-      return NextResponse.json(
-        { message: 'family not found' },
-        { status: 404 },
-      );
+    if (!dbUser) {
+      return NextResponse.json({ message: 'user not found' }, { status: 404 });
     }
-    const homeFamilyId = dbUser.homeFamilyId;
+    const ownedFamilies = await prisma.family.findMany({
+      where: {
+        ownerUserId: userId,
+      },
+
+      select: {
+        id: true,
+      },
+    });
+
+    const deleteFamilyIds = Array.from(
+      new Set(
+        [
+          dbUser.homeFamilyId,
+
+          ...ownedFamilies.map((family) => family.id),
+        ].filter(Boolean),
+      ),
+    ) as string[];
 
     await prisma.$transaction(async (tx) => {
       // 1. 自分のhomeFamilyを見ている参加者を、自分自身のhomeFamilyへ戻す
 
-      if (homeFamilyId) {
+      if (deleteFamilyIds.length > 0) {
         const sharedUsers = await tx.user.findMany({
           where: {
-            activeFamilyId: homeFamilyId,
-
+            activeFamilyId: { in: deleteFamilyIds },
             NOT: { id: userId },
           },
 
           select: {
             id: true,
-
             homeFamilyId: true,
           },
         });
@@ -54,7 +67,6 @@ export const DELETE = async (request: NextRequest) => {
         for (const sharedUser of sharedUsers) {
           await tx.user.update({
             where: { id: sharedUser.id },
-
             data: {
               activeFamilyId: sharedUser.homeFamilyId,
             },
@@ -76,9 +88,9 @@ export const DELETE = async (request: NextRequest) => {
 
       // 3. 自分のhomeFamilyに紐づくデータを削除
 
-      if (homeFamilyId) {
+      if (deleteFamilyIds.length > 0) {
         const recipes = await tx.recipe.findMany({
-          where: { familyId: homeFamilyId },
+          where: { familyId: { in: deleteFamilyIds } },
 
           select: { id: true },
         });
@@ -86,7 +98,7 @@ export const DELETE = async (request: NextRequest) => {
         const recipeIds = recipes.map((recipe) => recipe.id);
 
         const menus = await tx.menu.findMany({
-          where: { familyId: homeFamilyId },
+          where: { familyId: { in: deleteFamilyIds } },
 
           select: { id: true },
         });
@@ -119,55 +131,58 @@ export const DELETE = async (request: NextRequest) => {
 
         await tx.familyRecipeStatus.deleteMany({
           where: {
-            familyId: homeFamilyId,
+            familyId: { in: deleteFamilyIds },
           },
         });
 
         await tx.notification.deleteMany({
           where: {
-            OR: [{ familyId: homeFamilyId }, { actorUserId: userId }],
+            OR: [
+              { familyId: { in: deleteFamilyIds } },
+              { actorUserId: userId },
+            ],
           },
         });
 
         await tx.menu.deleteMany({
           where: {
-            familyId: homeFamilyId,
+            familyId: { in: deleteFamilyIds },
           },
         });
 
         await tx.shoppingItem.deleteMany({
           where: {
-            familyId: homeFamilyId,
+            familyId: { in: deleteFamilyIds },
           },
         });
 
         await tx.recipe.deleteMany({
           where: {
-            familyId: homeFamilyId,
+            familyId: { in: deleteFamilyIds },
           },
         });
 
         await tx.ingredient.deleteMany({
           where: {
-            familyId: homeFamilyId,
+            familyId: { in: deleteFamilyIds },
           },
         });
 
         await tx.familyInvite.deleteMany({
           where: {
-            familyId: homeFamilyId,
+            familyId: { in: deleteFamilyIds },
           },
         });
 
         await tx.familyMember.deleteMany({
           where: {
-            familyId: homeFamilyId,
+            familyId: { in: deleteFamilyIds },
           },
         });
 
-        await tx.family.delete({
+        await tx.family.deleteMany({
           where: {
-            id: homeFamilyId,
+            id: { in: deleteFamilyIds },
           },
         });
       }
@@ -223,6 +238,7 @@ export const DELETE = async (request: NextRequest) => {
     return NextResponse.json({ message: '退会しました' });
   } catch (error) {
     console.log('DELETE recipe error', error);
+    console.log('DELETE withdrawal error', error);
     return NextResponse.json(
       { message: '削除中にエラーが発生しました' },
       { status: 500 },
