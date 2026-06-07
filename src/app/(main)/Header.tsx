@@ -12,10 +12,11 @@ import useSWR from 'swr';
 import { fetcher } from '@/lib/featcher';
 
 import { NotificationsResponse } from './notifications/page';
+import { useFamilyChangeWatcher } from './_hoocks/useFamilyChangeWatcher';
 
 const Header = () => {
   const [open, setOpen] = useState(false); //ハンバーガーメニュー用
-
+  useFamilyChangeWatcher();
   const { data } = useSWR<NotificationsResponse>('/api/notifications', fetcher);
 
   const hasUnreadNonfications = data?.hasUnread; //未読判定用
@@ -26,6 +27,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    sessionStorage.removeItem('activeFamilyId');
     router.replace('/');
   };
 

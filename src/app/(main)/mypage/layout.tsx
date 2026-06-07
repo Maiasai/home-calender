@@ -19,6 +19,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const aboutApp = [
     { name: '利用規約', href: '/terms' },
     { name: 'プライバシーポリシー', href: '/privacy' },
+    { name: '退会', href: '/mypage/withdrawal' },
   ];
 
   return (
@@ -81,7 +82,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={a.href}
                 href={a.href}
-                className={`p-1 sm:p-3 rounded-lg transition-colors${
+                className={`p-1 sm:p-3 rounded-lg transition-colors ${
                   pathname === a.href
                     ? 'bg-orange-100 text-gray-400 font-bold'
                     : 'hover:bg-gray-100'
