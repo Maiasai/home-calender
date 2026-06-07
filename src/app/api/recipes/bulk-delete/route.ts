@@ -28,24 +28,26 @@ export async function POST(request: NextRequest) {
     // 外部キー制約に引っかからないように、まず関連テーブルを削除
     // deleteMany + whereで配列のIDに該当する全レコードを削除
     await prisma.$transaction(async (tx) => {
-      await tx.userRecipeStatus.deleteMany({
-        where: { recipeId: { in: ids } },
-      });
-      await tx.familyRecipeStatus.deleteMany({
-        where: { recipeId: { in: ids } },
-      });
+      await Promise.all([
+        tx.userRecipeStatus.deleteMany({
+          where: { recipeId: { in: ids } },
+        }),
+        tx.familyRecipeStatus.deleteMany({
+          where: { recipeId: { in: ids } },
+        }),
 
-      await tx.recipeIngredient.deleteMany({
-        where: { recipeId: { in: ids } },
-      });
+        tx.recipeIngredient.deleteMany({
+          where: { recipeId: { in: ids } },
+        }),
 
-      await tx.recipeStep.deleteMany({
-        where: { recipeId: { in: ids } },
-      });
+        tx.recipeStep.deleteMany({
+          where: { recipeId: { in: ids } },
+        }),
 
-      await tx.menuRecipe.deleteMany({
-        where: { recipeId: { in: ids } },
-      });
+        tx.menuRecipe.deleteMany({
+          where: { recipeId: { in: ids } },
+        }),
+      ]);
       await tx.menu.deleteMany({
         where: {
           familyId: activeid,

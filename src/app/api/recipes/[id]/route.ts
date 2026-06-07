@@ -28,7 +28,7 @@ export const GET = async (
     );
   }
 
-  const recipe = await prisma.recipe.findUnique({
+  const recipe = await prisma.recipe.findFirst({
     //DBから一意なキーで一件だけ取得（ここでの型はRecipe | null）
     where: {
       //URLで渡されたidのレシピを探して（ここで条件を渡してる）
@@ -79,22 +79,24 @@ export const DELETE = async (
     const activeFamilyId = dbUser.activeFamilyId;
 
     await prisma.$transaction(async (tx) => {
-      await tx.userRecipeStatus.deleteMany({
-        where: { recipeId: params.id },
-      });
-      await tx.familyRecipeStatus.deleteMany({
-        where: { recipeId: params.id },
-      });
+      await Promise.all([
+        tx.userRecipeStatus.deleteMany({
+          where: { recipeId: params.id },
+        }),
+        tx.familyRecipeStatus.deleteMany({
+          where: { recipeId: params.id },
+        }),
 
-      await tx.recipeIngredient.deleteMany({
-        where: { recipeId: params.id },
-      });
-      await tx.recipeStep.deleteMany({
-        where: { recipeId: params.id },
-      });
-      await tx.menuRecipe.deleteMany({
-        where: { recipeId: params.id },
-      });
+        tx.recipeIngredient.deleteMany({
+          where: { recipeId: params.id },
+        }),
+        tx.recipeStep.deleteMany({
+          where: { recipeId: params.id },
+        }),
+        tx.menuRecipe.deleteMany({
+          where: { recipeId: params.id },
+        }),
+      ]);
       const result = await tx.recipe.deleteMany({
         where: {
           id: params.id,
@@ -106,26 +108,24 @@ export const DELETE = async (
       if (result.count === 0) {
         throw new Error('削除対象のレシピが見つかりません');
       }
-      await tx.menu.deleteMany({
-        where: {
-          familyId: activeFamilyId,
-          menuRecipes: {
-            none: {},
+      await Promise.all([
+        tx.menu.deleteMany({
+          where: {
+            familyId: activeFamilyId,
+            menuRecipes: {
+              none: {},
+            },
           },
-        },
-      });
-      await tx.ingredient.deleteMany({
-        where: {
-          familyId: activeFamilyId,
-          recipeIngredients: {
-            none: {},
+        }),
+        tx.ingredient.deleteMany({
+          where: {
+            familyId: activeFamilyId,
+            recipeIngredients: {
+              none: {},
+            },
           },
-        },
-      });
-
-      if (result.count === 0) {
-        throw new Error('削除対象のレシピが見つかりません');
-      }
+        }),
+      ]);
     });
     return NextResponse.json({ message: '削除しました' });
   } catch (error) {
@@ -216,10 +216,16 @@ export const PUT = async (
         },
       });
 
-      //材料は一旦全部削除
-      await tx.recipeIngredient.deleteMany({
-        where: { recipeId: params.id },
-      });
+      await Promise.all([
+        //材料は一旦全部削除
+        await tx.recipeIngredient.deleteMany({
+          where: { recipeId: params.id },
+        }),
+        //手順も全部削除
+        await tx.recipeStep.deleteMany({
+          where: { recipeId: params.id },
+        }),
+      ]);
 
       //再度生成
       for (let i = 0; i < body.ingredients.length; i++) {
@@ -269,11 +275,6 @@ export const PUT = async (
             none: {},
           },
         },
-      });
-
-      //手順も全部削除
-      await tx.recipeStep.deleteMany({
-        where: { recipeId: params.id },
       });
 
       for (let i = 0; i < body.steps.length; i++) {
