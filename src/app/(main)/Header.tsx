@@ -27,6 +27,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    sessionStorage.removeItem('familyWatcherUserId');
     sessionStorage.removeItem('activeFamilyId');
     router.replace('/');
   };

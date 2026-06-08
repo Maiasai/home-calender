@@ -19,16 +19,26 @@ export const useFamilyChangeWatcher = () => {
   useEffect(() => {
     const user = meData?.user;
 
-    if (!user?.activeFamilyId || !user?.homeFamilyId) return;
+    if (!user?.id || !user?.activeFamilyId || !user?.homeFamilyId) return;
+    const userIdKey = 'familyWatcherUserId';
 
-    const storageKey = 'activeFamilyId';
-    const beforeActiveFamilyId = sessionStorage.getItem(storageKey);
+    const activeFamilyIdKey = 'activeFamilyId';
+
+    const beforeUserId = sessionStorage.getItem(userIdKey);
+
+    const beforeActiveFamilyId = sessionStorage.getItem(activeFamilyIdKey);
+
+    const currentUserId = user.id;
+
     const currentActiveFamilyId = user.activeFamilyId;
 
-    // 初回は比較せず、今のactiveFamilyIdを保存するだけ
-    if (isFirstCheck.current) {
-      sessionStorage.setItem(storageKey, currentActiveFamilyId);
-      isFirstCheck.current = false;
+    // 別ユーザーでログインした場合は比較しない
+
+    if (beforeUserId !== currentUserId) {
+      sessionStorage.setItem(userIdKey, currentUserId);
+
+      sessionStorage.setItem(activeFamilyIdKey, currentActiveFamilyId);
+
       return;
     }
 
@@ -36,12 +46,11 @@ export const useFamilyChangeWatcher = () => {
       beforeActiveFamilyId && beforeActiveFamilyId !== currentActiveFamilyId;
 
     const isReturnedToOwnFamily = currentActiveFamilyId === user.homeFamilyId;
-
     if (isFamilyChanged && isReturnedToOwnFamily) {
       alert('共有グループが解除されました。自分のグループに戻りました。');
       router.refresh();
     }
 
-    sessionStorage.setItem(storageKey, currentActiveFamilyId);
+    sessionStorage.setItem(activeFamilyIdKey, currentActiveFamilyId);
   }, [meData, router]);
 };
