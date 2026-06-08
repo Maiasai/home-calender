@@ -65,6 +65,20 @@ const NewRegistration = ({
           Authorization: `Bearer ${token}`,
         },
       });
+      if (res.status === 401) return;
+
+      if (!res.ok) {
+        console.error('users/me failed', await res.text());
+
+        return;
+      }
+      if (!res.ok) {
+        const errorData = await res.json();
+
+        alert(errorData.message || '登録に失敗しました');
+
+        return;
+      }
       const data: GetMeResponse = await res.json();
       if (data.user) {
         const needsNickname =
@@ -93,6 +107,11 @@ const NewRegistration = ({
 
   //登録処理
   const onSubmit = async (data: SignupData) => {
+    if (!token) {
+      alert('認証情報の取得中です。少し待ってからもう一度お試しください');
+
+      return;
+    }
     // ① Supabaseにパスワード登録(メールアドレスから登録した場合のみ)
     if (data.password) {
       const { error } = await supabase.auth.updateUser({
@@ -105,14 +124,16 @@ const NewRegistration = ({
             'New password should be different from the old password',
           )
         ) {
-          alert(
-            '以前使用したパスワードです。別のパスワードを設定してください。',
+          console.log(
+            '同じパスワードのため、すでに設定済みとして登録処理を続行します',
           );
+        } else {
+          alert('パスワード設定に失敗しました');
+
+          alert(error.message);
+
           return;
         }
-        alert('パスワード設定に失敗しました');
-        alert(error.message);
-        return;
       }
     }
 
@@ -132,7 +153,10 @@ const NewRegistration = ({
     });
 
     if (!res.ok) {
-      alert('登録に失敗しました');
+      const errorData = await res.json();
+
+      alert(errorData.message || '登録に失敗しました');
+
       return;
     }
 
