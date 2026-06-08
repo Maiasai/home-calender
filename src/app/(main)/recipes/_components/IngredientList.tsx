@@ -12,7 +12,7 @@ import {
   UseFormTrigger,
 } from 'react-hook-form';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
-import { parseFraction } from './parseFraction';
+import { normalizeFraction, parseFraction } from './parseFraction';
 import ErrorMessage from './ErrorMessage';
 import DeleteIcon from '@/app/components/image/deleteicon';
 import { UnitData } from '@/app/api/units/route';
@@ -54,15 +54,43 @@ const IngredientList = ({
       <div className="flex flex-col">
         <div>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             className="w-20 px-2  py-1 border-b"
             //数字に変換してから、ここで親のRHFのservingsを更新している
             {...registerServings('servings', {
-              min: { value: 0, message: '0人以上で入力してください' },
-              max: { value: 10, message: '10人以下で入力してください' },
-              valueAsNumber: true, //ユーザーの入力した数字は文字列になってしまうため、"3"ここで数字に変換
+              validate: (value) => {
+                const normalized = normalizeFraction(String(value));
+
+                if (!normalized) {
+                  return '人数を入力してください';
+                }
+
+                const numberValue = Number(normalized);
+
+                if (Number.isNaN(numberValue)) {
+                  return '数字で入力してください';
+                }
+
+                if (numberValue < 0) {
+                  return '0人以上で入力してください';
+                }
+
+                if (numberValue > 10) {
+                  return '10人以下で入力してください';
+                }
+
+                return true;
+              },
+              onBlur: (e) => {
+                const normalized = normalizeFraction(e.currentTarget.value);
+
+                setValue('servings', Number(normalized), {
+                  shouldValidate: true,
+                });
+              },
             })}
-          ></input>
+          />
 
           <label className="ml-2">人分</label>
         </div>

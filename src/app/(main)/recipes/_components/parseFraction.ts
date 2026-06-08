@@ -2,21 +2,22 @@
 //APIでも使えるようにするために'use client'は不要
 
 // 全角→半角、スラッシュ変換
-const normalizeFraction = (input: string): string => {
+export const normalizeFraction = (input: string): string => {
   return input
-    .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
-    .replace(/[／∕]/g, "/");
+    .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
+    .replace(/[／∕]/g, '/');
 };
 
 // 文字列を小数に変換
-export const parseFraction = (input: string): number => {//複数関数をどうファイルからexportしたい場合に使用
+export const parseFraction = (input: string): number => {
+  //複数関数をどうファイルからexportしたい場合に使用
   const normalized = normalizeFraction(input.trim());
 
-  if (normalized.includes("/")) {
-    const [numerator, denominator] = normalized.split("/").map(Number);
-      if (!isNaN(numerator) && !isNaN(denominator)) {
-        return numerator / denominator;
-      }
+  if (normalized.includes('/')) {
+    const [numerator, denominator] = normalized.split('/').map(Number);
+    if (!isNaN(numerator) && !isNaN(denominator)) {
+      return numerator / denominator;
+    }
   }
 
   const result = parseFloat(normalized);
