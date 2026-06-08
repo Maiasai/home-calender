@@ -180,6 +180,18 @@ export const POST = async (request: NextRequest) => {
     }
     const activeFamilyId = dbUser.activeFamilyId;
 
+    const recipeCount = await prisma.recipe.count({
+      where: {
+        familyId: activeFamilyId,
+      },
+    });
+    if (recipeCount >= 150) {
+      return NextResponse.json(
+        { message: 'レシピは150件まで登録できます' },
+        { status: 400 },
+      );
+    }
+
     const recipedata = await prisma.$transaction(async (tx) => {
       const recipe = await tx.recipe.create({
         //テーブル操作。データベースに保存する処理

@@ -33,6 +33,17 @@ export const POST = async (request: NextRequest) => {
         { status: 404 },
       );
     }
+    const recipeCount = await prisma.recipe.count({
+      where: {
+        familyId: dbUser.activeFamilyId,
+      },
+    });
+    if (recipeCount >= 150) {
+      return NextResponse.json(
+        { message: 'レシピは150件まで登録できます' },
+        { status: 400 },
+      );
+    }
 
     const recipe = await prisma.recipe.create({
       data: {

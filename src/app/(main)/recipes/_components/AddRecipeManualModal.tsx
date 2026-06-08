@@ -106,8 +106,8 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
 
       if (!res.ok) {
         //HTTPステータスコードが200-299の時trueになる
-        const text = await res.text();
-        throw new Error(`HTTP ${res.status}-${text}`);
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'レシピ登録に失敗しました');
       }
 
       //成功だった場合
@@ -118,7 +118,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
       onClose();
       await mutate();
     } catch (err: any) {
-      console.error(err.message);
+      alert(err.message);
     }
   };
 
