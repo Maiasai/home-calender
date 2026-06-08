@@ -7,3 +7,6 @@ export const truncateRecipeListTitle = (text: string) => truncate(text, 7);
 
 //献立作成、カスタマイズ画面
 export const truncateRecipeTitle = (text: string) => truncate(text, 15);
+
+//ニックネーム
+export const truncateNickName = (text: string) => truncate(text, 8);

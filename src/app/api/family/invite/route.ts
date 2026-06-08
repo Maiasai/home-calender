@@ -44,20 +44,23 @@ export const POST = async (request: NextRequest) => {
       }
 
       // ② 既存メンバーチェック
-      const existingMember = await prisma.familyMember.findFirst({
-        where: { familyId, user: { email } },
-      });
+      const [existingMember, existingInvite] = await Promise.all([
+        prisma.familyMember.findFirst({
+          where: { familyId, user: { email } },
+        }),
+
+        // ③ 既存招待チェック
+        prisma.familyInvite.findFirst({
+          where: { familyId, email },
+        }),
+      ]);
+
       if (existingMember) {
         return NextResponse.json(
-          { message: 'already a member' },
+          { message: '既に参加済みのメンバーです' },
           { status: 400 },
         );
       }
-
-      // ③ 既存招待チェック
-      const existingInvite = await prisma.familyInvite.findFirst({
-        where: { familyId, email },
-      });
 
       if (existingInvite) {
         return NextResponse.json(
@@ -67,7 +70,7 @@ export const POST = async (request: NextRequest) => {
       }
 
       // ④ 招待作成
-      const invite = await prisma.familyInvite.create({
+      await prisma.familyInvite.create({
         data: {
           familyId: familyId,
           email: email, //招待相手
@@ -79,7 +82,7 @@ export const POST = async (request: NextRequest) => {
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }
@@ -92,11 +95,19 @@ export const DELETE = async (request: NextRequest) => {
     const user = await requireUser(request);
     const body: DeleteInviteRequest = await request.json();
 
-    const dbUser = await prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
+    const [dbUser, invite] = await Promise.all([
+      prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+      }),
+
+      prisma.familyInvite.findUnique({
+        where: {
+          id: body.id,
+        },
+      }),
+    ]);
 
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
@@ -104,12 +115,6 @@ export const DELETE = async (request: NextRequest) => {
         { status: 400 },
       );
     }
-
-    const invite = await prisma.familyInvite.findUnique({
-      where: {
-        id: body.id,
-      },
-    });
 
     if (!invite) {
       return NextResponse.json(
@@ -161,7 +166,7 @@ export const DELETE = async (request: NextRequest) => {
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }

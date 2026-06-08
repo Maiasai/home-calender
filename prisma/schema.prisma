@@ -59,6 +59,7 @@ enum NotificationType {
   RECIPE_UPDATED
 
   MENU_CREATED
+  MENU_UPDATED
 
   SHOPPING_CREATED
   SHOPPING_UPDATED
@@ -99,7 +100,9 @@ model User {
 
 model Ingredient {
   id             String @id @default(uuid()) @db.Uuid
+  familyId     String @db.Uuid @map("family_id")
   name           String @unique
+  
   normalizedName String   @map("normalized_name")
 
   nutritionCategory NutritionCategory?
@@ -109,9 +112,11 @@ model Ingredient {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
   // relations
   recipeIngredients RecipeIngredient[]
 
+  @@unique([familyId, normalizedName])
   @@map("ingredients")
 }
 
@@ -140,6 +145,7 @@ model Recipe {
 
   //お気に入りテーブルとのリレーション
   userRecipeStatus UserRecipeStatus[] 
+  familyRecipeStatus FamilyRecipeStatus[] 
 
   //献立カレンダーとのリレーション
   menuRecipes MenuRecipe[]
@@ -153,7 +159,7 @@ model RecipeIngredient {
   recipeId     String   @db.Uuid
   ingredientId String   @db.Uuid
 
-  quantityText Float    @map("quantity_text")//材料の量カラム
+  quantityText Float?    @map("quantity_text")//材料の量カラム
   unitId       String?   @db.Uuid//材料の単位カラム
   isSeasoning  Boolean  @default(false) @map("is_seasoning")
   sortOrder    Int      @map("sort_order")
@@ -196,7 +202,6 @@ model UserRecipeStatus {
   recipeId  String   @db.Uuid
 
   isFavorite       Boolean @default(false)//お気に入り
-  hasCooked        Boolean @default(false)//作ったことある
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -206,6 +211,26 @@ model UserRecipeStatus {
 
   @@unique([userId, recipeId]) // userId と recipeId の組み合わせは1つしか存在しない
   @@map("user_recipe_status")
+}
+
+model FamilyRecipeStatus {
+
+  id        String   @id @default(uuid()) @db.Uuid
+  familyId  String   @db.Uuid
+  recipeId  String   @db.Uuid
+
+  hasCooked Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([familyId, recipeId])
+
+  @@map("family_recipe_status")
+
 }
 
 //その日の献立を渡すテーブル
@@ -270,9 +295,11 @@ model Family {
   activeUsers User[] @relation("ActiveFamily")
   homeUsers   User[] @relation("HomeFamily")
   recipes Recipe[]
+  ingredient Ingredient[] 
   menus Menu[]
   shoppingItems ShoppingItem[]
   notificatios Notification[]
+  familyRecipeStatus FamilyRecipeStatus[] 
 
   //誰がこのグループのオーナーか
   owner User @relation("FamilyOwner",fields: [ownerUserId],references: [id])

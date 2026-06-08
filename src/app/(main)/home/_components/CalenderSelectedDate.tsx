@@ -115,6 +115,7 @@ const CalenderSelectedDate = ({
             items={selectedDayData?.breakfast || []}
             iconSrc="/images/morningIcon.png"
             iconAlt="朝アイコン"
+            selectedDate={selectedDate}
           />
 
           {/* 昼 */}
@@ -122,6 +123,7 @@ const CalenderSelectedDate = ({
             items={selectedDayData?.lunch || []}
             iconSrc="/images/daytimeIcon.png"
             iconAlt="昼アイコン"
+            selectedDate={selectedDate}
           />
 
           {/* 夜 */}
@@ -129,6 +131,7 @@ const CalenderSelectedDate = ({
             items={selectedDayData?.dinner || []}
             iconSrc="/images/nightIcon.png"
             iconAlt="夜アイコン"
+            selectedDate={selectedDate}
           />
         </div>
       </div>

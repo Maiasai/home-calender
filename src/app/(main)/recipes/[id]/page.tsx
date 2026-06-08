@@ -12,6 +12,9 @@ import type { RecipeDetail } from '../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { supabase } from '@/lib/supabase';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import ErrorMessage from '../_components/ErrorMessage';
 //RecipeDetail→typeを自動生成するコンポーネントのため、ここで明示的にtypeとしておく
 
 type Props = {
@@ -24,18 +27,20 @@ const RecipeDetail = ({ params }: Props) => {
 
   const searchParams = useSearchParams();
   const from = searchParams.get('from');
+  const date = searchParams.get('date');
 
   const {
     data: recipe,
     error,
     isLoading,
+    mutate,
   } = useSWR<RecipeDetail>(`/api/recipes/${id}`, fetcher);
   //ここでdata→fetchで取ったデータ
   //error→エラー情報　isLoading→取得中かどうか
 
-  if (isLoading) return <p>読み込み中...</p>; //取得してすぐ→"RecipeDetail | undefined" 読み込み中の間にRecipeDetailになる
-  if (error) return <p>エラー</p>;
-  if (!recipe) return <p>データがありません</p>;
+  if (isLoading) return <Loading />;
+  if (!recipe) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   const imageSrc =
     recipe.thumbnailUrl && recipe.thumbnailUrl.trim() !== ''
@@ -48,8 +53,6 @@ const RecipeDetail = ({ params }: Props) => {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session?.access_token) {
-      console.log('tokenがありません');
-
       return;
     }
     const res = await fetch(`/api/recipes/${id}`, {
@@ -60,21 +63,28 @@ const RecipeDetail = ({ params }: Props) => {
     });
     if (!res.ok) {
       const error = await res.json();
-      console.log('削除失敗 status:', res.status);
-      console.log('削除失敗 error:', error);
       return;
     }
+    mutate();
     router.push('/recipes');
   };
 
   //編集画面へ遷移
   const editRecipe = async (id: string) => {
-    router.push(`/recipes/${id}/edit`); //遷移なのでrouter.pushでOK
+    if (from === 'calendar' && date) {
+      router.push(`/recipes/${id}/edit?from=calendar&date=${date}`);
+    } else if (from === 'calendar') {
+      router.push(`/recipes/${id}/edit?from=calendar`);
+    } else {
+      router.push(`/recipes/${id}/edit`);
+    } //遷移なのでrouter.pushでOK
   };
 
   //戻るボタンの処理
   const handleBack = () => {
-    if (from === 'calendar') {
+    if (from === 'calendar' && date) {
+      router.push(`/home?date=${date}`);
+    } else if (from === 'calendar') {
       router.push('/home');
     } else {
       router.push('/recipes');
@@ -129,90 +139,96 @@ const RecipeDetail = ({ params }: Props) => {
           />
         </div>
 
-        {/* タイトル */}
-        <nav className="w-full text-xl mt-3 font-semibold">{recipe.title}</nav>
+        <div className="mx-2">
+          {/* タイトル */}
+          <nav className="w-full text-xl mt-3 font-semibold">
+            {recipe.title}
+          </nav>
 
-        {/* カテゴリと最終更新日 */}
-        <div className="flex justify-between mt-3">
-          <label>
-            <CategoryBadge category={recipe.category} />
-          </label>
+          {/* カテゴリと最終更新日 */}
+          <div className="flex justify-between mt-3">
+            <label>
+              <CategoryBadge category={recipe.category} />
+            </label>
 
-          <label className="flex items-center">
-            最終更新日：
-            {new Date(recipe.updatedAt).toLocaleDateString('ja-JP')}
-          </label>
-        </div>
+            <label className="flex items-center">
+              最終更新日：
+              {new Date(recipe.updatedAt).toLocaleDateString('ja-JP')}
+            </label>
+          </div>
 
-        <div className="flex flex-col space-y-10 mt-10 mb-10">
-          {/* 材料 */}
-          <div className="mb-4">
-            <div>
-              <h2 className="text-lg font-semibold mb-3">材料</h2>
-            </div>
+          <div className="flex flex-col space-y-10 mt-10 mb-10">
+            {/* 材料 */}
+            <div className="mb-4">
+              <div>
+                <h2 className="text-lg font-semibold mb-3">材料</h2>
+              </div>
 
-            <h3 className="text-base font-semibold mb-3 ml-2">
-              {recipe.servings}人分
-            </h3>
+              <h3 className="text-base font-semibold mb-3 ml-2">
+                {recipe.servings}人分
+              </h3>
 
-            {/* 材料名  ※li使う場合はulで囲う */}
-            <ul>
-              {recipe.recipeIngredients.map((ingredientdata) => (
-                <li key={ingredientdata.id}>
-                  {/* 材料名 */}
-                  <div className="flex items-center py-2 px-3 gap-8">
-                    <div className="border-b w-3/4 mb-2">
+              {/* 材料名  ※li使う場合はulで囲う */}
+              <ul>
+                {recipe.recipeIngredients.map((ingredientdata) => (
+                  <li
+                    key={ingredientdata.id}
+                    className="flex items-start py-1 px-3 border-b mt-2"
+                  >
+                    {/* 材料名 */}
+
+                    <div className="w-3/4">
                       {ingredientdata.ingredient.name}
                     </div>
 
                     {/* 量と単位 */}
-                    <div className="border-b w-1/4  mb-2">
+                    <div className="w-1/4 text-right shrink-0">
                       {ingredientdata.quantityText}
                       {ingredientdata.unit?.name}
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 作り方 */}
+            <div>
+              <h2 className="text-lg font-semibold mb-4">作り方</h2>
+
+              {/* 作り方内容 */}
+              <ul>
+                {recipe.recipeSteps.map((recipestep) => (
+                  <li key={recipestep.id}>
+                    <div className="flex py-1 px-2 border-b mb-4">
+                      <div className="mx-1">{recipestep.stepNumber}</div>
+                      {recipestep.instructionText}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* メモ */}
+            <div>
+              <h2 className="text-lg font-semibold pb-5">メモ</h2>
+              <p className="border-b  ml-2">{recipe.memo}</p>
+            </div>
           </div>
 
-          {/* 作り方 */}
-          <div>
-            <h2 className="text-lg font-semibold">作り方</h2>
-
-            {/* 作り方内容 */}
-            <ul>
-              {recipe.recipeSteps.map((recipestep) => (
-                <li key={recipestep.id}>
-                  <div className="flex py-1 px-2 border-b">
-                    <div className="mx-1">{recipestep.stepNumber}</div>
-                    {recipestep.instructionText}
-                  </div>
-                </li>
-              ))}
-            </ul>
+          {/* hrefは→ string | undefinedしか許さないため、return前でreturn nullを実施*/}
+          <div className="flex justify-center">
+            {recipe.sourceType === 'URL' && recipe.sourceUrl && (
+              <a
+                href={recipe.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <PrimaryButton className="w-[159px] h-[34px]" variant="primary">
+                  レシピサイトを開く
+                </PrimaryButton>
+              </a>
+            )}
           </div>
-
-          {/* メモ */}
-          <div>
-            <h2 className="text-lg font-semibold pb-5">メモ</h2>
-            <p className="border-b  ml-2">{recipe.memo}</p>
-          </div>
-        </div>
-
-        {/* hrefは→ string | undefinedしか許さないため、return前でreturn nullを実施*/}
-        <div className="flex justify-center">
-          {recipe.sourceType === 'URL' && recipe.sourceUrl && (
-            <a
-              href={recipe.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <PrimaryButton className="w-[159px] h-[34px]" variant="primary">
-                レシピサイトを開く
-              </PrimaryButton>
-            </a>
-          )}
         </div>
       </div>
     </div>

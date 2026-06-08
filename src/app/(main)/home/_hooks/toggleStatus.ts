@@ -3,7 +3,6 @@
 
 import { KeyedMutator } from 'swr/_internal';
 import { RecipeData } from '../../recipes/_types/RecipeTypes';
-import { useSupabaseSession } from './useSupabaseSession';
 
 type CookedAndIsFavoriteRequestBody = {
   isFavorite?: boolean;
@@ -29,20 +28,36 @@ const toggleStatus = async (
       //recipes配列の中の該当レシピだけ書き換える
 
       if (reciper.id === id) {
-        //該当レシピを探す（クリックされたレシピだけ変更）
-        return {
-          ...reciper,
-          userRecipeStatus: [
-            {
-              //既存状態を保持しつつ切り替える
-              ...(reciper.userRecipeStatus?.[0] ?? {
-                isFavorite: false,
-                hasCooked: false,
-              }),
-              [key]: !current,
-            },
-          ],
-        };
+        if (key === 'isFavorite') {
+          //該当レシピを探す（クリックされたレシピだけ変更）
+          return {
+            ...reciper,
+            userRecipeStatus: [
+              {
+                //既存状態を保持しつつ切り替える
+                ...(reciper.userRecipeStatus?.[0] ?? {
+                  isFavorite: false,
+                  hasCooked: false,
+                }),
+                isFavorite: !current,
+              },
+            ],
+          };
+        }
+
+        if (key === 'hasCooked') {
+          return {
+            ...reciper,
+            familyRecipeStatus: [
+              {
+                ...(reciper.familyRecipeStatus?.[0] ?? {
+                  hasCooked: false,
+                }),
+                hasCooked: !current,
+              },
+            ],
+          };
+        }
       }
       return reciper; //APIを再取得しない（SWRキャッシュだけ更新）
     });

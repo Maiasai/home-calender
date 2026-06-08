@@ -6,8 +6,10 @@ import {
   Control,
   FieldErrors,
   useFieldArray,
+  UseFormGetValues,
   UseFormRegister,
   UseFormSetValue,
+  UseFormTrigger,
 } from 'react-hook-form';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { parseFraction } from './parseFraction';
@@ -24,6 +26,8 @@ type Props = {
   register: UseFormRegister<RecipeFormValues>;
   setValue: UseFormSetValue<RecipeFormValues>;
   units: UnitData[];
+  getValues: UseFormGetValues<RecipeFormValues>;
+  trigger: UseFormTrigger<RecipeFormValues>;
 };
 
 const IngredientList = ({
@@ -33,6 +37,8 @@ const IngredientList = ({
   register,
   setValue,
   units,
+  getValues,
+  trigger,
 }: Props) => {
   const MAX_INGREDIENTS = 20; //最大追加可能数
 
@@ -87,11 +93,13 @@ const IngredientList = ({
                       value: 15,
                       message: '材料名は15文字以内で入力してください',
                     },
-                    validate: (value, formValues) => {
-                      const row = formValues.ingredients[index];
+                    validate: (value) => {
+                      const row = getValues(`ingredients.${index}`);
+                      const hasAnyValue =
+                        row.name?.trim() || row.amount || row.unitId;
 
-                      // 何か入力されてるなら必須
-                      if (row.amount || row.unitId) {
+                      // 量と単位に入力されてるなら材料名は必須
+                      if (hasAnyValue) {
                         return value?.trim()
                           ? true
                           : '材料名を入力してください';
@@ -109,21 +117,53 @@ const IngredientList = ({
             </div>
 
             {/* 量 */}
-            <div className="flex items-center">
-              <div className="flec flex-col">
+            <div className="flex flex-col items-center ml-6 mb-4">
+              <div className="flex">
                 <input
                   type="text" // 1/2 入力できるようにするため
-                  className="w-[150px] px-2 py-1 border-b mb-1"
+                  className="w-[150px] px-2 py-1 border-b"
                   {...register(`ingredients.${index}.amount`, {
-                    min: { value: 0, message: '0以上で入力してください' },
-                    max: { value: 500, message: '500以下で入力してください' },
-                    pattern: /^(\d+(\.\d+)?|\d+\/\d+)$/,
+                    validate: (value) => {
+                      const row = getValues(`ingredients.${index}`);
+
+                      if (!value && row.unitId) {
+                        return '単位がある場合、量を入力してください';
+                      }
+
+                      const parsed = parseFraction(String(value));
+
+                      if (Number.isNaN(parsed)) {
+                        return '数字または分数で入力してください';
+                      }
+
+                      if (parsed < 0) return '0以上で入力してください';
+
+                      if (parsed > 500) return '500以下で入力してください';
+
+                      return true;
+                    },
+                    onChange: () => {
+                      trigger(`ingredients.${index}.amount`);
+                    },
 
                     //入力欄からフォーカスが外れたとき に発火するイベント
                     onBlur: (e) => {
                       //onBlurは用意している標準イベント.(register内では自動推論の為、型指定不要)
                       const value = e.currentTarget.value; //この onBlur が登録されている input 要素,value→ユーザーが入力した文字列を取得
+
+                      if (!value) {
+                        setValue(`ingredients.${index}.amount`, undefined);
+
+                        return;
+                      }
+
                       const parsed = parseFraction(value); //数値に変換する関数を通す。
+
+                      if (Number.isNaN(parsed)) {
+                        setValue(`ingredients.${index}.amount`, undefined);
+
+                        return;
+                      }
                       //ingredients配列のindex番目のamountのみをsetValueで更新
                       setValue(`ingredients.${index}.amount`, parsed, {
                         shouldValidate: true,
@@ -132,24 +172,24 @@ const IngredientList = ({
                   })}
                   placeholder="例: 0.5 または 1/2"
                 />
-                <div className="pl-2">
-                  <ErrorMessage error={errors.ingredients?.[index]?.amount} />
-                </div>
+
+                {/* 単位 */}
+                <select
+                  className="w-[90px] px-2 py-1 border-b ml-1"
+                  {...register(`ingredients.${index}.unitId`)}
+                >
+                  <option value="">未選択</option>
+
+                  {units.map((unit) => (
+                    <option key={unit.id} value={unit.id}>
+                      {unit.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-
-              {/* 単位 */}
-              <select
-                className="w-[90px] px-2 py-1 border-b mb-4 ml-1"
-                {...register(`ingredients.${index}.unitId`)}
-              >
-                <option value="">未選択</option>
-
-                {units.map((unit) => (
-                  <option key={unit.id} value={unit.id}>
-                    {unit.name}
-                  </option>
-                ))}
-              </select>
+              <div className="pl-1">
+                <ErrorMessage error={errors.ingredients?.[index]?.amount} />
+              </div>
             </div>
           </div>
         </div>

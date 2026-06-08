@@ -5,7 +5,7 @@ type Props = {
   className?: string;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'danger' | 'secondary';
+  variant?: 'primary' | 'danger' | 'secondary' | 'third';
 };
 
 const PrimaryButton = ({
@@ -55,6 +55,20 @@ const PrimaryButton = ({
     shadow-lg
     transition-all duration-150
     hover:bg-[#f9e5d9]
+    active:scale-95
+  `,
+
+    //グレー枠　白背景ボタン
+    third: `
+    rounded-lg
+    bg-[#ffffff]
+    border border-gray-200
+    text-gray-600
+    text-sm
+    font-semibold
+    shadow-lg
+    transition-all duration-150
+    hover:bg-gray-200
     active:scale-95
   `,
   };

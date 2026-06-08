@@ -28,7 +28,7 @@ export const GET = async (
     );
   }
 
-  const recipe = await prisma.recipe.findUnique({
+  const recipe = await prisma.recipe.findFirst({
     //DBから一意なキーで一件だけ取得（ここでの型はRecipe | null）
     where: {
       //URLで渡されたidのレシピを探して（ここで条件を渡してる）
@@ -76,25 +76,56 @@ export const DELETE = async (
         { status: 404 },
       );
     }
-    const activeFid = dbUser.activeFamilyId;
+    const activeFamilyId = dbUser.activeFamilyId;
 
     await prisma.$transaction(async (tx) => {
-      await tx.userRecipeStatus.deleteMany({
-        where: { recipeId: params.id },
-      });
-      await tx.recipeIngredient.deleteMany({
-        where: { recipeId: params.id },
-      });
-      await tx.recipeStep.deleteMany({
-        where: { recipeId: params.id },
-      });
+      await Promise.all([
+        tx.userRecipeStatus.deleteMany({
+          where: { recipeId: params.id },
+        }),
+        tx.familyRecipeStatus.deleteMany({
+          where: { recipeId: params.id },
+        }),
+
+        tx.recipeIngredient.deleteMany({
+          where: { recipeId: params.id },
+        }),
+        tx.recipeStep.deleteMany({
+          where: { recipeId: params.id },
+        }),
+        tx.menuRecipe.deleteMany({
+          where: { recipeId: params.id },
+        }),
+      ]);
       const result = await tx.recipe.deleteMany({
-        where: { id: params.id, familyId: activeFid },
+        where: {
+          id: params.id,
+
+          familyId: activeFamilyId,
+        },
       });
 
       if (result.count === 0) {
         throw new Error('削除対象のレシピが見つかりません');
       }
+      await Promise.all([
+        tx.menu.deleteMany({
+          where: {
+            familyId: activeFamilyId,
+            menuRecipes: {
+              none: {},
+            },
+          },
+        }),
+        tx.ingredient.deleteMany({
+          where: {
+            familyId: activeFamilyId,
+            recipeIngredients: {
+              none: {},
+            },
+          },
+        }),
+      ]);
     });
     return NextResponse.json({ message: '削除しました' });
   } catch (error) {
@@ -160,16 +191,8 @@ export const PUT = async (
         { status: 404 },
       );
     }
-    const target = await prisma.recipe.findFirst({
-      where: {
-        id: params.id,
-        familyId: dbUser.activeFamilyId,
-      },
-    });
 
-    if (!target) {
-      return NextResponse.json({ message: 'not found' }, { status: 404 });
-    }
+    const activeFamilyId = dbUser.activeFamilyId;
 
     const recipedata = await prisma.$transaction(async (tx) => {
       const recipe = await tx.recipe.update({
@@ -193,52 +216,71 @@ export const PUT = async (
         },
       });
 
-      //材料は一旦全部削除
-      await tx.recipeIngredient.deleteMany({
-        where: { recipeId: params.id },
-      });
+      await Promise.all([
+        //材料は一旦全部削除
+        tx.recipeIngredient.deleteMany({
+          where: { recipeId: params.id },
+        }),
+        //手順も全部削除
+        tx.recipeStep.deleteMany({
+          where: { recipeId: params.id },
+        }),
+      ]);
 
       //再度生成
       for (let i = 0; i < body.ingredients.length; i++) {
         //配列のi番目を取り出す
         const ing = body.ingredients[i];
-        //空の行は個々にSKIP
-        const isEmpty = !ing.name && !ing.amount && !ing.unitId;
 
-        if (isEmpty) continue;
+        const displayName = ing.name?.trim();
+        const normalizedName = displayName?.toLowerCase();
+
+        if (!displayName || !normalizedName) continue;
+        const amount =
+          typeof ing.amount === 'number' && !Number.isNaN(ing.amount)
+            ? ing.amount
+            : null;
+
+        const unitId = ing.unitId?.trim() || null;
 
         await tx.recipeIngredient.create({
           data: {
-            quantityText: ing.amount ?? null,
+            quantityText: amount,
             sortOrder: i,
-
             recipe: {
               connect: { id: params.id },
             },
-
             ingredient: {
               connectOrCreate: {
                 where: {
-                  name: ing.name,
+                  familyId_normalizedName: {
+                    familyId: activeFamilyId,
+                    normalizedName,
+                  },
                 },
                 create: {
-                  name: ing.name,
-                  normalizedName: ing.name,
+                  familyId: activeFamilyId,
+                  name: displayName,
+                  normalizedName,
                 },
               },
             },
-            unit: ing.unitId
+            unit: unitId
               ? {
-                  connect: { id: ing.unitId },
+                  connect: { id: unitId },
                 }
               : undefined,
           },
         });
       }
-
-      //手順も全部削除
-      await tx.recipeStep.deleteMany({
-        where: { recipeId: params.id },
+      // どのレシピからも使われなくなったIngredientだけ削除
+      await tx.ingredient.deleteMany({
+        where: {
+          familyId: activeFamilyId,
+          recipeIngredients: {
+            none: {},
+          },
+        },
       });
 
       for (let i = 0; i < body.steps.length; i++) {
@@ -257,7 +299,6 @@ export const PUT = async (
           },
         });
       }
-
       await createNotification({
         familyId: recipe.familyId,
         actorUserId: user.id,

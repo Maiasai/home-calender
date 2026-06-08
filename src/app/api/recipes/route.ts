@@ -34,6 +34,11 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
+    //trim()→前後の空白を削除
+    //split→"キャベツ にんじん".split(/\s+/)が["キャベツ", "にんじん"]なる
+    //filter(Boolean)→でから文字捨ててる
+    const keywords = keyword?.trim().split(/\s+/).filter(Boolean) ?? [];
+
     const recipeget = await prisma.recipe.findMany({
       //レシピテーブル全件を取得
       where: {
@@ -41,12 +46,12 @@ export const GET = async (request: NextRequest) => {
 
         //条件があるときだけ以下追加
         //レシピ名検索
-        ...(keyword && {
-          OR: [
+        ...(keywords.length > 0 && {
+          OR: keywords?.flatMap((word) => [
             //OR[{条件1},{条件2},]→レシピ名or材料名
             {
               title: {
-                contains: keyword,
+                contains: word,
                 mode: 'insensitive',
               },
             },
@@ -57,14 +62,14 @@ export const GET = async (request: NextRequest) => {
                   //「1つでも条件に合うものがあればOK」
                   ingredient: {
                     name: {
-                      contains: keyword,
+                      contains: word,
                       mode: 'insensitive',
                     },
                   },
                 },
               },
             },
-          ],
+          ]),
         }),
 
         //カテゴリ絞り込み
@@ -86,9 +91,9 @@ export const GET = async (request: NextRequest) => {
 
         //作ったもの絞り込み
         ...(isCooked === 'true' && {
-          userRecipeStatus: {
+          familyRecipeStatus: {
             some: {
-              userId: user.id,
+              familyId: dbUser.activeFamilyId,
               hasCooked: true,
             },
           },
@@ -112,6 +117,13 @@ export const GET = async (request: NextRequest) => {
           },
           select: {
             isFavorite: true,
+          },
+        },
+        familyRecipeStatus: {
+          where: {
+            familyId: dbUser.activeFamilyId,
+          },
+          select: {
             hasCooked: true,
           },
         },
@@ -123,7 +135,7 @@ export const GET = async (request: NextRequest) => {
     console.log('GET /api/recipes error:', error);
 
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }
@@ -168,6 +180,18 @@ export const POST = async (request: NextRequest) => {
     }
     const activeFamilyId = dbUser.activeFamilyId;
 
+    const recipeCount = await prisma.recipe.count({
+      where: {
+        familyId: activeFamilyId,
+      },
+    });
+    if (recipeCount >= 150) {
+      return NextResponse.json(
+        { message: 'レシピは150件まで登録できます' },
+        { status: 400 },
+      );
+    }
+
     const recipedata = await prisma.$transaction(async (tx) => {
       const recipe = await tx.recipe.create({
         //テーブル操作。データベースに保存する処理
@@ -195,8 +219,10 @@ export const POST = async (request: NextRequest) => {
       if (ingredients?.length) {
         for (let index = 0; index < ingredients.length; index++) {
           const ingre = ingredients[index]; //②ingredients の中の 1つを取り出してingre という名前の箱にindexごとに入れる　*ingreの中に全ての材料が入るわけではない。
+          const displayName = ingre.name?.trim();
+          const normalizedName = displayName?.toLowerCase();
 
-          if (!ingre.name || !ingre.unitId) continue;
+          if (!displayName || !normalizedName) continue;
 
           await tx.recipeIngredient.create({
             //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
@@ -215,12 +241,17 @@ export const POST = async (request: NextRequest) => {
               ingredient: {
                 connectOrCreate: {
                   where: {
-                    name: ingre.name,
+                    //familyId + normalizedName の組み合わせで探す
+                    familyId_normalizedName: {
+                      familyId: activeFamilyId,
+                      normalizedName,
+                    },
                   },
                   //ingredientテーブルに新しい材料を作って、 同時にその ingredientId を RecipeIngredient に入れる
                   create: {
-                    name: ingre.name,
-                    normalizedName: ingre.name,
+                    familyId: activeFamilyId,
+                    name: displayName, //表示用
+                    normalizedName,
                   },
                 },
               },

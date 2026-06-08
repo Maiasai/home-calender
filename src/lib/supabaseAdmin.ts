@@ -1,4 +1,5 @@
-// @/_libs/supabaseAdmin.ts
+// 管理者用
+//ユーザー作成・削除・強い権限が必要なサーバー処理専用。
 import { createClient } from '@supabase/supabase-js';
 
 export const supabaseAdmin = createClient(

@@ -14,6 +14,9 @@ import { CategoryFilter } from '../../recipes/_types/category/CategoryFilter';
 import { MonthData } from '../_typs/Menu';
 import { KeyedMutator } from 'swr';
 import { Meal } from '../_typs/Meal';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import { ErrorMessage } from '@/components/ErrorMessage';
 
 type Props = {
   open: boolean;
@@ -89,6 +92,9 @@ const MealModalBase = ({
   };
 
   if (!open) return null;
+  if (isLoading) return <Loading fullScreen />;
+  if (!recipes) return <Empty />;
+  if (isError) return <ErrorMessage />;
 
   return (
     <>

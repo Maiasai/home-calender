@@ -12,6 +12,8 @@ import { supabase } from '@/lib/supabase';
 import { useSearchParams } from 'next/navigation';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
 
 const EmailChange = () => {
   const { token } = useSupabaseSession();
@@ -25,7 +27,10 @@ const EmailChange = () => {
   });
 
   const searchParams = useSearchParams();
-  const { data, error } = useSWR<UserResponseType>(`/api/mypage/`, fetcher);
+  const { data, error, isLoading } = useSWR<UserResponseType>(
+    `/api/mypage/`,
+    fetcher,
+  );
 
   //Emailマスク表示
   const maskEmail = (mail: string) => {
@@ -42,8 +47,7 @@ const EmailChange = () => {
 
       {
         //確認メールのリンクを押した後、どこへ戻すかを指定
-        emailRedirectTo:
-          '${process.env.NEXT_PUBLIC_APP_URL}/mypage/email?emailChanged=true',
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/mypage/email?emailChanged=true`,
       },
     );
 
@@ -69,12 +73,23 @@ const EmailChange = () => {
 
         if (!authEmail) return;
 
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        const accessToken = session?.access_token;
+
+        if (!accessToken) {
+          console.log('access token not found');
+
+          return;
+        }
         //Prisma(DB)へ同期
         await fetch('/api/sync-email', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             email: authEmail,
@@ -89,8 +104,9 @@ const EmailChange = () => {
     syncEmail();
   }, [searchParams]);
 
-  if (!data) return <div>loading...</div>;
-  if (error) return <div>エラーが発生しました</div>;
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto">

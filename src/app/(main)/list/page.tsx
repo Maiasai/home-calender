@@ -9,7 +9,15 @@ import Image from 'next/image';
 import { UpdateShoppingData } from '@/app/api/shopping-list/_types/UpdateShoppingData';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import { createGroupedItems } from './_hooks/useGroupedItems';
-import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 
 import {
   arrayMove,
@@ -20,6 +28,9 @@ import SortableItem from './_components/SortableItem';
 import { GroupedItem } from './_typs/GroupedItem';
 import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import { ErrorMessage } from '@/components/ErrorMessage';
 
 const List = () => {
   const { token } = useSupabaseSession();
@@ -29,7 +40,7 @@ const List = () => {
 
   //メモ）mutate→最新データを再取得（サーバーと再同期）
   //メモ）onBlur→入力欄からフォーカスが外れた瞬間に発火するイベント
-  const { data, mutate, isLoading } = useSWR<Shoppinglist[]>(
+  const { data, mutate, isLoading, error } = useSWR<Shoppinglist[]>(
     '/api/shopping-list/from-menu',
     fetcher,
   );
@@ -163,6 +174,21 @@ const List = () => {
     mutate();
   };
 
+  //スマホでも反応しやすいよう設定
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    }),
+  );
+
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
+
   return (
     <div className="max-w-3xl mx-auto">
       <nav className="flex justify-center border-b-2 max mb-4">
@@ -188,9 +214,15 @@ const List = () => {
         </button>
 
         <div className="flex flex-col justify-between items-center mb-4 p-1">
-          {/* リスト */}
           <div className="w-full mx-auto max-w-sm md:max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
+            {groupedItems.length === 0 && (
+              <p className="p-8 flex justify-center">
+                買い物リストがありません
+              </p>
+            )}
+            {/* リスト */}
             <DndContext
+              sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
             >
@@ -310,13 +342,20 @@ const List = () => {
 
                           <div
                             {...listeners}
-                            className="shrink-0 cursor-grab ml-3 mr-1 mt-1"
+                            onContextMenu={(e) => e.preventDefault()}
+                            className="shrink-0 cursor-grab ml-3 mr-1 mt-1 touch-none"
+                            style={{
+                              WebkitTouchCallout: 'none',
+                              WebkitUserSelect: 'none',
+                              userSelect: 'none',
+                            }}
                           >
                             <Image
                               src="/images/Sort_50dp.png"
                               alt="並び替えアイコン"
                               width={30}
                               height={30}
+                              draggable={false}
                             />
                           </div>
                         </div>

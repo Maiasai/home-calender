@@ -18,7 +18,10 @@ export const PUT = async (request: NextRequest) => {
     const updates = body.items;
 
     if (!dbUser) {
-      return NextResponse.json({ message: 'user not found' }, { status: 404 });
+      return NextResponse.json(
+        { message: 'ユーザーが見つかりませんでした' },
+        { status: 404 },
+      );
     }
 
     const familyId = dbUser.activeFamilyId;

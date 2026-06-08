@@ -16,7 +16,7 @@ export const POST = async (req: NextRequest) => {
       await prisma.user.update({
         where: { id: userId },
         data: {
-          authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
+          email,
         },
       });
       return NextResponse.json({ ok: true });
@@ -40,21 +40,23 @@ export const POST = async (req: NextRequest) => {
       });
 
       // ③ user更新
-      await tx.user.update({
-        where: { id: userId },
-        data: {
-          activeFamilyId: family.id,
-          homeFamilyId: family.id,
-        },
-      });
+      await Promise.all([
+        tx.user.update({
+          where: { id: userId },
+          data: {
+            activeFamilyId: family.id,
+            homeFamilyId: family.id,
+          },
+        }),
 
-      // ④ member作成
-      await tx.familyMember.create({
-        data: {
-          userId,
-          familyId: family.id,
-        },
-      });
+        // ④ member作成
+        tx.familyMember.create({
+          data: {
+            userId,
+            familyId: family.id,
+          },
+        }),
+      ]);
     });
     return NextResponse.json({ ok: true });
   } catch (error) {

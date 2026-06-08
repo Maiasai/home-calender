@@ -48,6 +48,9 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };

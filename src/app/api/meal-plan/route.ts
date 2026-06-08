@@ -32,7 +32,6 @@ export const GET = async (request: NextRequest) => {
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
         { message: 'family not found' },
-
         { status: 404 },
       );
     }
@@ -118,7 +117,7 @@ export const POST = async (request: NextRequest) => {
     console.error('API ERROR:', error);
 
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }
@@ -148,7 +147,6 @@ export const PUT = async (request: NextRequest) => {
     const exists = await prisma.menu.findFirst({
       where: {
         id: body.id,
-        userId: user.id,
         familyId: activeFamilyId,
       },
     });
@@ -160,7 +158,7 @@ export const PUT = async (request: NextRequest) => {
       );
     }
 
-    const mealEditData = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       await tx.menuRecipe.deleteMany({
         where: { menuId: body.id },
       });
@@ -174,9 +172,17 @@ export const PUT = async (request: NextRequest) => {
         })),
       });
     });
+    await createNotification({
+      familyId: activeFamilyId,
+      actorUserId: user.id,
+      type: 'MENU_UPDATED',
+    });
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };
 
@@ -196,6 +202,9 @@ export const DELETE = async (request: NextRequest) => {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };

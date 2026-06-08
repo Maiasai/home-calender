@@ -29,8 +29,6 @@ type Props = {
   errorssign: FieldErrors<SignupData>;
   isValidsign: boolean;
   isSubmittingsign: boolean;
-  loading: boolean;
-  setLoading: (v: boolean) => void;
   email: string;
 };
 
@@ -44,8 +42,6 @@ const LoginModal = ({
   errorssign,
   isValidsign,
   isSubmittingsign,
-  loading,
-  setLoading,
   email,
 }: Props) => {
   const { token } = useSupabaseSession();
@@ -64,15 +60,12 @@ const LoginModal = ({
   const onSubmitPass = async (data: SignupData) => {
     if (!data.password) {
       alert('パスワードが必要です');
-      setLoading(false);
       return;
     }
     const { data: authData, error } = await supabase.auth.signInWithPassword({
       email, // さっき入力したやつをstateから
       password: data.password,
     });
-
-    setLoading(false);
 
     if (error) {
       console.error(error);
@@ -85,12 +78,19 @@ const LoginModal = ({
 
       return;
     }
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      return;
+    }
     if (!error) {
       await fetch('/api/sync-email', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           email: authData.user?.email,
@@ -154,7 +154,7 @@ const LoginModal = ({
                 className="w-60 h-11"
                 variant="primary"
               >
-                ログイン
+                {isSubmittingsign ? 'ログイン中...' : 'ログイン'}
               </PrimaryButton>
             </div>
             <div className="flex justify-center pt-2 border-b text-sm">

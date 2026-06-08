@@ -10,9 +10,17 @@ type Props = {
   items: ItemType[];
   iconSrc: string;
   iconAlt: string;
+  selectedDate: Date;
 };
 
-export const MealSection = ({ items, iconSrc, iconAlt }: Props) => {
+export const MealSection = ({
+  items,
+  iconSrc,
+  iconAlt,
+  selectedDate,
+}: Props) => {
+  const selectedDateKey = selectedDate.toLocaleDateString('sv-SE');
+
   return (
     <>
       {items.map((item) => (
@@ -28,7 +36,7 @@ export const MealSection = ({ items, iconSrc, iconAlt }: Props) => {
           </div>
 
           <Link
-            href={`/recipes/${item.id}?from=calendar`}
+            href={`/recipes/${item.id}?from=calendar&date=${selectedDateKey}`}
             className="block shink-0"
           >
             <div className="relative  w-[150px] h-[100px]  overflow-hidden rounded-md">
@@ -42,7 +50,7 @@ export const MealSection = ({ items, iconSrc, iconAlt }: Props) => {
           </Link>
 
           <Link
-            href={`/recipes/${item.id}?from=calendar`}
+            href={`/recipes/${item.id}?from=calendar?date=${selectedDateKey}`}
             className="flex-1 min-w-0 break-words"
           >
             {item.title}

@@ -102,7 +102,7 @@ export const GET = async (request: NextRequest) => {
           ingredients: item.recipe.recipeIngredients.map((ri) => ({
             id: ri.ingredient.id,
             name: ri.ingredient.name,
-            amount: ri.quantityText,
+            amount: ri.quantityText ?? null,
             unit: ri.unit ?? null,
             nutritionCategory: ri.ingredient.nutritionCategory ?? null,
           })),
@@ -124,7 +124,7 @@ export const GET = async (request: NextRequest) => {
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }

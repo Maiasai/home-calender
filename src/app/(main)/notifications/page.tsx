@@ -9,6 +9,9 @@ import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteR
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { NotificationsType } from './_typs/NotificationsType';
 import { useState } from 'react';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
+import { ErrorMessage } from '@/components/ErrorMessage';
 
 //返ってくる通知の型をオブジェクトに
 export type NotificationsResponse = {
@@ -22,6 +25,7 @@ const typesName = {
   RECIPE_UPDATED: 'レシピを更新',
 
   MENU_CREATED: '献立を作成',
+  MENU_UPDATED: '献立を更新',
 
   SHOPPING_CREATED: '買い物リストを作成',
   SHOPPING_UPDATED: '買い物リストを更新',
@@ -29,11 +33,12 @@ const typesName = {
 
 const Notifications = () => {
   const { token } = useSupabaseSession();
-  const { data, error, mutate } = useSWR<NotificationsResponse>(
+  const { data, isLoading, error, mutate } = useSWR<NotificationsResponse>(
     '/api/notifications',
     fetcher,
   );
 
+  const [isJoining, setIsJoining] = useState(false);
   const [visibleCount, setVisibleCount] = useState(10); //表示件数管理用
 
   const invites = data?.invites ?? [];
@@ -43,6 +48,10 @@ const Notifications = () => {
   //参加処理
   const Join = async (inviteId: string) => {
     try {
+      if (isJoining) return;
+
+      setIsJoining(true);
+
       const res = await fetch('/api/family/invite/accept', {
         method: 'POST',
         credentials: 'include',
@@ -62,6 +71,8 @@ const Notifications = () => {
     } catch (error: any) {
       console.error(error.message);
       alert('招待への参加が失敗しました');
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -88,6 +99,10 @@ const Notifications = () => {
     }
     await mutate();
   };
+
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -118,11 +133,12 @@ const Notifications = () => {
                     {/* クリックで招待レコードのIDが呼ばれる */}
                     <div className="flex gap-3 ml-6">
                       <PrimaryButton
+                        disabled={isJoining}
                         onClick={() => Join(d.id)}
                         className="w-[80px] h-[25px]"
                         variant="primary"
                       >
-                        参加
+                        {isJoining ? '参加中...' : '参加'}
                       </PrimaryButton>
 
                       <button

@@ -16,6 +16,7 @@ import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { InvitesType } from '@/app/api/family/_typs/InvitesType';
 import { KeyedMutator } from 'swr';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { truncateNickName } from '@/utils/format';
 
 type Filed = {
   //useFieldArray内部で一意キーを自動付与してるから以下の型になる
@@ -217,7 +218,7 @@ const GroupOwner = ({
                 )}
               </div>
               {/* 参加済みメンバー */}
-              <div className="flex flex-col mb-4">
+              <div className="flex flex-col mb-8">
                 <p className="mb-3">◼︎参加済みメンバー</p>
                 {members?.length === 0 ? (
                   <p className="ml-2 text-base text-gray-500">
@@ -230,16 +231,20 @@ const GroupOwner = ({
                     const canDelete = isOwner && !isSelf;
 
                     return (
-                      <div key={m.id} className="flex items-center">
-                        <p className="ml-2 text-base text-gray-500">
-                          {m.nickname}
+                      <div key={m.id} className="flex items-center  mb-3">
+                        <p className="ml-1 text-base text-gray-500">
+                          {truncateNickName(m.nickname)}
                         </p>
 
-                        {isSelf && <p className="ml-2 text-sm">（あなた）</p>}
+                        <div className=" flex flex-col">
+                          {isSelf && <p className="ml-1 text-sm">（あなた）</p>}
 
-                        {isOwnerUser && (
-                          <p className="text-sm  text-orange-500">※オーナー</p>
-                        )}
+                          {isOwnerUser && (
+                            <p className="text-sm ml-4  text-orange-500">
+                              ※オーナー
+                            </p>
+                          )}
+                        </div>
 
                         {canDelete && (
                           <button
@@ -254,6 +259,11 @@ const GroupOwner = ({
                     );
                   })
                 )}
+              </div>
+              <div className="mb-8 rounded-lg bg-orange-50 px-4 py-3 text-xs text-gray-700 leading-relaxed">
+                <p>※「作ったことある」は、家族みんなで確認できます。</p>
+
+                <p>※「お気に入り」は、自分だけの設定として保存されます。</p>
               </div>
             </>
           ) : (

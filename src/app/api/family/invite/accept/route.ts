@@ -72,13 +72,13 @@ export const POST = async (request: NextRequest) => {
       }),
     ]);
     return NextResponse.json(
-      { message: 'Successful participation' },
+      { message: 'グループからの招待を承認しました' },
       { status: 200 },
     );
   } catch (error) {
     console.log('error', error);
     return NextResponse.json(
-      { message: 'サーバーエラーが発生しました' },
+      { message: 'エラーが発生しました' },
       { status: 500 },
     );
   }

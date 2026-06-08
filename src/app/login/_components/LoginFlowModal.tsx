@@ -24,6 +24,7 @@ import { Mode } from '../_typs/mode';
 import { InputEmailData } from '../_typs/InputEmailData';
 import PageHeader from '@/app/(main)/recipes/_components/PageHeader';
 import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
 const titles = {
   email: 'メールアドレスを入力',
@@ -176,6 +177,13 @@ const LoginFlowModal = ({
     }
     // 既存ユーザー→ログインへ
     if (result.exists) {
+      if (result.authProvider === 'GOOGLE') {
+        alert(
+          'このメールアドレスは Google アカウントで登録されています。Googleでログインしてください',
+        );
+        setStep('select');
+        return;
+      }
       setStep('login');
       return;
     }
@@ -195,13 +203,14 @@ const LoginFlowModal = ({
       alert(
         'このメールアドレスは Google アカウントで登録されています。Googleでログインしてください',
       );
+      setStep('select');
       return;
     }
 
     //パスワードリセットメール送信
     await supabase.auth.resetPasswordForEmail(email, {
       //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
-      redirectTo: `${window.location.origin}/?reset=1`,
+      redirectTo: `${window.location.origin}/?reset=1`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
     });
 
     alert(
@@ -239,15 +248,37 @@ const LoginFlowModal = ({
     setLoginModalOpen(true);
   };
 
-  //パスワードリセットモーダル検知
+  //パスワードリセットモーダル検知(ページを開いたときに自動で走る)
+  //※セッションは再設定メールリンクを踏んだときに、supabaseが本人確認して発行してくれてる。
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const handleResetPasswordLink = async () => {
+      //ページ開かれたらURLに code か reset=1 があるか見る
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const reset = params.get('reset');
 
-    if (params.get('reset') === '1') {
+      if (!code && reset !== '1') return;
+
+      //0.5秒だけまつ
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      //今すでにSupabaseが持っているセッションを取り出す
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        alert(
+          '認証情報が確認できません。もう一度パスワード再設定メールから開いてください。',
+        );
+        return;
+      }
       setStep('resetPassword');
       setLoginModalOpen(true);
-    }
-  }, []);
+    };
+    //この関数をこれで動かす
+    handleResetPasswordLink();
+  }, [setLoginModalOpen]);
 
   if (!open) return null;
 
@@ -263,11 +294,7 @@ const LoginFlowModal = ({
             <LoginSelectModal setStep={setStep} />
           </>
         )}
-        {loading && (
-          <div className="absolute inset-0 bg-white/100 flex items-center justify-center z-50">
-            <span className="text-gray-700 font-medium text-lg">処理中…</span>
-          </div>
-        )}
+        {isSubmitting && <LoadingOverlay />}
 
         {/* メールアドレス入力 */}
         {step === 'email' && (
@@ -332,8 +359,6 @@ const LoginFlowModal = ({
                   errorssign={errorssign}
                   isValidsign={isValidsign}
                   isSubmittingsign={isSubmittingsign}
-                  loading={loading}
-                  setLoading={setLoading}
                   isGoogleUser={isGoogleUser}
                 />
               </div>
@@ -364,8 +389,6 @@ const LoginFlowModal = ({
                   errorssign={errorssign}
                   isValidsign={isValidsign}
                   isSubmittingsign={isSubmittingsign}
-                  loading={loading}
-                  setLoading={setLoading}
                   email={email}
                 />
               </div>

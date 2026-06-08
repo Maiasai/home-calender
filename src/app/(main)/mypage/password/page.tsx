@@ -10,6 +10,8 @@ import { UserResponseType } from '@/app/api/mypage/_typs/UserResponseType';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/featcher';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { Loading } from '@/components/Loading';
+import { Empty } from '@/components/Empty';
 
 const ChangePassword = () => {
   //パスワード入力欄を 表示/非表示 にする boolean
@@ -26,7 +28,10 @@ const ChangePassword = () => {
     mode: 'onChange',
   });
 
-  const { data, error } = useSWR<UserResponseType>(`/api/mypage/`, fetcher);
+  const { data, isLoading, error } = useSWR<UserResponseType>(
+    `/api/mypage/`,
+    fetcher,
+  );
 
   //newPassword入力欄の最新値を常に取得→ここで比較用。validate: (value) => value === newPassword
   const password = watch('newPassword'); // newPassword の値を常に取得
@@ -92,9 +97,9 @@ const ChangePassword = () => {
     alert('パスワードを更新しました');
   };
 
-  if (!data) return <div>loading...</div>;
-  if (error) return <div>エラーが発生しました</div>;
-
+  if (isLoading) return <Loading />;
+  if (!data) return <Empty />;
+  if (error) return <ErrorMessage />;
   return (
     <div className="max-w-3xl mx-auto">
       <nav className="flex justify-center border-b-2 mb-10">

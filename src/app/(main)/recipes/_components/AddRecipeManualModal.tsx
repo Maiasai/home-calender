@@ -36,11 +36,12 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
   const [category, setCategory] = useState<RecipeCategory | ''>('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [units, setUnits] = useState<UnitData[]>([]); //ここで選択肢を管理
-  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     register,
     setValue,
+    getValues,
+    trigger,
     handleSubmit,
     control,
     formState: { errors, isValid, isSubmitting },
@@ -84,8 +85,6 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
   }, []); //[]の意味：画面が初回表示された時だけ実行
 
   const onSubmit = async (data: RecipeFormValues) => {
-    setLoading(true);
-
     //useStateとuseFormの値をsubmit時にpayloadで合体
     const payload: CreateRecipeRequest = {
       ...data, //useFormの値(フォームに入力された値)
@@ -107,21 +106,19 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
 
       if (!res.ok) {
         //HTTPステータスコードが200-299の時trueになる
-        const text = await res.text();
-        throw new Error(`HTTP ${res.status}-${text}`);
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'レシピ登録に失敗しました');
       }
 
       //成功だった場合
       const d = await res.json();
-      alert('レシピを登録しました！');
+      alert('レシピを登録しました');
       reset(); //成功したら入力欄をクリア
 
       onClose();
       await mutate();
     } catch (err: any) {
-      console.error(err.message);
-    } finally {
-      setLoading(false);
+      alert(err.message);
     }
   };
 
@@ -156,6 +153,8 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
               errors={errors}
               setValue={setValue}
               units={units}
+              getValues={getValues}
+              trigger={trigger}
             />
           </div>
 
@@ -182,7 +181,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
               variant="primary"
               className="w-[160px] h-[30px]"
             >
-              レシピを登録する
+              {isSubmitting ? 'レシピ登録中' : 'レシピを登録する'}
             </PrimaryButton>
           </div>
         </form>

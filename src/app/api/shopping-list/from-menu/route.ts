@@ -49,7 +49,10 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json(formatted, { status: 200 });
   } catch (error) {
     console.error('エラー内容', error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };
 
@@ -128,7 +131,6 @@ export const POST = async (request: NextRequest) => {
 
     let globalIndex = 0;
 
-    console.dir(mealData, { depth: null });
     const data = mealData.menuRecipes.flatMap((item) =>
       item.recipe.recipeIngredients
         .filter((ing) => ing.ingredient?.name?.trim())
@@ -141,6 +143,7 @@ export const POST = async (request: NextRequest) => {
         })),
     );
 
+    console.log('data', data);
     await Promise.all(
       data.map(async (item) => {
         const existing = await prisma.shoppingItem.findFirst({
@@ -175,7 +178,7 @@ export const POST = async (request: NextRequest) => {
     await createNotification({
       familyId: dbUser.activeFamilyId,
       actorUserId: user.id,
-      type: 'SHOPPING_UPDATED',
+      type: 'SHOPPING_CREATED',
     });
 
     return NextResponse.json(
@@ -184,7 +187,10 @@ export const POST = async (request: NextRequest) => {
     );
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };
 
@@ -233,11 +239,24 @@ export const PUT = async (request: NextRequest) => {
       },
       data: updateData,
     });
-
+    if (result.count === 0) {
+      return NextResponse.json(
+        { message: '更新対象が見つかりません' },
+        { status: 404 },
+      );
+    }
+    await createNotification({
+      familyId: dbUser.activeFamilyId,
+      actorUserId: user.id,
+      type: 'SHOPPING_UPDATED',
+    });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ message: 'サーバーエラー' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'エラーが発生しました' },
+      { status: 500 },
+    );
   }
 };
 

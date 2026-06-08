@@ -14,7 +14,7 @@ export const POST = async (request: NextRequest) => {
 
     if (!nickname || typeof nickname !== 'string') {
       return NextResponse.json(
-        { message: 'invalid nickname' },
+        { message: 'ニックネームの形式が間違えています' },
         { status: 400 },
       );
     }
