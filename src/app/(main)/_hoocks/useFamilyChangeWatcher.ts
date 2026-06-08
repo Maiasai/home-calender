@@ -5,12 +5,11 @@
 import { GetMeResponse } from '@/app/api/_types/ApiResponse';
 import { fetcher } from '@/lib/featcher';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import useSWR from 'swr';
 
 export const useFamilyChangeWatcher = () => {
   const router = useRouter();
-  const isFirstCheck = useRef(true);
 
   const { data: meData } = useSWR<GetMeResponse>('/api/users/me', fetcher, {
     refreshInterval: 30000,

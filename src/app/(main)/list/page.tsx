@@ -9,7 +9,15 @@ import Image from 'next/image';
 import { UpdateShoppingData } from '@/app/api/shopping-list/_types/UpdateShoppingData';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import { createGroupedItems } from './_hooks/useGroupedItems';
-import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 
 import {
   arrayMove,
@@ -166,6 +174,17 @@ const List = () => {
     mutate();
   };
 
+  //スマホでも反応しやすいよう設定
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    }),
+  );
+
   if (isLoading) return <Loading />;
   if (!data) return <Empty />;
   if (error) return <ErrorMessage />;
@@ -203,6 +222,7 @@ const List = () => {
             )}
             {/* リスト */}
             <DndContext
+              sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
             >
@@ -322,13 +342,20 @@ const List = () => {
 
                           <div
                             {...listeners}
-                            className="shrink-0 cursor-grab ml-3 mr-1 mt-1"
+                            onContextMenu={(e) => e.preventDefault()}
+                            className="shrink-0 cursor-grab ml-3 mr-1 mt-1 touch-none"
+                            style={{
+                              WebkitTouchCallout: 'none',
+                              WebkitUserSelect: 'none',
+                              userSelect: 'none',
+                            }}
                           >
                             <Image
                               src="/images/Sort_50dp.png"
                               alt="並び替えアイコン"
                               width={30}
                               height={30}
+                              draggable={false}
                             />
                           </div>
                         </div>
