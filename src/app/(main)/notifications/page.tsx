@@ -38,6 +38,7 @@ const Notifications = () => {
     fetcher,
   );
 
+  const [isJoining, setIsJoining] = useState(false);
   const [visibleCount, setVisibleCount] = useState(10); //表示件数管理用
 
   const invites = data?.invites ?? [];
@@ -47,6 +48,10 @@ const Notifications = () => {
   //参加処理
   const Join = async (inviteId: string) => {
     try {
+      if (isJoining) return;
+
+      setIsJoining(true);
+
       const res = await fetch('/api/family/invite/accept', {
         method: 'POST',
         credentials: 'include',
@@ -66,6 +71,8 @@ const Notifications = () => {
     } catch (error: any) {
       console.error(error.message);
       alert('招待への参加が失敗しました');
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -126,11 +133,12 @@ const Notifications = () => {
                     {/* クリックで招待レコードのIDが呼ばれる */}
                     <div className="flex gap-3 ml-6">
                       <PrimaryButton
+                        disabled={isJoining}
                         onClick={() => Join(d.id)}
                         className="w-[80px] h-[25px]"
                         variant="primary"
                       >
-                        参加
+                        {isJoining ? '参加中...' : '参加'}
                       </PrimaryButton>
 
                       <button
