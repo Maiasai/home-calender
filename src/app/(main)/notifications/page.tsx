@@ -68,9 +68,11 @@ const Notifications = () => {
 
       await mutate();
       alert('招待への参加が完了しました');
-    } catch (error: any) {
-      console.error(error.message);
-      alert('招待への参加が失敗しました');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        alert('招待への参加が失敗しました');
+      }
     } finally {
       setIsJoining(false);
     }

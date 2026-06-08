@@ -156,7 +156,7 @@ export const DELETE = async (request: NextRequest) => {
           }),
         ]);
 
-        (await Promise.all([
+        await Promise.all([
           tx.menu.deleteMany({
             where: {
               familyId: { in: deleteFamilyIds },
@@ -192,12 +192,12 @@ export const DELETE = async (request: NextRequest) => {
               familyId: { in: deleteFamilyIds },
             },
           }),
-        ]),
-          await tx.family.deleteMany({
-            where: {
-              id: { in: deleteFamilyIds },
-            },
-          }));
+        ]);
+        await tx.family.deleteMany({
+          where: {
+            id: { in: deleteFamilyIds },
+          },
+        });
       }
 
       // 4. 自分が他の共有グループに参加していた分も解除
@@ -252,6 +252,7 @@ export const DELETE = async (request: NextRequest) => {
     }
     return NextResponse.json({ message: '退会しました' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { message: '削除中にエラーが発生しました' },
       { status: 500 },

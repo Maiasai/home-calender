@@ -4,11 +4,9 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import Image from 'next/image';
-import { supabase } from '@/lib/supabase';
-import { ApiOkResponse } from '@/app/api/_types/ApiOkResponse';
 import { CategoryFilter } from './_types/category/CategoryFilter';
 import { useRecipes } from './_hooks/useRecipes';
 import AddRecipeModalBase from './_components/AddRecipeModalBase';
@@ -47,16 +45,6 @@ const RecipesPage = () => {
     cooked: cookedFilter,
   });
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-    };
-
-    checkUser();
-  }, []);
-
   //一括削除モード
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return; //selectedIds が空なら何もせず関数を終了
@@ -72,7 +60,6 @@ const RecipesPage = () => {
         ids: selectedIds,
       }),
     });
-    const data: ApiOkResponse = await res.json();
 
     if (!res.ok) {
       alert('削除に失敗しました');

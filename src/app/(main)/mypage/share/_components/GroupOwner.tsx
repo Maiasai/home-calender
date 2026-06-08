@@ -86,7 +86,7 @@ const GroupOwner = ({
 
     if (!ok) return;
     try {
-      const res = await fetch('/api/family/members/', {
+      await fetch('/api/family/members/', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

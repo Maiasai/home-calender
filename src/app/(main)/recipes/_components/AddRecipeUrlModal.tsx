@@ -33,7 +33,6 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
-    reset,
   } = useForm<CreateRecipeByUrlRequest>({
     mode: 'onChange',
     defaultValues: {
@@ -69,8 +68,12 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
 
       onClose();
       await mutate();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert('エラーが発生しました');
+      }
     }
   };
 

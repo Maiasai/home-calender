@@ -4,7 +4,6 @@
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import ErrorMessage from './ErrorMessage';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
-import Image from 'next/image';
 import DeleteIcon from '@/app/components/image/deleteicon';
 import PrimaryButton from '@/components/button/PrimaryButton';
 
@@ -21,8 +20,6 @@ type Props = {
 };
 
 const StepList = ({ fields, append, remove, register, errors }: Props) => {
-  const MAX_STEP = 20; //最大追加可能数
-
   return (
     <div className="flex flex-col w-full gap-2">
       <label>作り方</label>

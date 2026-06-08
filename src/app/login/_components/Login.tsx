@@ -6,7 +6,6 @@ import {
   FieldErrors,
   UseFormHandleSubmit,
   UseFormRegister,
-  UseFormWatch,
 } from 'react-hook-form';
 import { ModalStep } from '../_typs/ModalStep';
 import { SignupData } from '@/app/login/_typs/SignupData';
@@ -16,7 +15,6 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Mode } from '../_typs/mode';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
-import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
@@ -25,7 +23,6 @@ type Props = {
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   registersign: UseFormRegister<SignupData>;
   handleSubmitsign: UseFormHandleSubmit<SignupData>;
-  watch: UseFormWatch<SignupData>;
   errorssign: FieldErrors<SignupData>;
   isValidsign: boolean;
   isSubmittingsign: boolean;
@@ -38,17 +35,14 @@ const LoginModal = ({
   setMode,
   registersign,
   handleSubmitsign,
-  watch,
   errorssign,
   isValidsign,
   isSubmittingsign,
   email,
 }: Props) => {
-  const { token } = useSupabaseSession();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
-  const password = watch('password'); // password の値を常に取得
 
   //Emailをここでマスク表示
   const maskEmail = (email: string) => {

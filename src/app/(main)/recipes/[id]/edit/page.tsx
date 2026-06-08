@@ -2,7 +2,6 @@
 
 'use client';
 
-import { supabase } from '@/lib/supabase';
 import BackIcon from '@/app/components/image/backicon';
 
 import { RecipeCategory } from '@/generated/prisma';
@@ -32,7 +31,7 @@ type Props = {
 type PutRecipeRequest = RecipeFormValues & {
   id: string;
   category?: RecipeCategory;
-  servings: Number;
+  servings: number;
 };
 
 //①ユーザーが画面に入ってきたらRecipeEditコンポーネントが実行
@@ -151,7 +150,6 @@ const RecipeEdit = ({ params }: Props) => {
       category: category || undefined,
       servings: Number(data.servings), // 念のため明示的に数値化
     };
-    const result = await supabase.auth.getSession();
 
     try {
       const res = await fetch(`/api/recipes/${recipe.id}`, {
@@ -171,7 +169,6 @@ const RecipeEdit = ({ params }: Props) => {
       }
 
       //成功だった場合
-      const d = await res.json();
       alert('レシピを更新しました！');
       if (from === 'calendar' && date) {
         router.push(`/recipes/${id}?from=calendar&date=${date}`);
@@ -180,8 +177,12 @@ const RecipeEdit = ({ params }: Props) => {
       } else {
         router.push(`/recipes/${id}`);
       }
-    } catch (err: any) {
-      console.error(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert('エラーが発生しました');
+      }
     }
   };
 

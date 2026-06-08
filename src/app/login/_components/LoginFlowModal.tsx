@@ -6,7 +6,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LoginModalProps } from '@/app/login/_typs/LoginModalProps';
-import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { VerifyCodeFormValues } from '@/app/login/_typs/VerifyCodeFormValues';
 import { EmailFormValues } from '@/app/login/_typs/Emailformvalues';
@@ -49,15 +48,10 @@ const LoginFlowModal = ({
   const { token } = useSupabaseSession();
 
   const [step, setStep] = useState<ModalStep>('select');
-  const [otp, setOtp] = useState('');
-  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(''); //verifyCode ステップや signup ステップでも email を参照するため用
-  const [authUser, setAuthUser] = useState<any>(null);
   const [isGoogleUser, setIsGoogleUser] = useState(false);
 
   const [mode, setMode] = useState<Mode>('normal');
-
-  const router = useRouter();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -124,8 +118,6 @@ const LoginFlowModal = ({
 
   //OTP送信
   const sendOtp = async (targetEmail: string) => {
-    setLoading(true);
-
     const res = await fetch('/api/auth/request-otp', {
       method: 'POST',
       headers: {
@@ -136,7 +128,6 @@ const LoginFlowModal = ({
     });
 
     const data = await res.json();
-    setLoading(false);
 
     if (!res.ok) {
       alert(data.message);
@@ -220,13 +211,12 @@ const LoginFlowModal = ({
 
   //認証コード入力箇所
   const onSubmitOtp = async (data: VerifyCodeFormValues) => {
-    setOtp(data.otp);
     await handleVerifyOtp(data.otp, email);
   };
 
   //認証コードの入力後に呼ばれる
   const handleVerifyOtp = async (otp: string, targetEmail: string) => {
-    const { data, error } = await supabase.auth.verifyOtp({
+    const { error } = await supabase.auth.verifyOtp({
       //supabaseの認証窓口に、この情報渡して本人かを確認してもらう
       email: targetEmail, //コードを送ったメールアドレス
       token: otp, //token→supabase側の呼び名。　otp→inputに入れた8桁のコード
@@ -238,7 +228,6 @@ const LoginFlowModal = ({
       return;
     }
     // 認証成功（data = { session, user }　,error = null}が返る　 → 新規登録 モーダルを開く
-    setLoading(false);
     openSignupModal();
   };
 
@@ -385,7 +374,6 @@ const LoginFlowModal = ({
                   setMode={setMode}
                   registersign={registersign}
                   handleSubmitsign={handleSubmitsign}
-                  watch={watch}
                   errorssign={errorssign}
                   isValidsign={isValidsign}
                   isSubmittingsign={isSubmittingsign}

@@ -6,7 +6,7 @@ import { GroupedItem } from '../_typs/GroupedItem';
 
 type Props = {
   item: GroupedItem;
-  children: (listeners: any) => React.ReactNode;
+  children: (listeners: unknown) => React.ReactNode;
 };
 
 const SortableItem = ({ item, children }: Props) => {

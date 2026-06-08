@@ -34,6 +34,7 @@ const CalenderSelectedDate = ({
   onList,
   displayDate,
 }: Props) => {
+  const { token } = useSupabaseSession();
   //詳細表示用
   const selectedKey = selectedDate.toLocaleDateString('sv-SE'); //選択している日付
   const selectedDayData = data?.[selectedKey]; //右記のような形→{breakfast: Recipe[] lunch: Recipe[] dinner: Recipe[]}
@@ -54,7 +55,6 @@ const CalenderSelectedDate = ({
 
   //献立削除処理
   const deleteMeal = async (mealId: MealId) => {
-    const { token } = useSupabaseSession();
     try {
       await fetch('/api/meal-plan', {
         method: 'DELETE',

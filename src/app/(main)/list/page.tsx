@@ -59,7 +59,7 @@ const List = () => {
   //nameごとにここでグループ化
   useEffect(() => {
     if (!data) return;
-    setGroupedItems(createGroupedItems(data, {}));
+    setGroupedItems(createGroupedItems(data));
   }, [data]);
 
   //ドラッグイベント追加
@@ -341,7 +341,7 @@ const List = () => {
                           </div>
 
                           <div
-                            {...listeners}
+                            {...(listeners ?? {})}
                             onContextMenu={(e) => e.preventDefault()}
                             className="shrink-0 cursor-grab ml-3 mr-1 mt-1 touch-none"
                             style={{

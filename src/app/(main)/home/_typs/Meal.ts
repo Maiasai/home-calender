@@ -19,9 +19,3 @@ export type Meal = {
     mealType: MealType;
   }[];
 };
-
-type Ingredient = {
-  id: string;
-  name: string;
-  amount?: number;
-};

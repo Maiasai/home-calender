@@ -10,14 +10,11 @@ import { UserResponseType } from '@/app/api/mypage/_typs/UserResponseType';
 import { fetcher } from '@/lib/featcher';
 import { supabase } from '@/lib/supabase';
 import { useSearchParams } from 'next/navigation';
-import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 
 const EmailChange = () => {
-  const { token } = useSupabaseSession();
-
   const {
     register,
     handleSubmit,

@@ -90,8 +90,12 @@ const Share = () => {
 
       await mutateInvites();
       alert('招待通知を送信しました。\n相手の方は通知一覧から参加できます。');
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert('エラーが発生しました');
+      }
     }
   };
 

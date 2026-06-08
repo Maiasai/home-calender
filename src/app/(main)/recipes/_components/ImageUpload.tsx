@@ -32,9 +32,7 @@ const ImageUpload = ({
     <Controller
       name="thumbnailImageUrl"
       control={control}
-      render={(
-        { field }, //RHFがfield を渡してくるという意味(中には、onChange,onBlurなどのRHFがinput操作するための道具が入っている)
-      ) => (
+      render={() => (
         <div className="flex flex-col">
           <label className="block mb-2">画像とレシピ名</label>
 

@@ -82,7 +82,7 @@ const ResetPassword = ({
     };
 
     getUserEmail();
-  }, []);
+  }, [setEmail]);
 
   return (
     <div>

@@ -57,7 +57,7 @@ export const GET = async (request: NextRequest) => {
     });
 
     return NextResponse.json(mealdata, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: 'error' }, { status: 500 });
   }
 };
@@ -86,7 +86,7 @@ export const POST = async (request: NextRequest) => {
     }
     const activeFamilyId = dbUser.activeFamilyId;
 
-    const mealplandata = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const mealplan = await tx.menu.create({
         data: {
           //dataは　CREATE/UPDATE用
@@ -178,7 +178,7 @@ export const PUT = async (request: NextRequest) => {
       type: 'MENU_UPDATED',
     });
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: 'エラーが発生しました' },
       { status: 500 },
@@ -201,7 +201,7 @@ export const DELETE = async (request: NextRequest) => {
     });
 
     return NextResponse.json(result, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: 'エラーが発生しました' },
       { status: 500 },

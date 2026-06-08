@@ -3,7 +3,6 @@
 
 import { Dispatch, SetStateAction } from 'react';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
-import Image from 'next/image';
 import { RecipeData } from '../../recipes/_types/RecipeTypes';
 import SearchBarSimple from '../../recipes/_components/SearchBarSimple';
 import FilterPanel from '../../recipes/_components/FilterPanel';

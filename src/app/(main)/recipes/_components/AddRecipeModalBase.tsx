@@ -24,17 +24,6 @@ const titles = {
 
 const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
   const [step, setStep] = useState<RecipeModalStep>('select');
-  //→ここでstep管理。header管理、モーダル切り替えをする
-  //モーダル内の画面遷移はモーダルの責務になるのでここにstepのstateは書く
-
-  const [parsed, setParsed] = useState<any>(null);
-
-  //テキストからレシピ登録箇所　入力データ保持用
-  const [textFormData, setTextFormData] = useState({
-    sourceText: '',
-    memo: '',
-    category: '',
-  });
 
   const handleClose = () => {
     setStep('select'); //stepを初期化

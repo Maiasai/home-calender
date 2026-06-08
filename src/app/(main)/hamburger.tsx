@@ -8,7 +8,6 @@ type Props = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   handleLogout: () => Promise<void>;
-  hasUnreadInvite?: boolean;
   hasUnreadNonfications?: boolean;
 };
 
@@ -16,7 +15,6 @@ export const Hamburger = ({
   open,
   setOpen,
   handleLogout,
-  hasUnreadInvite,
   hasUnreadNonfications,
 }: Props) => {
   //メニュー開いた時、メニュー外スクロール不可にする

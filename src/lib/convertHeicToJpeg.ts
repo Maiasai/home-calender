@@ -1,10 +1,11 @@
 //HEICファイル変換用
-import heic2any from 'heic2any';
 
 export const convertHeicToJpeg = async (file: File) => {
   if (file.type !== 'image/heic' && file.type !== 'image/heif') {
     return file;
   }
+
+  const heic2any = (await import('heic2any')).default;
 
   const convertedBlob = await heic2any({
     //blobとはただのデータの塊

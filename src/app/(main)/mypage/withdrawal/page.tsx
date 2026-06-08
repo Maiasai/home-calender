@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import PrimaryButton from '@/components/button/PrimaryButton';
 
 const Withdrawal = () => {

@@ -11,10 +11,10 @@ import PageTitle from '../styles/PageTitle';
 import type { RecipeDetail } from '../_types/RecipeDetail';
 import { fetcher } from '@/lib/featcher';
 import PrimaryButton from '@/components/button/PrimaryButton';
-import { supabase } from '@/lib/supabase';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import ErrorMessage from '../_components/ErrorMessage';
+import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 //RecipeDetail→typeを自動生成するコンポーネントのため、ここで明示的にtypeとしておく
 
 type Props = {
@@ -22,6 +22,7 @@ type Props = {
 };
 
 const RecipeDetail = ({ params }: Props) => {
+  const { token } = useSupabaseSession();
   const { id } = params;
   const router = useRouter();
 
@@ -49,20 +50,15 @@ const RecipeDetail = ({ params }: Props) => {
 
   //レシピ削除
   const deleteRecipe = async (id: string) => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session?.access_token) {
-      return;
-    }
+    if (!token) return;
+
     const res = await fetch(`/api/recipes/${id}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${session?.access_token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     if (!res.ok) {
-      const error = await res.json();
       return;
     }
     mutate();

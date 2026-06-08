@@ -3,10 +3,7 @@
 import { Shoppinglist } from '../../home/_typs/Shoppinglist';
 import { GroupedItem } from '../_typs/GroupedItem';
 
-export const createGroupedItems = (
-  data: Shoppinglist[],
-  checkedMap: Record<string, boolean>,
-): GroupedItem[] => {
+export const createGroupedItems = (data: Shoppinglist[]): GroupedItem[] => {
   if (!data) return [];
 
   const map = new Map<string, GroupedItem>();

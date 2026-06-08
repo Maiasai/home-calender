@@ -10,7 +10,7 @@ export const PUT = async (request: NextRequest) => {
     const user = await requireUser(request);
     const body: InputEmailData = await request.json();
 
-    const result = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: user.id,
       },

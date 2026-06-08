@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { supabase } from '@/lib/supabase';
 import IngredientList from './IngredientList';
 import StepList from './StepList';
 import ImageUpload from './ImageUpload';
@@ -91,8 +90,6 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
       category: category || undefined,
       servings: Number(data.servings), // 念のため明示的に数値化
     };
-    const result = await supabase.auth.getSession();
-
     try {
       const res = await fetch('/api/recipes', {
         method: 'POST',
@@ -111,14 +108,17 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
       }
 
       //成功だった場合
-      const d = await res.json();
       alert('レシピを登録しました');
       reset(); //成功したら入力欄をクリア
 
       onClose();
       await mutate();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert('エラーが発生しました');
+      }
     }
   };
 

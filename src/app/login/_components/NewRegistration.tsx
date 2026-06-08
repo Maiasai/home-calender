@@ -5,7 +5,7 @@
 import { supabase } from '@/lib/supabase';
 import { SignupData } from '@/app/login/_typs/SignupData';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   FieldErrors,
   UseFormHandleSubmit,
@@ -82,7 +82,7 @@ const NewRegistration = ({
     };
 
     checkUser();
-  }, []);
+  }, [router, token]);
 
   //トップに戻る押下時の処理
   const handleBackToTop = () => {

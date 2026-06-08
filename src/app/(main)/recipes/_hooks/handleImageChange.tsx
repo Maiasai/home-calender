@@ -1,6 +1,5 @@
 //画像箇所　hook
 
-import { supabase } from '@/lib/supabase';
 import { UseFormSetValue } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
@@ -15,6 +14,8 @@ type Props = {
 };
 
 const handleImageChange = async ({ event, setValue, setPreviewUrl }: Props) => {
+  const { supabase } = await import('@/lib/supabase');
+
   //①ファイルを取り出す
   if (!event.target.files || event.target.files.length === 0) {
     //event.target.filesが存在しないか、ファイル数0の場合はreturn

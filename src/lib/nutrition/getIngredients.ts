@@ -18,6 +18,7 @@ export const getIngredients = (meal: Meal): (IngredientItem | null)[] => {
 
       if (!matched) return null;
 
+      if (i.amount == null) return null;
       return {
         //栄養判定専用データに変換
         //レシピ側

@@ -26,7 +26,7 @@ export const GET = async () => {
       { units: result },
       { status: 200 },
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: 'エラーが発生しました' },
       { status: 500 },

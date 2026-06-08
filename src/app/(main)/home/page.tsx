@@ -134,7 +134,6 @@ const TopPage = () => {
         throw new Error('追加に失敗しました');
       }
 
-      const data = await res.json();
       await globalMutate('/api/shopping-list/from-menu');
 
       alert('買い物リストに追加しました');

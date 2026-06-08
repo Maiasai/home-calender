@@ -62,7 +62,7 @@ const CustomizeView = ({
     }
     try {
       onBack();
-    } catch (e) {
+    } catch {
       alert('保存に失敗しました');
     }
   };

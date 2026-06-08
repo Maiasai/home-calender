@@ -12,6 +12,7 @@ import { fetcher } from '@/lib/featcher';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
+import { PasswordUpdateType } from './_type/PasswordUpdateType';
 
 const ChangePassword = () => {
   //パスワード入力欄を 表示/非表示 にする boolean
