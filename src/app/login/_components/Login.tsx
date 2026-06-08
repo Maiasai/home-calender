@@ -78,12 +78,19 @@ const LoginModal = ({
 
       return;
     }
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      return;
+    }
     if (!error) {
       await fetch('/api/sync-email', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           email: authData.user?.email,
