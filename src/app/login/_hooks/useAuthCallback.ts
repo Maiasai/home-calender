@@ -70,7 +70,7 @@ export const useAuthCallback = () => {
         body: JSON.stringify({
           id: user.id,
           email: user.email,
-          provider: user.app_metadata?.provider,
+          provider,
         }),
       });
 

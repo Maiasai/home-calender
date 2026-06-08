@@ -16,7 +16,7 @@ export const POST = async (req: NextRequest) => {
       await prisma.user.update({
         where: { id: userId },
         data: {
-          authProvider: provider === 'google' ? 'GOOGLE' : 'EMAIL',
+          email,
         },
       });
       return NextResponse.json({ ok: true });

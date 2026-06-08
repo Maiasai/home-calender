@@ -65,7 +65,6 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
         throw new Error(errorData.message || 'レシピ登録に失敗しました');
       }
 
-      const recipe = await res.json();
       router.push(`/recipes/`);
 
       onClose();

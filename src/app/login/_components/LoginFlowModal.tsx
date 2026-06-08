@@ -177,6 +177,13 @@ const LoginFlowModal = ({
     }
     // 既存ユーザー→ログインへ
     if (result.exists) {
+      if (result.authProvider === 'GOOGLE') {
+        alert(
+          'このメールアドレスは Google アカウントで登録されています。Googleでログインしてください',
+        );
+        setStep('select');
+        return;
+      }
       setStep('login');
       return;
     }
@@ -196,6 +203,7 @@ const LoginFlowModal = ({
       alert(
         'このメールアドレスは Google アカウントで登録されています。Googleでログインしてください',
       );
+      setStep('select');
       return;
     }
 
