@@ -53,7 +53,9 @@ const Withdrawal = () => {
     <div className="max-w-3xl mx-auto">
       <nav className="flex justify-center border-b-2 mb-6">退会</nav>
       <div className="rounded-lg p-2 bg-white">
-        <h1 className="text-lg font-bold mb-4">退会前の確認</h1>
+        <h1 className="flex justify-center text-lg font-bold mb-4">
+          退会前の確認
+        </h1>
 
         <p className="text-xs mb-4">
           退会すると、このアカウントに紐づくデータはすべて削除されます。
@@ -71,18 +73,19 @@ const Withdrawal = () => {
           <li>共有グループ情報</li>
         </ul>
 
-        <p className="text-sm text-red-600 font-bold mb-6">
+        <p className="flex justify-center text-sm text-red-600 font-bold mb-6">
           この操作は元に戻せません。
         </p>
-
-        <PrimaryButton
-          onClick={handleWithdrawal}
-          disabled={isDeleting}
-          className="px-4 py-2"
-          variant="danger"
-        >
-          {isDeleting ? '退会処理中...' : '退会する'}
-        </PrimaryButton>
+        <div className="flex justify-center ">
+          <PrimaryButton
+            onClick={handleWithdrawal}
+            disabled={isDeleting}
+            className="px-4 py-2"
+            variant="danger"
+          >
+            {isDeleting ? '退会処理中...' : '退会する'}
+          </PrimaryButton>
+        </div>
       </div>
     </div>
   );

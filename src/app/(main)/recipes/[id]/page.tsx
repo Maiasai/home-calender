@@ -33,6 +33,7 @@ const RecipeDetail = ({ params }: Props) => {
     data: recipe,
     error,
     isLoading,
+    mutate,
   } = useSWR<RecipeDetail>(`/api/recipes/${id}`, fetcher);
   //ここでdata→fetchで取ったデータ
   //error→エラー情報　isLoading→取得中かどうか
@@ -52,8 +53,6 @@ const RecipeDetail = ({ params }: Props) => {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session?.access_token) {
-      console.log('tokenがありません');
-
       return;
     }
     const res = await fetch(`/api/recipes/${id}`, {
@@ -66,6 +65,7 @@ const RecipeDetail = ({ params }: Props) => {
       const error = await res.json();
       return;
     }
+    mutate();
     router.push('/recipes');
   };
 
@@ -171,18 +171,20 @@ const RecipeDetail = ({ params }: Props) => {
               {/* 材料名  ※li使う場合はulで囲う */}
               <ul>
                 {recipe.recipeIngredients.map((ingredientdata) => (
-                  <li key={ingredientdata.id}>
+                  <li
+                    key={ingredientdata.id}
+                    className="flex items-start py-1 px-3 border-b mt-2"
+                  >
                     {/* 材料名 */}
-                    <div className="flex items-center py-2 px-3 gap-8">
-                      <div className="border-b w-3/4 mb-2">
-                        {ingredientdata.ingredient.name}
-                      </div>
 
-                      {/* 量と単位 */}
-                      <div className="border-b w-1/4  mb-2">
-                        {ingredientdata.quantityText}
-                        {ingredientdata.unit?.name}
-                      </div>
+                    <div className="w-3/4">
+                      {ingredientdata.ingredient.name}
+                    </div>
+
+                    {/* 量と単位 */}
+                    <div className="w-1/4 text-right shrink-0">
+                      {ingredientdata.quantityText}
+                      {ingredientdata.unit?.name}
                     </div>
                   </li>
                 ))}

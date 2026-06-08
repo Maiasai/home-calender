@@ -159,7 +159,7 @@ model RecipeIngredient {
   recipeId     String   @db.Uuid
   ingredientId String   @db.Uuid
 
-  quantityText Float    @map("quantity_text")//材料の量カラム
+  quantityText Float?    @map("quantity_text")//材料の量カラム
   unitId       String?   @db.Uuid//材料の単位カラム
   isSeasoning  Boolean  @default(false) @map("is_seasoning")
   sortOrder    Int      @map("sort_order")

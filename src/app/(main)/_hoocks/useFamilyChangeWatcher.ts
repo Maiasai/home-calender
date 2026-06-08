@@ -23,16 +23,18 @@ export const useFamilyChangeWatcher = () => {
 
     const activeFamilyIdKey = 'activeFamilyId';
 
+    //前回の状態
     const beforeUserId = sessionStorage.getItem(userIdKey);
 
     const beforeActiveFamilyId = sessionStorage.getItem(activeFamilyIdKey);
 
+    //今の状態
     const currentUserId = user.id;
 
     const currentActiveFamilyId = user.activeFamilyId;
 
     // 別ユーザーでログインした場合は比較しない
-
+    //初回ログイン→beforeUserIはないのでcurrentUserIdだけ保存
     if (beforeUserId !== currentUserId) {
       sessionStorage.setItem(userIdKey, currentUserId);
 
@@ -41,6 +43,7 @@ export const useFamilyChangeWatcher = () => {
       return;
     }
 
+    // Familyが変わったかつ自分のFamilyに戻った時にアラートが出る
     const isFamilyChanged =
       beforeActiveFamilyId && beforeActiveFamilyId !== currentActiveFamilyId;
 
@@ -49,7 +52,7 @@ export const useFamilyChangeWatcher = () => {
       alert('共有グループが解除されました。自分のグループに戻りました。');
       router.refresh();
     }
-
+    //今回の状態を次回の「前回」にするための処理。
     sessionStorage.setItem(activeFamilyIdKey, currentActiveFamilyId);
   }, [meData, router]);
 };

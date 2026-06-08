@@ -123,15 +123,23 @@ const IngredientList = ({
                   type="text" // 1/2 入力できるようにするため
                   className="w-[150px] px-2 py-1 border-b"
                   {...register(`ingredients.${index}.amount`, {
-                    min: { value: 0, message: '0以上で入力してください' },
-                    max: { value: 500, message: '500以下で入力してください' },
-                    pattern: /^(\d+(\.\d+)?|\d+\/\d+)$/,
                     validate: (value) => {
                       const row = getValues(`ingredients.${index}`);
 
                       if (!value && row.unitId) {
                         return '単位がある場合、量を入力してください';
                       }
+
+                      const parsed = parseFraction(String(value));
+
+                      if (Number.isNaN(parsed)) {
+                        return '数字または分数で入力してください';
+                      }
+
+                      if (parsed < 0) return '0以上で入力してください';
+
+                      if (parsed > 500) return '500以下で入力してください';
+
                       return true;
                     },
                     onChange: () => {
@@ -142,7 +150,20 @@ const IngredientList = ({
                     onBlur: (e) => {
                       //onBlurは用意している標準イベント.(register内では自動推論の為、型指定不要)
                       const value = e.currentTarget.value; //この onBlur が登録されている input 要素,value→ユーザーが入力した文字列を取得
+
+                      if (!value) {
+                        setValue(`ingredients.${index}.amount`, undefined);
+
+                        return;
+                      }
+
                       const parsed = parseFraction(value); //数値に変換する関数を通す。
+
+                      if (Number.isNaN(parsed)) {
+                        setValue(`ingredients.${index}.amount`, undefined);
+
+                        return;
+                      }
                       //ingredients配列のindex番目のamountのみをsetValueで更新
                       setValue(`ingredients.${index}.amount`, parsed, {
                         shouldValidate: true,

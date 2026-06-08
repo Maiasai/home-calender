@@ -102,7 +102,7 @@ export const GET = async (request: NextRequest) => {
           ingredients: item.recipe.recipeIngredients.map((ri) => ({
             id: ri.ingredient.id,
             name: ri.ingredient.name,
-            amount: ri.quantityText,
+            amount: ri.quantityText ?? null,
             unit: ri.unit ?? null,
             nutritionCategory: ri.ingredient.nutritionCategory ?? null,
           })),

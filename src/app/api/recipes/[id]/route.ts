@@ -218,11 +218,11 @@ export const PUT = async (
 
       await Promise.all([
         //材料は一旦全部削除
-        await tx.recipeIngredient.deleteMany({
+        tx.recipeIngredient.deleteMany({
           where: { recipeId: params.id },
         }),
         //手順も全部削除
-        await tx.recipeStep.deleteMany({
+        tx.recipeStep.deleteMany({
           where: { recipeId: params.id },
         }),
       ]);
@@ -235,11 +235,17 @@ export const PUT = async (
         const displayName = ing.name?.trim();
         const normalizedName = displayName?.toLowerCase();
 
-        if (!displayName || !normalizedName || !ing.unitId) continue;
+        if (!displayName || !normalizedName) continue;
+        const amount =
+          typeof ing.amount === 'number' && !Number.isNaN(ing.amount)
+            ? ing.amount
+            : null;
+
+        const unitId = ing.unitId?.trim() || null;
 
         await tx.recipeIngredient.create({
           data: {
-            quantityText: ing.amount ?? null,
+            quantityText: amount,
             sortOrder: i,
             recipe: {
               connect: { id: params.id },
@@ -259,9 +265,9 @@ export const PUT = async (
                 },
               },
             },
-            unit: ing.unitId
+            unit: unitId
               ? {
-                  connect: { id: ing.unitId },
+                  connect: { id: unitId },
                 }
               : undefined,
           },

@@ -23,5 +23,5 @@ export type Meal = {
 type Ingredient = {
   id: string;
   name: string;
-  amount?: string;
+  amount?: number;
 };

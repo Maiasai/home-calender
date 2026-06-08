@@ -24,7 +24,7 @@ export type MonthData = {
 export type ItemIngredient = {
   id: string;
   name: string;
-  amount: number;
+  amount: number | null;
   unit: {
     id: string;
     name: string;

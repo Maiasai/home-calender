@@ -222,7 +222,7 @@ export const POST = async (request: NextRequest) => {
           const displayName = ingre.name?.trim();
           const normalizedName = displayName?.toLowerCase();
 
-          if (!displayName || !normalizedName || !ingre.unitId) continue;
+          if (!displayName || !normalizedName) continue;
 
           await tx.recipeIngredient.create({
             //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
