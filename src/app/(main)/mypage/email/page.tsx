@@ -18,13 +18,14 @@ const EmailChange = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isValid, isSubmitting },
   } = useForm<EmailUpdateType>({
     mode: 'onChange',
   });
 
   const searchParams = useSearchParams();
-  const { data, error, isLoading } = useSWR<UserResponseType>(
+  const { data, error, isLoading, mutate } = useSWR<UserResponseType>(
     `/api/mypage/`,
     fetcher,
   );
@@ -49,7 +50,25 @@ const EmailChange = () => {
     );
 
     if (error) {
-      alert('メール送信に失敗しました。');
+      if (
+        error.message ===
+        'A user with this email address has already been registered'
+      ) {
+        setError('email', {
+          type: 'manual',
+
+          message: 'このメールアドレスは既に登録されています',
+        });
+
+        return;
+      }
+
+      setError('email', {
+        type: 'manual',
+
+        message: 'メール送信に失敗しました',
+      });
+
       return;
     }
     alert('確認メールを送信しました');
@@ -93,6 +112,7 @@ const EmailChange = () => {
           }),
         });
 
+        mutate();
         alert('メールアドレスを変更しました');
 
         window.history.replaceState({}, '', '/mypage/email');

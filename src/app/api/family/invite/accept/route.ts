@@ -19,7 +19,7 @@ export const POST = async (request: NextRequest) => {
 
       prisma.familyInvite.findUnique({
         where: {
-          id: body.inviteId,
+          id: body.id,
         },
       }),
     ]);

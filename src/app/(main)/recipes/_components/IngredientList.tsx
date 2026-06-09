@@ -55,7 +55,7 @@ const IngredientList = ({
         <div>
           <input
             type="text"
-            inputMode="numeric"
+            inputMode="numeric" //文字列として扱うけど、数字入力向けのキーボードを出す
             className="w-20 px-2  py-1 border-b"
             //数字に変換してから、ここで親のRHFのservingsを更新している
             {...registerServings('servings', {
@@ -86,7 +86,7 @@ const IngredientList = ({
                 const normalized = normalizeFraction(e.currentTarget.value);
 
                 setValue('servings', Number(normalized), {
-                  shouldValidate: true,
+                  shouldValidate: true, //更z新後にもう一回バリデーションする
                 });
               },
             })}

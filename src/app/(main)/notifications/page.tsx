@@ -40,6 +40,7 @@ const Notifications = () => {
 
   const [isJoining, setIsJoining] = useState(false);
   const [visibleCount, setVisibleCount] = useState(10); //表示件数管理用
+  const [joiningInviteId, setJoiningInviteId] = useState<string | null>(null); //今処理中の招待ID記憶用
 
   const invites = data?.invites ?? [];
   const notifications = data?.notifications ?? [];
@@ -47,6 +48,7 @@ const Notifications = () => {
   ////招待通知//////////////
   //参加処理
   const Join = async (inviteId: string) => {
+    setJoiningInviteId(inviteId);
     try {
       if (isJoining) return;
 
@@ -59,7 +61,7 @@ const Notifications = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ inviteId }),
+        body: JSON.stringify({ id: inviteId }),
       });
       if (!res.ok) {
         const text = await res.json();
@@ -135,12 +137,12 @@ const Notifications = () => {
                     {/* クリックで招待レコードのIDが呼ばれる */}
                     <div className="flex gap-3 ml-6">
                       <PrimaryButton
-                        disabled={isJoining}
+                        disabled={joiningInviteId === d.id}
                         onClick={() => Join(d.id)}
                         className="w-[80px] h-[25px]"
                         variant="primary"
                       >
-                        {isJoining ? '参加中...' : '参加'}
+                        {joiningInviteId === d.id ? '参加中...' : '参加'}
                       </PrimaryButton>
 
                       <button

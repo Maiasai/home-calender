@@ -86,7 +86,7 @@ const GroupOwner = ({
 
     if (!ok) return;
     try {
-      await fetch('/api/family/members/', {
+      const res = await fetch('/api/family/me/', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -96,6 +96,12 @@ const GroupOwner = ({
           id: id,
         }),
       });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || '削除に失敗しました');
+
+        return;
+      }
       await mutateMembers();
     } catch (e) {
       console.error(e);
@@ -228,7 +234,7 @@ const GroupOwner = ({
                   members?.map((m: MembersTyps) => {
                     const isSelf = m.userId === profile?.id;
                     const isOwnerUser = m.userId === owner?.id;
-                    const canDelete = isOwner && !isSelf;
+                    const canDelete = isOwner && !isSelf && !isOwnerUser;
 
                     return (
                       <div key={m.id} className="flex items-center  mb-3">

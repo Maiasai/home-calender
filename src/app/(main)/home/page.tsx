@@ -189,6 +189,7 @@ const TopPage = () => {
           onEdit={handleEdit} //ユーザーが編集押下＞MenuButtonのonClickが感知→onEditにその日の献立がくっついてここにくる。
           onList={handleAddList}
           displayDate={displayDate}
+          mutate={mutate}
         />
       )}
 

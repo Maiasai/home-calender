@@ -117,7 +117,7 @@ const LoginFlowModal = ({
   } = useForm<SignupData>({ mode: 'onChange' });
 
   //OTP送信
-  const sendOtp = async (targetEmail: string) => {
+  const sendOtp = async (targetEmail: string, isResend = false) => {
     const res = await fetch('/api/auth/request-otp', {
       method: 'POST',
       headers: {
@@ -133,6 +133,7 @@ const LoginFlowModal = ({
       alert(data.message);
       return;
     }
+    alert(isResend ? '認証コードを再送しました' : '認証コードを送信しました');
 
     setStep('verifyCode');
   };

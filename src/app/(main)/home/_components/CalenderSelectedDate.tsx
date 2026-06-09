@@ -24,6 +24,7 @@ type Props = {
   onEdit: (meal: Meal) => void;
   onList: (meal: Meal) => void;
   displayDate: string;
+  mutate: () => void;
 };
 
 const CalenderSelectedDate = ({
@@ -33,6 +34,7 @@ const CalenderSelectedDate = ({
   onEdit,
   onList,
   displayDate,
+  mutate,
 }: Props) => {
   const { token } = useSupabaseSession();
   //詳細表示用
@@ -66,6 +68,7 @@ const CalenderSelectedDate = ({
           id: mealId,
         }),
       });
+      await mutate();
     } catch (e) {
       console.error(e);
     }

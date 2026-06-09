@@ -17,6 +17,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const shareMenuItems = [{ name: 'アプリの共有設定', href: '/mypage/share' }];
 
   const aboutApp = [
+    { name: 'ヘルプ', href: '/mypage/help' },
     { name: '利用規約', href: '/terms' },
     { name: 'プライバシーポリシー', href: '/privacy' },
     { name: '退会', href: '/mypage/withdrawal' },
@@ -26,7 +27,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="flex max-w-3xl mx-auto mt-10 gap-1 sm:gap-2">
       {/* 左側：サイドメニュー */}
 
-      <aside className="w-42 sm:w-56 shrink-0">
+      <aside className="w-[100px] sm:w-56 shrink-0">
         <nav className="bg-white rounded-xl shadow-sm p-1 sm:p-4">
           {/* アカウント */}
           <h2 className="font-bold text-sm sm:text-lg mb-4 border-b ml-2">
@@ -38,13 +39,13 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`p-1 sm:p-3 rounded-lg transition-colors ${
+                className={`p-1 sm:p-3 rounded-lg transition-colors  border shadow-sm ${
                   pathname === item.href
                     ? 'bg-orange-100 text-gray-400 font-bold' // 現在のページ
                     : 'hover:bg-gray-100'
                 }`}
               >
-                <span className="text-xs  sm:text-sm">{item.name}</span>
+                <span className="text-xs  sm:text-sm ">{item.name}</span>
                 <span>　›</span>
               </Link>
             ))}
@@ -60,7 +61,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`p-1 sm:p-3 rounded-lg transition-colors ${
+                className={`p-1 sm:p-3 rounded-lg transition-colors border shadow-sm ${
                   pathname === item.href
                     ? 'bg-orange-100 text-gray-400 font-bold' // 現在のページ
                     : 'hover:bg-gray-100'
@@ -82,7 +83,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
               <Link
                 key={a.href}
                 href={a.href}
-                className={`p-1 sm:p-3 rounded-lg transition-colors ${
+                className={`p-1 sm:p-3 rounded-lg transition-colors  border shadow-sm ${
                   pathname === a.href
                     ? 'bg-orange-100 text-gray-400 font-bold'
                     : 'hover:bg-gray-100'

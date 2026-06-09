@@ -19,7 +19,7 @@ type Props = {
   otpErrors: FieldErrors<VerifyCodeFormValues>;
   otpSubmit: boolean;
   otpValid: boolean;
-  sendOtp: (email: string) => Promise<void>;
+  sendOtp: (email: string, isResend: boolean) => Promise<void>;
   email: string;
 };
 
@@ -77,7 +77,7 @@ const VerifyCodeMailInputModal = ({
           <button
             type="button"
             className="text-xs mt-2 border-b"
-            onClick={() => sendOtp(email)}
+            onClick={() => sendOtp(email, true)}
           >
             コードを再送する
           </button>

@@ -223,11 +223,17 @@ export const POST = async (request: NextRequest) => {
           const normalizedName = displayName?.toLowerCase();
 
           if (!displayName || !normalizedName) continue;
+          const amount =
+            typeof ingre.amount === 'number' && !Number.isNaN(ingre.amount)
+              ? ingre.amount
+              : null;
+
+          const unitId = ingre.unitId?.trim() || null;
 
           await tx.recipeIngredient.create({
             //③やってきた材料をDBに保存＞①からまた取り出してきて②→③と動いて保存される。（１つずつ）
             data: {
-              quantityText: ingre.amount ?? 0,
+              quantityText: amount,
               sortOrder: index,
 
               recipe: {
@@ -255,12 +261,11 @@ export const POST = async (request: NextRequest) => {
                   },
                 },
               },
-              unit: {
-                //unitはすでにDBに存在しているためconnect
-                connect: {
-                  id: ingre.unitId, //フロントでユーザーが選択した単位は、idでやり取りされる
-                },
-              },
+              unit: unitId //材料名だけのときも登録できるように
+                ? {
+                    connect: { id: unitId },
+                  }
+                : undefined,
               //既に存在するもの→connect、新しく作るもの→create
             },
           });
