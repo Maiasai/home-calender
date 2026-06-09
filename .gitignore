@@ -45,4 +45,3 @@ prisma/dev.db
 prisma/dev.db.*
 
 
-prisma/migrations/
