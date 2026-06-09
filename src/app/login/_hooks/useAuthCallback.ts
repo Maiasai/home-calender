@@ -35,10 +35,19 @@ export const useAuthCallback = () => {
         return;
       }
 
-      await supabase.auth.exchangeCodeForSession(code);
       const {
         data: { session },
-      } = await supabase.auth.getSession();
+
+        error: exchangeError,
+      } = await supabase.auth.exchangeCodeForSession(code);
+
+      if (exchangeError || !session?.access_token) {
+        console.error(exchangeError);
+
+        router.push('/');
+
+        return;
+      }
       const {
         data: { user },
         error: userError,
@@ -65,7 +74,7 @@ export const useAuthCallback = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${session?.access_token}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           id: user.id,
@@ -78,7 +87,7 @@ export const useAuthCallback = () => {
       const res = await fetch('/api/users/me', {
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${session?.access_token}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
       });
 
