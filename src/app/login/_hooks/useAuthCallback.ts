@@ -4,8 +4,8 @@
 
 'use client';
 
-import { supabase } from '@/lib/supabase';
 import { GetMeResponse } from '@/app/api/_types/ApiResponse';
+import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
 type Options = {
@@ -27,9 +27,13 @@ export const useAuthCallback = () => {
     options?.setLoading?.(true);
 
     try {
+      console.log('handleAuthCallback start');
       //①GoogleがユーザーOK→一時的なコードを発行
       const code = new URL(window.location.href).searchParams.get('code');
 
+      console.log('code in callback=', code);
+
+      console.log('before exchange');
       if (!code) {
         router.push('/');
         return;
@@ -41,6 +45,11 @@ export const useAuthCallback = () => {
         error: exchangeError,
       } = await supabase.auth.exchangeCodeForSession(code);
 
+      console.log('after exchange', {
+        session,
+
+        exchangeError,
+      });
       if (exchangeError || !session?.access_token) {
         console.error(exchangeError);
 
