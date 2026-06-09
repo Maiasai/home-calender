@@ -41,11 +41,6 @@ export const useAuthCallback = () => {
         error: exchangeError,
       } = await supabase.auth.exchangeCodeForSession(code);
 
-      console.log('after exchange', {
-        session,
-
-        exchangeError,
-      });
       if (exchangeError || !session?.access_token) {
         console.error(exchangeError);
 
@@ -88,7 +83,6 @@ export const useAuthCallback = () => {
         }),
       });
 
-      console.log('sync-user status:', syncRes.status);
       //④DBにユーザーいるか確認
       const res = await fetch('/api/users/me', {
         credentials: 'include',
@@ -96,22 +90,12 @@ export const useAuthCallback = () => {
           Authorization: `Bearer ${session.access_token}`,
         },
       });
-      console.log('users/me status:', res.status);
 
       //意味）もし onAuthComplete が渡されてたら、その関数を今ここで実行する
       options?.onAuthComplete?.({
         provider: provider,
         isGoogleUser,
       });
-      console.log('after exchange', {
-        sessionExists: !!session,
-
-        tokenExists: !!session?.access_token,
-
-        exchangeError,
-      });
-
-      console.log('before getUser');
 
       const data: GetMeResponse = await res.json();
 
