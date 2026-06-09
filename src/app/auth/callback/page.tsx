@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthCallback } from '@/app/login/_hooks/useAuthCallback';
 
@@ -14,9 +14,13 @@ const AuthCallbackPage = () => {
   console.log('handleAuthCallback start');
   const authHandler = useAuthCallback(); //②authHandler を“準備”（useAuthCallbackからのログイン処理関数を受け取ってる）
   const router = useRouter();
+  const hasRun = useRef(false);
 
   useEffect(() => {
     console.log('callback mounted');
+    if (hasRun.current) return;
+
+    hasRun.current = true;
     //③レンダー終わった後にuseEffect発火
     const code = new URLSearchParams(window.location.search).get('code');
 
@@ -43,8 +47,7 @@ const AuthCallbackPage = () => {
 
       onLoginSuccess: () => router.push('/home'),
     });
-  }, []); //callbackページは1回しか使わないから依存配列はなし
-
+  }, [authHandler, router]);
   return (
     <p className="flex items-center justify-center min-h-screen">
       ログイン処理中...
