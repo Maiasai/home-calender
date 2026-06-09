@@ -103,8 +103,15 @@ export const useAuthCallback = () => {
         provider: provider,
         isGoogleUser,
       });
-      console.log('after exchange session token=', !!session?.access_token);
-      console.log('after exchange error=', exchangeError);
+      console.log('after exchange', {
+        sessionExists: !!session,
+
+        tokenExists: !!session?.access_token,
+
+        exchangeError,
+      });
+
+      console.log('before getUser');
 
       const data: GetMeResponse = await res.json();
 
