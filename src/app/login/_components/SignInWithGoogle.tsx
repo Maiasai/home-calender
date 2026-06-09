@@ -4,6 +4,10 @@
 import { supabase } from '@/lib/supabase';
 
 const signInWithGoogle = async () => {
+  console.log('origin=', window.location.origin);
+
+  console.log('before oauth localStorage=', Object.keys(localStorage));
+
   //Googleにログイン認証をお願いする仕組み
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google', //①SupabaseにGoogleログインしたいと伝える→supabaseがGoogleの認証ページに飛ばしてくれる
@@ -12,7 +16,7 @@ const signInWithGoogle = async () => {
     //④ここのリダイレクトでアプリに戻ってくる
     options: { redirectTo: `${window.location.origin}/auth/callback` },
   });
-
+  console.log('after oauth call');
   if (error) {
     console.error(error);
     alert('Googleログイン失敗');
