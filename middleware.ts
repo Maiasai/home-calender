@@ -2,6 +2,10 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname.startsWith('/auth/callback')) {
+    return NextResponse.next();
+  }
+
   let res = NextResponse.next();
 
   const supabase = createServerClient(
@@ -31,3 +35,8 @@ export async function middleware(req: NextRequest) {
 
   return res;
 }
+export const config = {
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|auth/callback|login).*)',
+  ],
+};
