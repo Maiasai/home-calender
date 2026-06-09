@@ -9,7 +9,6 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthCallback } from '@/app/login/_hooks/useAuthCallback';
-import { supabase } from '@/lib/supabase';
 
 const AuthCallbackPage = () => {
   const authHandler = useAuthCallback(); //②authHandler を“準備”（useAuthCallbackからのログイン処理関数を受け取ってる）
