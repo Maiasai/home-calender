@@ -4,7 +4,7 @@
 import { supabase } from '@/lib/supabase';
 
 const signInWithGoogle = async () => {
-  alert('google click');
+  alert('google click 1');
 
   alert(`origin=${window.location.origin}`);
 
