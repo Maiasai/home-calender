@@ -5,10 +5,10 @@ import { supabase } from '@/lib/supabase';
 
 const signInWithGoogle = async () => {
   alert('google click');
-  console.log('origin=', window.location.origin);
 
-  console.log('before oauth localStorage=', Object.keys(localStorage));
+  alert(`origin=${window.location.origin}`);
 
+  alert(`before oauth=${JSON.stringify(Object.keys(localStorage))}`);
   //Googleにログイン認証をお願いする仕組み
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google', //①SupabaseにGoogleログインしたいと伝える→supabaseがGoogleの認証ページに飛ばしてくれる
