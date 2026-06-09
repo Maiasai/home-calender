@@ -4,6 +4,7 @@
 import { supabase } from '@/lib/supabase';
 
 const signInWithGoogle = async () => {
+  alert('google click');
   console.log('origin=', window.location.origin);
 
   console.log('before oauth localStorage=', Object.keys(localStorage));
