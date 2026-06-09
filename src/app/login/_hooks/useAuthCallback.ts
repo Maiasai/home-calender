@@ -67,7 +67,7 @@ export const useAuthCallback = () => {
         return;
       }
 
-      await fetch('/api/auth/sync-user', {
+      const syncRes = await fetch('/api/auth/sync-user', {
         //③Supabaseのユーザー → DBに同期
         //※前提としてSupabase Authには自動保存されるが、Prismaで触るSupabase Databaseには保存されない
         //そのため、ここで同期処理が必要となる
@@ -83,6 +83,7 @@ export const useAuthCallback = () => {
         }),
       });
 
+      console.log('sync-user status:', syncRes.status);
       //④DBにユーザーいるか確認
       const res = await fetch('/api/users/me', {
         credentials: 'include',
@@ -90,6 +91,7 @@ export const useAuthCallback = () => {
           Authorization: `Bearer ${session.access_token}`,
         },
       });
+      console.log('users/me status:', res.status);
 
       //意味）もし onAuthComplete が渡されてたら、その関数を今ここで実行する
       options?.onAuthComplete?.({

@@ -40,7 +40,7 @@ const AuthCallbackPage = () => {
 
       onLoginSuccess: () => router.push('/home'),
     });
-  }, [authHandler, router]); //callbackページは1回しか使わないから依存配列はなし
+  }, []); //callbackページは1回しか使わないから依存配列はなし
 
   return (
     <p className="flex items-center justify-center min-h-screen">
