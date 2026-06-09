@@ -9,6 +9,10 @@ export const supabase = createBrowserClient(
   {
     auth: {
       detectSessionInUrl: false,
+
+      persistSession: true,
+
+      autoRefreshToken: true,
     },
   },
 );
