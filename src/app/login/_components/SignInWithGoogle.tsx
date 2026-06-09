@@ -15,7 +15,14 @@ const signInWithGoogle = async () => {
     //②Googleのログイン画面に飛ばされる→ユーザーがGoogleでログイン→supabaseにGoogleが結果を返す
     //③初回→ユーザー作成、2回目→既存ユーザー取得
     //④ここのリダイレクトでアプリに戻ってくる
-    options: { redirectTo: `${window.location.origin}/auth/callback` },
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+      queryParams: {
+        access_type: 'offline',
+
+        prompt: 'select_account',
+      },
+    },
   });
   console.log('after oauth call');
   if (error) {
