@@ -11,13 +11,11 @@ import { useRouter } from 'next/navigation';
 import { useAuthCallback } from '@/app/login/_hooks/useAuthCallback';
 
 const AuthCallbackPage = () => {
-  console.log('handleAuthCallback start');
   const authHandler = useAuthCallback(); //②authHandler を“準備”（useAuthCallbackからのログイン処理関数を受け取ってる）
   const router = useRouter();
   const hasRun = useRef(false);
 
   useEffect(() => {
-    console.log('callback mounted');
     if (hasRun.current) return;
 
     hasRun.current = true;
@@ -47,7 +45,7 @@ const AuthCallbackPage = () => {
 
       onLoginSuccess: () => router.push('/home'),
     });
-  }, [authHandler, router]);
+  }, []);
   return (
     <p className="flex items-center justify-center min-h-screen">
       ログイン処理中...

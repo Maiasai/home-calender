@@ -27,13 +27,9 @@ export const useAuthCallback = () => {
     options?.setLoading?.(true);
 
     try {
-      console.log('handleAuthCallback start');
       //①GoogleがユーザーOK→一時的なコードを発行
       const code = new URL(window.location.href).searchParams.get('code');
 
-      console.log('code in callback=', code);
-
-      console.log('before exchange');
       if (!code) {
         router.push('/');
         return;
@@ -107,6 +103,8 @@ export const useAuthCallback = () => {
         provider: provider,
         isGoogleUser,
       });
+      console.log('after exchange session token=', !!session?.access_token);
+      console.log('after exchange error=', exchangeError);
 
       const data: GetMeResponse = await res.json();
 
