@@ -67,7 +67,7 @@ export const useAuthCallback = () => {
         return;
       }
 
-      const syncRes = await fetch('/api/auth/sync-user', {
+      await fetch('/api/auth/sync-user', {
         //③Supabaseのユーザー → DBに同期
         //※前提としてSupabase Authには自動保存されるが、Prismaで触るSupabase Databaseには保存されない
         //そのため、ここで同期処理が必要となる
