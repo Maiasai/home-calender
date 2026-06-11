@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase Admin（サーバー専用）
-const supabaseAdmin = createClient(
+const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 export const POST = async (req: NextRequest) => {
@@ -26,7 +26,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     // ③ SupabaseでOTP送信
-    const { error } = await supabaseAdmin.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: true,
