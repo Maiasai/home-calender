@@ -33,6 +33,7 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
+    console.log('OTP error:', error);
     if (error) {
       let message = error.message;
 
