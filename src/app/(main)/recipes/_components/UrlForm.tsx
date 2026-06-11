@@ -18,10 +18,13 @@ type Props<T extends FieldValues> = {
 const UrlForm = <T extends FieldValues>({ registerUrl, errors }: Props<T>) => {
   return (
     <div className="flex flex-col items-start ">
-      <p className="flex items-center w-full text-base text-gray-500 mb-1 ml-2 mt-1 ">
-        レシピURLを貼り付けてください
-      </p>
-      <p className="ml-4 text-sm">※手入力も可</p>
+      <div className="flex items-center">
+        <p className="flex text-base text-gray-500 mb-1 ml-2 mt-1 ">
+          レシピURLを貼り付けてください
+        </p>
+        <span className="text-red-500 ml-1">*</span>
+      </div>
+      <p className="ml-2 text-xs">※手入力も可</p>
 
       <input
         {...registerUrl('sourceUrl' as Path<T>, {
@@ -32,10 +35,12 @@ const UrlForm = <T extends FieldValues>({ registerUrl, errors }: Props<T>) => {
           },
         })}
         placeholder="例：https://example.com/recipe"
-        className={'w-full px-2 py-1 border-b'}
+        className={'w-full px-2 py-1 border-b mb-1'}
       />
 
-      <ErrorMessage error={errors.sourceUrl as FieldError} />
+      <div className="ml-4">
+        <ErrorMessage error={errors.sourceUrl as FieldError} />
+      </div>
     </div>
   );
 };

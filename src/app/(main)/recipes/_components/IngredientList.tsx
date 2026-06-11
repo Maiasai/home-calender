@@ -53,46 +53,49 @@ const IngredientList = ({
 
       <div className="flex flex-col">
         <div>
-          <input
-            type="text"
-            inputMode="numeric" //文字列として扱うけど、数字入力向けのキーボードを出す
-            className="w-20 px-2  py-1 border-b"
-            //数字に変換してから、ここで親のRHFのservingsを更新している
-            {...registerServings('servings', {
-              validate: (value) => {
-                const normalized = normalizeFraction(String(value));
+          <div className="flex">
+            <input
+              type="text"
+              inputMode="numeric" //文字列として扱うけど、数字入力向けのキーボードを出す
+              className="w-20 px-2  py-1 border-b"
+              //数字に変換してから、ここで親のRHFのservingsを更新している
+              {...registerServings('servings', {
+                validate: (value) => {
+                  const normalized = normalizeFraction(String(value));
 
-                if (!normalized) {
-                  return '人数を入力してください';
-                }
+                  if (!normalized) {
+                    return '人数を入力してください';
+                  }
 
-                const numberValue = Number(normalized);
+                  const numberValue = Number(normalized);
 
-                if (Number.isNaN(numberValue)) {
-                  return '数字で入力してください';
-                }
+                  if (Number.isNaN(numberValue)) {
+                    return '数字で入力してください';
+                  }
 
-                if (numberValue < 0) {
-                  return '0人以上で入力してください';
-                }
+                  if (numberValue < 0) {
+                    return '0人以上で入力してください';
+                  }
 
-                if (numberValue > 10) {
-                  return '10人以下で入力してください';
-                }
+                  if (numberValue > 10) {
+                    return '10人以下で入力してください';
+                  }
 
-                return true;
-              },
-              onBlur: (e) => {
-                const normalized = normalizeFraction(e.currentTarget.value);
+                  return true;
+                },
+                onBlur: (e) => {
+                  const normalized = normalizeFraction(e.currentTarget.value);
 
-                setValue('servings', Number(normalized), {
-                  shouldValidate: true, //更z新後にもう一回バリデーションする
-                });
-              },
-            })}
-          />
+                  setValue('servings', Number(normalized), {
+                    shouldValidate: true, //更z新後にもう一回バリデーションする
+                  });
+                },
+              })}
+            />
 
-          <label className="ml-2">人分</label>
+            <label className="ml-2 mt-1">人分</label>
+            <span className="text-red-500 ml-1">*</span>
+          </div>
         </div>
       </div>
       <ErrorMessage error={errors.servings} />

@@ -28,11 +28,21 @@ const TitleForm = <T extends FieldValues>({
 }: Props<T>) => {
   return (
     <div className="flex flex-col w-full">
-      <label>{step === 'MANUAL' && 'タイトル'}</label>
+      <label className="flex">
+        {step === 'MANUAL' && (
+          <>
+            タイトル
+            <span className="text-red-500 ml-1">*</span>
+          </>
+        )}
+      </label>
       {step === 'URL' && (
-        <p className="flex items-center w-full text-base text-gray-500 mb-1 ml-2 mt-1">
-          レシピ名を入力してください
-        </p>
+        <div className="flex">
+          <p className="flex items-center text-base text-gray-500 mb-1 ml-2 mt-1">
+            レシピ名を入力してください
+          </p>
+          <span className="text-red-500 ml-1">*</span>
+        </div>
       )}
 
       <div className="flex w-full≈">
@@ -49,7 +59,7 @@ const TitleForm = <T extends FieldValues>({
           className={
             step === 'MANUAL'
               ? 'w-full px-2 py-1 border-b'
-              : 'w-full px-2 border-b'
+              : 'w-full px-2 border-b mb-1'
           }
         />
         {step === 'MANUAL' && (
@@ -63,8 +73,10 @@ const TitleForm = <T extends FieldValues>({
         )}
       </div>
 
-      {/* エラーの型がオリジナルでもurlでも汎用で使えるようになったため、ここで１個のinputエラーと指定 */}
-      <ErrorMessage error={errors.title as FieldError} />
+      <div className="ml-4">
+        {/* エラーの型がオリジナルでもurlでも汎用で使えるようになったため、ここで１個のinputエラーと指定 */}
+        <ErrorMessage error={errors.title as FieldError} />
+      </div>
     </div>
   );
 };

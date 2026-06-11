@@ -89,8 +89,8 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
     let thumbnailImageUrl = data.thumbnailImageUrl;
     if (data.thumbnailFile) {
       const uuid = uuidv4(); //ランダムな一意なIDを作る関数
-      const fileName = data.thumbnailFile.name;
-      const filePath = `private/${uuid}_${fileName}`;
+      const extension = data.thumbnailFile.name.split('.').pop() || 'jpg';
+      const filePath = `private/${uuid}.${extension}`;
 
       //②supabaseにアップロード（uuid名で保存）
       //uploadDataには保存された場所が入ってくる
@@ -155,7 +155,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
   };
 
   return (
-    <div className="bg-gray-100 w-full max-w-[900px] max-h-[80vh] overflow-y-auto">
+    <div className="bg-gray-100 w-full max-w-[800px] max-h-[80vh] overflow-y-auto">
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-center flex-col md:flex-row md:h-[250px] h-[300px] gap-6 bg-white m-5 p-4 rounded-lg">

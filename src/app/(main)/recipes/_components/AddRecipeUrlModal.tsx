@@ -78,12 +78,15 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
   };
 
   return (
-    <div className="bg-gray-100 w-full max-w-[900px] max-h-[80vh] overflow-y-auto">
+    <div className="bg-gray-100 w-full max-w-[800px] max-h-[80vh] overflow-y-auto ">
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col items-center md:h-[180px] h-[190px] bg-white m-5 p-4 rounded-lg">
+          <div className="flex flex-col items-center md:h-[280px] h-[300px] bg-white m-5 p-4 rounded-lg">
             {/* タイトル */}
-            <div className="w-full">
+            <div className="w-full mb-6">
+              <p className="text-xs text-red-400 mb-4 ml-2">
+                * マークがついている項目は必須です
+              </p>
               <TitleForm registerTitle={register} errors={errors} step={step} />
             </div>
             {/* Url */}

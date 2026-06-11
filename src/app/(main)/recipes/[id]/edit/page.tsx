@@ -148,8 +148,8 @@ const RecipeEdit = ({ params }: Props) => {
     let thumbnailImageUrl = data.thumbnailImageUrl;
     if (data.thumbnailFile) {
       const uuid = uuidv4(); //ランダムな一意なIDを作る関数
-      const fileName = data.thumbnailFile.name;
-      const filePath = `private/${uuid}_${fileName}`;
+      const extension = data.thumbnailFile.name.split('.').pop() || 'jpg';
+      const filePath = `private/${uuid}.${extension}`;
 
       //②supabaseにアップロード（uuid名で保存）
       //uploadDataには保存された場所が入ってくる

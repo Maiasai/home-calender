@@ -34,7 +34,10 @@ const ImageUpload = ({
       control={control}
       render={() => (
         <div className="flex flex-col">
-          <label className="block mb-2">画像とレシピ名</label>
+          <p className="text-xs text-red-400 mb-4">
+            * マークがついている項目は必須です
+          </p>
+          <label className="block mb-2">レシピ画像</label>
 
           <div
             onClick={openFile} //①画像選択でここが発火
