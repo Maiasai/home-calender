@@ -155,14 +155,21 @@ export const DELETE = async (
       ]);
     });
 
+    console.log('thumbnailUrl:', recipe.thumbnailUrl);
     const imagePath = recipe.thumbnailUrl
       ? getStoragePathFromPublicUrl(recipe.thumbnailUrl)
       : null;
 
+    console.log('imagePath:', imagePath);
+
     if (imagePath) {
-      const { error } = await supabaseAdmin.storage
+      const { data, error } = await supabaseAdmin.storage
         .from('post_thumbnail')
         .remove([imagePath]);
+
+      console.log('remove data:', data);
+
+      console.log('remove error:', error);
 
       if (error) {
         console.error('Storage画像削除失敗:', error.message);
