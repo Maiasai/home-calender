@@ -15,7 +15,8 @@ const ConfirmEmailModal = ({ onNext }: Props) => {
       </p>
 
       <p className="text-sm text-gray-600 leading-relaxed">
-        確認後、続けて届いている認証コードを入力してください。
+        確認後、もう一度メールアドレスを入力して「次へ」を押すと、
+        認証コードを受け取れます。
       </p>
 
       <PrimaryButton
@@ -24,7 +25,7 @@ const ConfirmEmailModal = ({ onNext }: Props) => {
         className="w-60 h-11"
         variant="primary"
       >
-        認証コードを入力する
+        メール入力に戻る
       </PrimaryButton>
     </div>
   );
