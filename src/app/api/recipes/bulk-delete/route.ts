@@ -6,6 +6,8 @@ import { ApiOkResponse } from '../../_types/ApiOkResponse';
 import requireUser from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const user = await requireUser(request);
