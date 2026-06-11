@@ -24,6 +24,11 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       );
     }
+    const { data: usersData } = await supabase.auth.admin.listUsers();
+
+    const authUser = usersData.users.find((u) => u.email === email);
+
+    const needsEmailConfirmation = !authUser || !authUser.email_confirmed_at;
 
     // ③ SupabaseでOTP送信
     const { error } = await supabase.auth.signInWithOtp({
@@ -50,7 +55,11 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message }, { status: 400 });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+
+      needsEmailConfirmation,
+    });
   } catch (error) {
     //想定外エラー
     console.error(error);

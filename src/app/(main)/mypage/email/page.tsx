@@ -82,17 +82,23 @@ const EmailChange = () => {
       if (emailChanged === 'true') {
         const {
           data: { user },
+          error: userError,
           //getUserでSupabase Auth 側の最新emailを取得
         } = await supabase.auth.getUser();
+        console.log('user:', user);
 
+        console.log('userError:', userError);
         const authEmail = user?.email;
 
         if (!authEmail) return;
 
         const {
           data: { session },
+          error: sessionError,
         } = await supabase.auth.getSession();
+        console.log('session:', session);
 
+        console.log('sessionError:', sessionError);
         const accessToken = session?.access_token;
 
         if (!accessToken) {
@@ -101,7 +107,7 @@ const EmailChange = () => {
           return;
         }
         //Prisma(DB)へ同期
-        await fetch('/api/sync-email', {
+        const res = await fetch('/api/sync-email', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -111,15 +117,28 @@ const EmailChange = () => {
             email: authEmail,
           }),
         });
+        console.log('sync-email status:', res.status);
 
+        console.log('sync-email body:', await res.text());
+        if (!res.ok) {
+          const text = await res.text();
+
+          console.error('sync-email failed:', res.status, text);
+
+          alert('メールアドレスの同期に失敗しました');
+
+          return;
+        }
         mutate();
-        alert('メールアドレスを変更しました');
+        alert(
+          'メールアドレス変更は完了しました。続けてログインし直してください。',
+        );
 
         window.history.replaceState({}, '', '/mypage/email');
       }
     };
     syncEmail();
-  }, [searchParams]);
+  }, [searchParams, mutate]);
 
   if (isLoading) return <Loading />;
   if (!data) return <Empty />;
