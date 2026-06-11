@@ -160,21 +160,13 @@ export const DELETE = async (
       : null;
 
     if (imagePath) {
-      const { data, error } = await supabaseAdmin.storage
+      const { error } = await supabaseAdmin.storage
         .from('post_thumbnail')
         .remove([imagePath]);
 
       if (error) {
         console.error('Storage画像削除失敗:', error.message);
       }
-
-      console.log('thumbnailUrl:', recipe.thumbnailUrl);
-
-      console.log('imagePath:', imagePath);
-
-      console.log('remove data:', data);
-
-      console.log('remove error:', error);
     }
 
     return NextResponse.json({ message: '削除しました' });
