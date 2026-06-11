@@ -1,7 +1,6 @@
 //マイページ＞メールアドレスの変更
 
 'use client';
-import React, { useEffect } from 'react';
 import ErrorMessage from '../../recipes/_components/ErrorMessage';
 import { EmailUpdateType } from './_type/EmailUpdateType ';
 import { useForm } from 'react-hook-form';
@@ -9,7 +8,6 @@ import useSWR from 'swr';
 import { UserResponseType } from '@/app/api/mypage/_typs/UserResponseType';
 import { fetcher } from '@/lib/featcher';
 import { supabase } from '@/lib/supabase';
-import { useSearchParams } from 'next/navigation';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
@@ -24,8 +22,7 @@ const EmailChange = () => {
     mode: 'onChange',
   });
 
-  const searchParams = useSearchParams();
-  const { data, error, isLoading, mutate } = useSWR<UserResponseType>(
+  const { data, error, isLoading } = useSWR<UserResponseType>(
     `/api/mypage/`,
     fetcher,
   );
@@ -72,67 +69,10 @@ const EmailChange = () => {
 
       return;
     }
-    alert('確認メールを送信しました');
+    alert(
+      '変更前と変更後のメールアドレスに確認メールを送信しました。\n両方のメールに記載されたリンクを押すと変更が完了します。',
+    );
   };
-  //メールからリンク押下後
-  useEffect(() => {
-    const syncEmail = async () => {
-      //ここでURLに emailChanged=true があることを検知
-      const emailChanged = searchParams.get('emailChanged');
-      const message = searchParams.get('message');
-
-      const isEmailChangeCallback =
-        emailChanged === 'true' ||
-        message?.includes('Confirmation link accepted');
-
-      if (!isEmailChangeCallback) return;
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      const authEmail = user?.email;
-
-      if (!authEmail) return;
-
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      console.log(session);
-
-      const accessToken = session?.access_token;
-
-      if (!accessToken) return;
-
-      //Prisma(DB)へ同期
-      const res = await fetch('/api/sync-email', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          email: authEmail,
-        }),
-      });
-      if (!res.ok) {
-        const text = await res.text();
-
-        console.error('sync-email failed:', res.status, text);
-
-        alert('メールアドレスの同期に失敗しました');
-
-        return;
-      }
-      await mutate();
-      alert(
-        'メールアドレス変更は完了しました。続けてログインし直してください。',
-      );
-
-      window.history.replaceState({}, '', '/mypage/email');
-    };
-    syncEmail();
-  }, [searchParams, mutate]);
 
   if (isLoading) return <Loading />;
   if (!data) return <Empty />;
