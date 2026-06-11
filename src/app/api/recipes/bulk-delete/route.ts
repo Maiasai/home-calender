@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { ApiOkResponse } from '../../_types/ApiOkResponse';
 import requireUser from '@/lib/auth';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,6 +25,37 @@ export async function POST(request: NextRequest) {
     const { ids } = await request.json(); // string[]が期待
 
     const activeid = dbUser.activeFamilyId;
+
+    const getStoragePathFromPublicUrl = (url: string) => {
+      const marker = '/storage/v1/object/public/post_thumbnail/';
+      const index = url.indexOf(marker); //その文字列が何文字目から始まるかを確認するメソッド
+
+      if (index === -1) return null;
+
+      //infexはhttp〜/strorageの手前までの数　＋　markerの長さになるので。取り出したいprivateの前の数を出すことができる
+      return url.slice(index + marker.length);
+    };
+
+    //削除指定のidsをもとにレシピ画像URLも取得
+    const recipes = await prisma.recipe.findMany({
+      where: {
+        id: { in: ids },
+        familyId: activeid,
+      },
+      select: {
+        thumbnailUrl: true,
+      },
+    });
+
+    const imagePaths = recipes
+      .map((recipe) =>
+        recipe.thumbnailUrl
+          ? getStoragePathFromPublicUrl(recipe.thumbnailUrl)
+          : null,
+      )
+
+      //ここで配列に混ざったnullを消す
+      .filter((path): path is string => path !== null);
 
     // 外部キー制約に引っかからないように、まず関連テーブルを削除
     // deleteMany + whereで配列のIDに該当する全レコードを削除
@@ -70,9 +102,20 @@ export async function POST(request: NextRequest) {
 
       // 最後に Recipe を削除
       await tx.recipe.deleteMany({
-        where: { id: { in: ids } },
+        where: { id: { in: ids }, familyId: activeid },
       });
     });
+
+    //// DB削除が成功した後にStorage削除
+    if (imagePaths.length > 0) {
+      const { error } = await supabaseAdmin.storage
+        .from('post_thumbnail')
+        .remove(imagePaths);
+
+      if (error) {
+        console.error('Storage画像削除失敗:', error.message);
+      }
+    }
 
     return NextResponse.json<ApiOkResponse>({ ok: true });
   } catch (err) {
