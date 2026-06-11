@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server';
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
+  const next = url.searchParams.get('next') || '/auth/complete';
 
   if (!code) {
     return NextResponse.redirect(new URL('/', request.url));
@@ -18,5 +19,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
-  return NextResponse.redirect(new URL('/auth/complete', request.url));
+  return NextResponse.redirect(new URL(next, request.url));
 }

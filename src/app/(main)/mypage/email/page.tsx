@@ -38,6 +38,7 @@ const EmailChange = () => {
 
   //入力されたメールアドレスに確認メールを送信
   const onSubmit = async (data: EmailUpdateType) => {
+    const next = encodeURIComponent('/mypage/email?emailChanged=true');
     const { error } = await supabase.auth.updateUser(
       {
         email: data.email,
@@ -45,7 +46,7 @@ const EmailChange = () => {
 
       {
         //確認メールのリンクを押した後、どこへ戻すかを指定
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/mypage/email?emailChanged=true`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=${next}`,
       },
     );
 
