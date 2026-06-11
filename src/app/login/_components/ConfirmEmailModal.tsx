@@ -1,3 +1,5 @@
+import PrimaryButton from '@/components/button/PrimaryButton';
+
 type Props = {
   onBack: () => void;
 };
@@ -16,13 +18,14 @@ const ConfirmEmailModal = ({ onBack }: Props) => {
         確認が完了したら、もう一度ログインしてください。
       </p>
 
-      <button
+      <PrimaryButton
         type="button"
         onClick={onBack}
-        className="mt-4 bg-orange-400 text-white px-4 py-2 rounded"
+        className="w-60 h-11"
+        variant="primary"
       >
         ログイン画面へ戻る
-      </button>
+      </PrimaryButton>
     </div>
   );
 };
