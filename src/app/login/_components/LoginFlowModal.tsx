@@ -83,6 +83,15 @@ const LoginFlowModal = ({
     }
   }, [step]);
 
+  useEffect(() => {
+    const confirmed = sessionStorage.getItem('emailConfirmed');
+
+    if (confirmed === 'true') {
+      setStep('email');
+      sessionStorage.removeItem('emailConfirmed');
+    }
+  }, []);
+
   //Email管理用
   const {
     register,
@@ -146,13 +155,6 @@ const LoginFlowModal = ({
   };
 
   //初期ユーザーだった場合（メールアドレスリンク押下後）
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get('confirmed') === '1') {
-      setLoginModalOpen(true);
-    }
-  }, []);
   useEffect(() => {
     const checkSession = async () => {
       const {
@@ -340,10 +342,7 @@ const LoginFlowModal = ({
           <div className="flex justify-center w-full">
             <div className="w-[400px] flex flex-col items-center">
               <div className="w-full">
-                <PageHeader
-                  title={titles[step]}
-                  onBack={() => setStep('email')}
-                />
+                <PageHeader title={titles[step]} />
               </div>
 
               <ConfirmEmailModal

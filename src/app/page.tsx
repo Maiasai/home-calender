@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import LoginFlowModal from './login/_components/LoginFlowModal';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
@@ -10,6 +10,13 @@ const Home = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
 
   useBodyScrollLock({ open: LoginModalOpen });
+
+  useEffect(() => {
+    if (window.location.hash.includes('type=signup')) {
+      sessionStorage.setItem('emailConfirmed', 'true');
+      setLoginModalOpen(true);
+    }
+  }, []);
   return (
     <div>
       {/* 背景画像 */}
