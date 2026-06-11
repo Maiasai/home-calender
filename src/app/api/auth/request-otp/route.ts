@@ -2,16 +2,16 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+//OTP/確認メールを送る用
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
-// Supabase Admin（サーバー専用）
+// Supabase Admin（サーバー専用）Authユーザーが存在するか確認する用
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 export const POST = async (req: NextRequest) => {

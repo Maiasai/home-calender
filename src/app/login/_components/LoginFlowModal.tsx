@@ -84,6 +84,7 @@ const LoginFlowModal = ({
   }, [step]);
 
   useEffect(() => {
+    if (!open) return;
     const confirmed = sessionStorage.getItem('emailConfirmed');
 
     if (confirmed === 'true') {
