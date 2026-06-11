@@ -2,8 +2,14 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase Admin（サーバー専用）
 const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
+
+// Supabase Admin（サーバー専用）
+const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
@@ -24,11 +30,11 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       );
     }
-    const { data: usersData } = await supabase.auth.admin.listUsers();
+    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
 
     const authUser = usersData.users.find((u) => u.email === email);
 
-    const needsEmailConfirmation = !authUser || !authUser.email_confirmed_at;
+    const isNewAuthUser = !authUser;
 
     // ③ SupabaseでOTP送信
     const { error } = await supabase.auth.signInWithOtp({
@@ -38,7 +44,6 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    console.log('OTP error:', error);
     if (error) {
       let message = error.message;
 
@@ -58,7 +63,7 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({
       success: true,
 
-      needsEmailConfirmation,
+      needsEmailConfirmation: isNewAuthUser,
     });
   } catch (error) {
     //想定外エラー

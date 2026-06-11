@@ -323,11 +323,11 @@ const LoginFlowModal = ({
                 <PageHeader
                   title={titles[step]}
                   showBack
-                  onBack={() => setStep('email')}
+                  onBack={() => setStep('verifyCode')}
                 />
               </div>
 
-              <ConfirmEmailModal onBack={() => setStep('email')} />
+              <ConfirmEmailModal onNext={() => setStep('verifyCode')} />
             </div>
           </div>
         )}
