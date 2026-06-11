@@ -8,6 +8,7 @@ export interface RecipeFormValues {
   memo?: string;
   servings?: number;
   thumbnailImageUrl?: string;
+  thumbnailFile?: File | null; //画像ファイルそのもの、または null、または未定義
   ingredients: {
     name?: string;
     amount?: number; //DB では小数で保存されるが、TS では number として扱うだけでOK

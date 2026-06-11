@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import { RecipeCategory, RecipeSourceType } from '@/generated/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { createNotification } from '@/lib/notification';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 //左辺→分割代入、右辺→型指定（idはstrigですと言ってるだけ）　　{params} : { params : {id:string}}
 export const GET = async (
@@ -78,6 +79,32 @@ export const DELETE = async (
     }
     const activeFamilyId = dbUser.activeFamilyId;
 
+    const getStoragePathFromPublicUrl = (url: string) => {
+      const marker = '/storage/v1/object/public/post_thumbnail/';
+      const index = url.indexOf(marker); //その文字列が何文字目から始まるかを確認するメソッド
+
+      if (index === -1) return null;
+
+      //infexはhttp〜/strorageの手前までの数　＋　markerの長さになるので。取り出したいprivateの前の数を出すことができる
+      return url.slice(index + marker.length);
+    };
+    const recipe = await prisma.recipe.findFirst({
+      where: {
+        id: params.id,
+        familyId: activeFamilyId,
+      },
+      select: {
+        thumbnailUrl: true,
+      },
+    });
+
+    if (!recipe) {
+      return NextResponse.json(
+        { message: 'レシピが見つかりません' },
+        { status: 404 },
+      );
+    }
+
     await prisma.$transaction(async (tx) => {
       await Promise.all([
         tx.userRecipeStatus.deleteMany({
@@ -127,6 +154,21 @@ export const DELETE = async (
         }),
       ]);
     });
+
+    const imagePath = recipe.thumbnailUrl
+      ? getStoragePathFromPublicUrl(recipe.thumbnailUrl)
+      : null;
+
+    if (imagePath) {
+      const { error } = await supabaseAdmin.storage
+        .from('post_thumbnail')
+        .remove([imagePath]);
+
+      if (error) {
+        console.error('Storage画像削除失敗:', error.message);
+      }
+    }
+
     return NextResponse.json({ message: '削除しました' });
   } catch (error) {
     console.log('DELETE recipe error', error);

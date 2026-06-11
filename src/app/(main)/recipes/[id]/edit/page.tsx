@@ -23,6 +23,8 @@ import { fetcher } from '@/lib/featcher';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import UrlForm from '../../_components/UrlForm';
 import { Loading } from '@/components/Loading';
+import { supabase } from '@/lib/supabase';
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   params: { id: string };
@@ -143,10 +145,40 @@ const RecipeEdit = ({ params }: Props) => {
   const onSubmit = async (data: RecipeFormValues) => {
     if (!recipe) return;
 
+    let thumbnailImageUrl = data.thumbnailImageUrl;
+    if (data.thumbnailFile) {
+      const uuid = uuidv4(); //ランダムな一意なIDを作る関数
+      const fileName = data.thumbnailFile.name;
+      const filePath = `private/${uuid}_${fileName}`;
+
+      //②supabaseにアップロード（uuid名で保存）
+      //uploadDataには保存された場所が入ってくる
+      const { data: uploadData, error } = await supabase.storage
+        .from('post_thumbnail')
+        .upload(filePath, data.thumbnailFile, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      //アップロード失敗した場合
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      //ここで公開URL取得
+      const publicUrl = await supabase.storage
+        .from('post_thumbnail') //supabage Storageのpost_thumbnailというパケットにあるdata.pathファイルの外部アクセスURLをくださいと指示
+        .getPublicUrl(uploadData.path).data.publicUrl;
+
+      thumbnailImageUrl = publicUrl;
+    }
+
     //useStateとuseFormの値をsubmit時にpayloadで合体
     const payload: PutRecipeRequest = {
       id: recipe.id, //編集の場合はどのレシピを更新するのかどうか指定が必要
       ...data, //useFormが管理しているフォームに入力された値
+      thumbnailImageUrl,
       category: category || undefined,
       servings: Number(data.servings), // 念のため明示的に数値化
     };

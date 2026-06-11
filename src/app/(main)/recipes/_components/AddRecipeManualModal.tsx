@@ -17,6 +17,8 @@ import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import { RecipeData } from '../_types/RecipeTypes';
 import { KeyedMutator } from 'swr';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '@/lib/supabase';
 
 type Props = {
   onClose: () => void;
@@ -84,9 +86,39 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
   }, []); //[]の意味：画面が初回表示された時だけ実行
 
   const onSubmit = async (data: RecipeFormValues) => {
+    let thumbnailImageUrl = data.thumbnailImageUrl;
+    if (data.thumbnailFile) {
+      const uuid = uuidv4(); //ランダムな一意なIDを作る関数
+      const fileName = data.thumbnailFile.name;
+      const filePath = `private/${uuid}_${fileName}`;
+
+      //②supabaseにアップロード（uuid名で保存）
+      //uploadDataには保存された場所が入ってくる
+      const { data: uploadData, error } = await supabase.storage
+        .from('post_thumbnail')
+        .upload(filePath, data.thumbnailFile, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      //アップロード失敗した場合
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      //ここで公開URL取得
+      const publicUrl = await supabase.storage
+        .from('post_thumbnail') //supabage Storageのpost_thumbnailというパケットにあるdata.pathファイルの外部アクセスURLをくださいと指示
+        .getPublicUrl(uploadData.path).data.publicUrl;
+
+      thumbnailImageUrl = publicUrl;
+    }
+
     //useStateとuseFormの値をsubmit時にpayloadで合体
     const payload: CreateRecipeRequest = {
       ...data, //useFormの値(フォームに入力された値)
+      thumbnailImageUrl,
       category: category || undefined,
       servings: Number(data.servings), // 念のため明示的に数値化
     };
