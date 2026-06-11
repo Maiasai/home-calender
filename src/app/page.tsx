@@ -5,6 +5,7 @@ import Image from 'next/image';
 import LoginFlowModal from './login/_components/LoginFlowModal';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { supabase } from '@/lib/supabase';
 
 const Home = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
@@ -16,6 +17,56 @@ const Home = () => {
       sessionStorage.setItem('emailConfirmed', 'true');
       setLoginModalOpen(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const syncEmailIfNeeded = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) return;
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      const authEmail = user?.email;
+
+      if (!authEmail) return;
+
+      const res = await fetch('/api/users/me', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!res.ok) return;
+
+      const meData = await res.json();
+
+      const dbEmail = meData.user?.email;
+
+      // AuthとPrismaが一致してたら何もしない
+      if (dbEmail === authEmail) return;
+
+      const syncRes = await fetch('/api/sync-email', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          email: authEmail,
+        }),
+      });
+
+      if (syncRes.ok) {
+        alert('メールアドレス変更が完了しました');
+      }
+    };
+
+    syncEmailIfNeeded();
   }, []);
   return (
     <div>
