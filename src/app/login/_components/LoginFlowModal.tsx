@@ -153,6 +153,17 @@ const LoginFlowModal = ({
       setLoginModalOpen(true);
     }
   }, []);
+  useEffect(() => {
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      console.log(session);
+    };
+
+    checkSession();
+  }, []);
 
   //1.メール入力【フォームの入口】　※emailに入った値がSupabase に送られる
   const onSubmitEmail: SubmitHandler<EmailFormValues> = async (
@@ -331,7 +342,6 @@ const LoginFlowModal = ({
               <div className="w-full">
                 <PageHeader
                   title={titles[step]}
-                  showBack
                   onBack={() => setStep('email')}
                 />
               </div>
