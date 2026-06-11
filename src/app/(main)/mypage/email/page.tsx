@@ -78,64 +78,56 @@ const EmailChange = () => {
     const syncEmail = async () => {
       //ここでURLに emailChanged=true があることを検知
       const emailChanged = searchParams.get('emailChanged');
+      const message = searchParams.get('message');
 
-      if (emailChanged === 'true') {
-        const {
-          data: { user },
-          error: userError,
-          //getUserでSupabase Auth 側の最新emailを取得
-        } = await supabase.auth.getUser();
-        console.log('user:', user);
+      const isEmailChangeCallback =
+        emailChanged === 'true' ||
+        message?.includes('Confirmation link accepted');
 
-        console.log('userError:', userError);
-        const authEmail = user?.email;
+      if (!isEmailChangeCallback) return;
 
-        if (!authEmail) return;
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession();
-        console.log('session:', session);
+      const authEmail = user?.email;
 
-        console.log('sessionError:', sessionError);
-        const accessToken = session?.access_token;
+      if (!authEmail) return;
 
-        if (!accessToken) {
-          console.log('access token not found');
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-          return;
-        }
-        //Prisma(DB)へ同期
-        const res = await fetch('/api/sync-email', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            email: authEmail,
-          }),
-        });
-        console.log('sync-email status:', res.status);
+      const accessToken = session?.access_token;
 
-        console.log('sync-email body:', await res.text());
-        if (!res.ok) {
-          const text = await res.text();
+      if (!accessToken) return;
 
-          console.error('sync-email failed:', res.status, text);
+      //Prisma(DB)へ同期
+      const res = await fetch('/api/sync-email', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          email: authEmail,
+        }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
 
-          alert('メールアドレスの同期に失敗しました');
+        console.error('sync-email failed:', res.status, text);
 
-          return;
-        }
-        mutate();
-        alert(
-          'メールアドレス変更は完了しました。続けてログインし直してください。',
-        );
+        alert('メールアドレスの同期に失敗しました');
 
-        window.history.replaceState({}, '', '/mypage/email');
+        return;
       }
+      await mutate();
+      alert(
+        'メールアドレス変更は完了しました。続けてログインし直してください。',
+      );
+
+      window.history.replaceState({}, '', '/mypage/email');
     };
     syncEmail();
   }, [searchParams, mutate]);

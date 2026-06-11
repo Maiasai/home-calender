@@ -274,10 +274,9 @@ const LoginFlowModal = ({
     const handleResetPasswordLink = async () => {
       //ページ開かれたらURLに code か reset=1 があるか見る
       const params = new URLSearchParams(window.location.search);
-      const code = params.get('code');
       const reset = params.get('reset');
 
-      if (!code && reset !== '1') return;
+      if (reset !== '1') return;
 
       //0.5秒だけまつ
       await new Promise((resolve) => setTimeout(resolve, 500));
