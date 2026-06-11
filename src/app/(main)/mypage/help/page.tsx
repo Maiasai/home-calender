@@ -2,6 +2,7 @@
 
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 
 const Help = () => {
@@ -66,7 +67,7 @@ const Help = () => {
               </ol>
 
               <div className="mt-5 overflow-hidden rounded-lg border">
-                <img
+                <Image
                   src={recipeAddImage}
                   alt="レシピ一覧画面のレシピ追加ボタン"
                   className="w-full h-auto"
@@ -78,7 +79,7 @@ const Help = () => {
                 className="list-decimal list-inside space-y-3 text-sm md:text-base leading-7 mt-5"
               >
                 <li>レシピの登録方法を選択する</li>
-                <img
+                <Image
                   src={recipeAddImage2}
                   alt="レシピの登録方法を選択する"
                   className="w-full h-auto"
@@ -92,7 +93,7 @@ const Help = () => {
                       ※URL登録では、レシピサイトのURLを保存できます。
                       著作権保護のため、材料や手順などの内容は自動で反映されません。
                     </p>
-                    <img
+                    <Image
                       src={recipeAddImage3}
                       alt="URL登録からレシピを登録する"
                       className="w-full h-auto"
@@ -102,7 +103,7 @@ const Help = () => {
                       ※オリジナルレシピは、画像とタイトルと人数のみでも登録できます。
                       材料や手順は後から自由に追加・編集できます。
                     </p>
-                    <img
+                    <Image
                       src={recipeAddImage4}
                       alt="URL登録からレシピを登録する"
                       className="w-full h-auto"
@@ -124,7 +125,7 @@ const Help = () => {
               <li>
                 献立カレンダーページで、登録したい日付を選択し「献立作成」を押す
               </li>
-              <img
+              <Image
                 src={recipeAddImage5}
                 alt="献立カレンダー画面の献立作成ボタン"
                 className="w-full h-auto"
@@ -134,7 +135,7 @@ const Help = () => {
                 献立作成画面で「＋レシピから選択」を押し、
                 献立に追加したいレシピを選んで保存する
               </li>{' '}
-              <img
+              <Image
                 src={recipeAddImage6}
                 alt="レシピを選択して保存する画面"
                 className="w-full h-auto"
@@ -147,13 +148,13 @@ const Help = () => {
                 <p className="mt-2 ml-2 text-xs md:text-sm text-gray-500">
                   ※登録後は、栄養バランスの確認や、献立から買い物リストへの追加ができるようになります。
                 </p>
-                <img
+                <Image
                   src={recipeAddImage7}
                   alt="献立作成画面の登録ボタン"
                   className="w-full h-auto mb-2"
                   onClick={() => setSelectedImage(recipeAddImage7)}
                 />
-                <img
+                <Image
                   src={recipeAddImage8}
                   alt="献立カレンダーに献立が反映された画面"
                   className="w-full h-auto"
@@ -211,7 +212,7 @@ const Help = () => {
             </ol>
 
             <div className="mt-5 overflow-hidden rounded-lg border">
-              <img
+              <Image
                 src={groupImage1}
                 alt="アプリの共有設定画面でメンバーを招待する"
                 className="w-full h-auto"
@@ -235,7 +236,7 @@ const Help = () => {
               </li>
 
               <div className="mt-5 overflow-hidden rounded-lg border">
-                <img
+                <Image
                   src={groupImage2}
                   alt="右上の通知アイコン"
                   className="w-full h-auto"
@@ -248,7 +249,7 @@ const Help = () => {
               </li>
 
               <div className="mt-5 overflow-hidden rounded-lg border">
-                <img
+                <Image
                   src={groupImage3}
                   alt="通知一覧の参加ボタン"
                   className="w-full h-auto"
@@ -289,7 +290,7 @@ const Help = () => {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
           onClick={() => setSelectedImage(null)}
         >
-          <img
+          <Image
             src={selectedImage}
             alt="拡大画像"
             className="max-h-[90vh] max-w-full rounded-lg bg-white"
