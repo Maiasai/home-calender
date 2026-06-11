@@ -346,13 +346,7 @@ const LoginFlowModal = ({
                 <PageHeader title={titles[step]} />
               </div>
 
-              <ConfirmEmailModal
-                onClose={() => {
-                  setStep('select');
-
-                  setLoginModalOpen(false);
-                }}
-              />
+              <ConfirmEmailModal />
             </div>
           </div>
         )}
