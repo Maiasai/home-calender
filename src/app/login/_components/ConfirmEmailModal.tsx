@@ -1,10 +1,10 @@
 import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
-  onNext: () => void;
+  onClose: () => void;
 };
 
-const ConfirmEmailModal = ({ onNext }: Props) => {
+const ConfirmEmailModal = ({ onClose }: Props) => {
   return (
     <div className="w-full text-center mt-8 space-y-4">
       <p className="font-semibold">確認メールを送信しました</p>
@@ -15,17 +15,17 @@ const ConfirmEmailModal = ({ onNext }: Props) => {
       </p>
 
       <p className="text-sm text-gray-600 leading-relaxed">
-        確認後、もう一度メールアドレスを入力して「次へ」を押すと、
-        認証コードを受け取れます。
+        確認完了後は、再度ログイン画面から同じメールアドレスを入力してください。
+        認証コードが送信されます。
       </p>
 
       <PrimaryButton
         type="button"
-        onClick={onNext}
+        onClick={onClose}
         className="w-60 h-11"
         variant="primary"
       >
-        メール入力に戻る
+        閉じる
       </PrimaryButton>
     </div>
   );

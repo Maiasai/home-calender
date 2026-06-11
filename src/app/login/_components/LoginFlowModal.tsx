@@ -145,6 +145,15 @@ const LoginFlowModal = ({
     setStep('verifyCode');
   };
 
+  //初期ユーザーだった場合（メールアドレスリンク押下後）
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('confirmed') === '1') {
+      setLoginModalOpen(true);
+    }
+  }, []);
+
   //1.メール入力【フォームの入口】　※emailに入った値がSupabase に送られる
   const onSubmitEmail: SubmitHandler<EmailFormValues> = async (
     data: InputEmailData,
@@ -327,7 +336,13 @@ const LoginFlowModal = ({
                 />
               </div>
 
-              <ConfirmEmailModal onNext={() => setStep('email')} />
+              <ConfirmEmailModal
+                onClose={() => {
+                  setStep('select');
+
+                  setLoginModalOpen(false);
+                }}
+              />
             </div>
           </div>
         )}
