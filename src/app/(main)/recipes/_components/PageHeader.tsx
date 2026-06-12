@@ -32,7 +32,9 @@ const PageHeader = ({
       {title && <h1 className="text-lg font-semibold ml-2">{title}</h1>}
 
       {/* 閉じるボタン */}
-      {showClose && onClose && <CloseButton onClose={onClose} />}
+      <div className="absolute top-2 right-3 mb-8">
+        {showClose && onClose && <CloseButton onClose={onClose} />}
+      </div>
     </div>
   );
 };

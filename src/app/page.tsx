@@ -13,13 +13,6 @@ const Home = () => {
   useBodyScrollLock({ open: LoginModalOpen });
 
   useEffect(() => {
-    if (window.location.hash.includes('type=signup')) {
-      sessionStorage.setItem('emailConfirmed', 'true');
-      setLoginModalOpen(true);
-    }
-  }, []);
-
-  useEffect(() => {
     const hash = decodeURIComponent(window.location.hash);
 
     if (hash.includes('type=signup')) {
