@@ -95,7 +95,6 @@ const Header = () => {
             open={open}
             setOpen={setOpen}
             handleLogout={handleLogout}
-            hasUnreadNonfications={hasUnreadNonfications}
           />
 
           <div className="pt-4 ml-10 space-x-10 hidden md:block">
