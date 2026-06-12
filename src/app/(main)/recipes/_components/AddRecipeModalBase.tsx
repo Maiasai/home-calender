@@ -13,7 +13,7 @@ import { KeyedMutator } from 'swr';
 type Props = {
   open: boolean;
   onClose: () => void;
-  mutate: KeyedMutator<RecipeData[]>;
+  mutate?: KeyedMutator<RecipeData[]>;
 };
 
 const titles = {

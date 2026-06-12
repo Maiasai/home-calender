@@ -18,11 +18,14 @@ import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { useSearchParams } from 'next/navigation';
+import PrimaryButton from '@/components/button/PrimaryButton';
+import AddRecipeModalBase from '../recipes/_components/AddRecipeModalBase';
 
 const TopPage = () => {
   const { token } = useSupabaseSession();
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false); //レシピ追加ボタン用
 
   //initialRecipesで編集モーダルを開いた瞬間の初期値を管理（編集用）*一切変更しない元データ
   const [initialRecipes, setInitialRecipes] = useState<SelectedRecipe[]>([]); //selectedRecipesを正しく初期化するために存在
@@ -162,6 +165,20 @@ const TopPage = () => {
       <nav className="flex justify-center border-b-2 max mb-4">
         献立カレンダー
       </nav>
+
+      <PrimaryButton
+        onClick={() => setIsRecipeModalOpen(true)}
+        className="md:hidden w-[110px] h-[30px] ml-4 mb-4"
+        variant="primary"
+      >
+        ＋レシピを追加
+      </PrimaryButton>
+      {isRecipeModalOpen && (
+        <AddRecipeModalBase
+          open={isRecipeModalOpen}
+          onClose={() => setIsRecipeModalOpen(false)}
+        />
+      )}
 
       {/* カレンダー(7列、gap-1でマスの間隔) */}
       <Calender

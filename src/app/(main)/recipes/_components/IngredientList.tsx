@@ -118,7 +118,7 @@ const IngredientList = ({
 
               <div className="flec flex-col">
                 <input
-                  className="w-[280px] px-2 py-1 border-b mb-1"
+                  className="w-[260px] px-2 py-1 border-b mb-1"
                   {...register(`ingredients.${index}.name`, {
                     maxLength: {
                       value: 15,

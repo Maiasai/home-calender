@@ -16,11 +16,12 @@ import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { KeyedMutator } from 'swr';
 import { RecipeData } from '../_types/RecipeTypes';
+import { mutate as globalMutate } from 'swr';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
-  mutate: KeyedMutator<RecipeData[]>;
+  mutate?: KeyedMutator<RecipeData[]>;
 };
 
 const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
@@ -67,7 +68,11 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
       router.push(`/recipes/`);
 
       onClose();
-      await mutate();
+      await mutate?.();
+      await globalMutate(
+        //keyが文字列かつ、/api/recipesで始まるものだけ再取得
+        (key) => typeof key === 'string' && key.startsWith('/api/recipes'),
+      );
     } catch (err: unknown) {
       if (err instanceof Error) {
         alert(err.message);

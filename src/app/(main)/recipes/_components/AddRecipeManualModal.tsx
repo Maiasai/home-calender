@@ -19,11 +19,12 @@ import { KeyedMutator } from 'swr';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '@/lib/supabase';
+import { mutate as globalMutate } from 'swr';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
-  mutate: KeyedMutator<RecipeData[]>;
+  mutate?: KeyedMutator<RecipeData[]>;
 };
 
 type CreateRecipeRequest = RecipeFormValues & {
@@ -142,9 +143,11 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
       //成功だった場合
       alert('レシピを登録しました');
       reset(); //成功したら入力欄をクリア
-
+      await globalMutate(
+        (key) => typeof key === 'string' && key.startsWith('/api/recipes'),
+      );
       onClose();
-      await mutate();
+      await mutate?.();
     } catch (err: unknown) {
       if (err instanceof Error) {
         alert(err.message);
@@ -158,7 +161,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
     <div className="bg-gray-100 w-full max-w-[800px] max-h-[80vh] overflow-y-auto">
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex items-center flex-col md:flex-row md:h-[250px] h-[300px] gap-6 bg-white m-5 p-4 rounded-lg">
+          <div className="flex items-center flex-col md:flex-row md:h-[250px] h-[340px] gap-6 bg-white m-5 p-4 rounded-lg">
             {/* 画像 */}
             <ImageUpload
               control={control}
