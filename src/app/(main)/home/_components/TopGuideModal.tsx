@@ -16,9 +16,13 @@ const TopGuideModal = ({ onClose, dontShowAgain, setDontShowAgain }: Props) => {
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="relative bg-white rounded-lg max-w-[600px] w-[95%] max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white z-10 px-8 pt-4 border-b">
-          <h2 className="text-lg font-bold text-center mt-3">はじめての方へ</h2>
+          <h2 className="text-lg font-bold text-center mt-3 mb-4">
+            はじめての方へ
+          </h2>
 
-          <CloseButton onClose={onClose} />
+          <div className="absolute top-4 right-3">
+            <CloseButton onClose={onClose} />
+          </div>
         </div>
 
         <div className="p-8">
