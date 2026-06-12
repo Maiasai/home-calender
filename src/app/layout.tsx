@@ -16,6 +16,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: 'おうちカレンダー',
   description: '献立、レシピ、買い物リスト管理アプリ',
+  icons: {
+    icon: '/icon.png',
+  },
 };
 
 export default function RootLayout({
