@@ -1,7 +1,7 @@
 //【クライアント】ホーム（献立カレンダー）
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MealModalBase from './_components/MealModalBase';
 import { fetcher } from '@/lib/featcher';
 import useSWR, { mutate as globalMutate } from 'swr';
@@ -20,12 +20,31 @@ import { ErrorMessage } from '@/components/ErrorMessage';
 import { useSearchParams } from 'next/navigation';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import AddRecipeModalBase from '../recipes/_components/AddRecipeModalBase';
+import TopGuideModal from './_components/TopGuideModal';
 
 const TopPage = () => {
   const { token } = useSupabaseSession();
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false); //レシピ追加ボタン用
+  const [isGuideOpen, setIsGuideOpen] = useState(false); //初回説明モーダル
+  const [dontShowAgain, setDontShowAgain] = useState(false); //初回説明モーダル(現在チェックがついてるか)
+
+  //初回説明モーダル処理
+  useEffect(() => {
+    const hideTopGuide = localStorage.getItem('hideTopGuide');
+
+    if (!hideTopGuide) {
+      setIsGuideOpen(true); //以後表示しないにチェック入ってなければモーダルを開く
+    }
+  }, []);
+
+  const handleCloseGuide = () => {
+    if (dontShowAgain) {
+      localStorage.setItem('hideTopGuide', 'true'); //ブラウザにチェック状態をここで保存
+    }
+    setIsGuideOpen(false);
+  };
 
   //initialRecipesで編集モーダルを開いた瞬間の初期値を管理（編集用）*一切変更しない元データ
   const [initialRecipes, setInitialRecipes] = useState<SelectedRecipe[]>([]); //selectedRecipesを正しく初期化するために存在
@@ -165,7 +184,6 @@ const TopPage = () => {
       <nav className="flex justify-center border-b-2 max mb-4">
         献立カレンダー
       </nav>
-
       <PrimaryButton
         onClick={() => setIsRecipeModalOpen(true)}
         className="md:hidden w-[110px] h-[30px] ml-4 mb-4"
@@ -179,7 +197,6 @@ const TopPage = () => {
           onClose={() => setIsRecipeModalOpen(false)}
         />
       )}
-
       {/* カレンダー(7列、gap-1でマスの間隔) */}
       <Calender
         data={data}
@@ -196,7 +213,6 @@ const TopPage = () => {
         width={1300}
         height={90}
       />
-
       {/* 選択日 */}
       {selectedDate && (
         <CalenderSelectedDate
@@ -209,7 +225,6 @@ const TopPage = () => {
           mutate={mutate}
         />
       )}
-
       <MealModalBase
         open={modalOpen} //modalOpen === true のとき開く
         onClose={handleCloseModal}
@@ -220,6 +235,13 @@ const TopPage = () => {
         targetMeal={targetMeal}
         displayDate={displayDate}
       />
+      {isGuideOpen && (
+        <TopGuideModal
+          onClose={handleCloseGuide}
+          dontShowAgain={dontShowAgain}
+          setDontShowAgain={setDontShowAgain}
+        />
+      )}
     </div>
   );
 };
