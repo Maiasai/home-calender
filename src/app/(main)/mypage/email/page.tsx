@@ -11,8 +11,13 @@ import { supabase } from '@/lib/supabase';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const EmailChange = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -22,7 +27,7 @@ const EmailChange = () => {
     mode: 'onChange',
   });
 
-  const { data, error, isLoading } = useSWR<UserResponseType>(
+  const { data, error, isLoading, mutate } = useSWR<UserResponseType>(
     `/api/mypage/`,
     fetcher,
   );
@@ -36,6 +41,7 @@ const EmailChange = () => {
   //入力されたメールアドレスに確認メールを送信
   const onSubmit = async (data: EmailUpdateType) => {
     const next = encodeURIComponent('/mypage/email?emailChanged=true');
+
     const { error } = await supabase.auth.updateUser(
       {
         email: data.email,
@@ -73,6 +79,20 @@ const EmailChange = () => {
       '変更前と変更後のメールアドレスに確認メールを送信しました。\n両方のメールに記載されたリンクを押すと変更が完了します。',
     );
   };
+
+  useEffect(() => {
+    if (searchParams.get('emailChanged') !== 'true') return;
+
+    const complete = async () => {
+      await mutate();
+
+      alert('メールアドレスの変更が完了しました');
+
+      router.replace('/mypage/email');
+    };
+
+    complete();
+  }, [searchParams, router]);
 
   if (isLoading) return <Loading />;
   if (!data) return <Empty />;
