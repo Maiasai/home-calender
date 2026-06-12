@@ -197,7 +197,7 @@ const GroupOwner = ({
                   className="w-[150px] h-[30px]"
                   variant="primary"
                 >
-                  一括招待ボタン
+                  招待を送信
                 </PrimaryButton>
               </div>
               {/* 招待中メンバー */}

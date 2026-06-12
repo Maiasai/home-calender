@@ -42,7 +42,11 @@ const Header = () => {
                 {/* Reactはデータが揃ってなくても描画してしまうため、データがあるときだけ描画する(クラッシュ対策）*/}
                 {profile && <span>{profile.nickname} さんログイン中</span>}
                 <button onClick={handleLogout}>ログアウト</button>
-                <Link href="/notifications" className="relative inline-block">
+
+                <Link
+                  href="/notifications"
+                  className="relative inline-block ml-8"
+                >
                   <Image
                     src="/images/bell.png"
                     alt="通知アイコン"
@@ -67,6 +71,25 @@ const Header = () => {
               height={51}
             />
           </Link>
+
+          {/* スマホ用通知アイコン */}
+          <div className="flex items-center space-x-10 mr-8 mb-4  md:hidden ">
+            <Link
+              href="/notifications"
+              className="relative inline-block mt-3 ml-8"
+            >
+              <Image
+                src="/images/bell.png"
+                alt="通知アイコン"
+                width={30}
+                height={20}
+                className="w-6 h-6 md:w-[30px] md:h-[30px]"
+              />
+              {hasUnreadNonfications && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
+              )}
+            </Link>
+          </div>
 
           <Hamburger
             open={open}

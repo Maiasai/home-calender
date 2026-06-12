@@ -143,7 +143,6 @@ export const POST = async (request: NextRequest) => {
         })),
     );
 
-    console.log('data', data);
     await Promise.all(
       data.map(async (item) => {
         const existing = await prisma.shoppingItem.findFirst({

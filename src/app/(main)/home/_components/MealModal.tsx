@@ -183,22 +183,30 @@ const MealModal = ({
                 )}
 
                 {/* レシピ画像とタイトル */}
-                {recipesInCategory?.map((r) => (
-                  <div key={r.id} className="flex items-center gap-3 mb-3">
-                    {/* 画像 */}
-                    <div className="w-[130px] h-[80px] overflow-hidden relative shrink-0 rounded-lg">
-                      <Image
-                        src={r.thumbnailUrl ?? '/images/noImage.jpg'}
-                        alt="画像"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
 
-                    {/* タイトル*/}
-                    <div>{truncateRecipeTitle(r.title)}</div>
-                  </div>
-                ))}
+                {recipesInCategory?.map((r) => {
+                  const imageSrc =
+                    r.thumbnailUrl && r.thumbnailUrl.trim() !== ''
+                      ? r.thumbnailUrl
+                      : '/images/noImage.jpg';
+
+                  return (
+                    <div key={r.id} className="flex items-center gap-3 mb-3">
+                      {/* 画像 */}
+                      <div className="w-[130px] h-[80px] overflow-hidden relative shrink-0 rounded-lg">
+                        <Image
+                          src={imageSrc}
+                          alt="画像"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+
+                      {/* タイトル*/}
+                      <div>{truncateRecipeTitle(r.title)}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );

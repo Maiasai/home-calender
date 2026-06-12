@@ -29,7 +29,7 @@ const TitleForm = <T extends FieldValues>({
   return (
     <div className="flex flex-col w-full">
       <label className="flex">
-        {step === 'MANUAL' && (
+        {step !== 'URL' && (
           <>
             タイトル
             <span className="text-red-500 ml-1">*</span>

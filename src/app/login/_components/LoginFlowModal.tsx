@@ -158,11 +158,7 @@ const LoginFlowModal = ({
   //初期ユーザーだった場合（メールアドレスリンク押下後）
   useEffect(() => {
     const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      console.log(session);
+      const {} = await supabase.auth.getSession();
     };
 
     checkSession();

@@ -157,7 +157,7 @@ const RecipeDetail = ({ params }: Props) => {
             {/* 材料 */}
             <div className="mb-4">
               <div>
-                <h2 className="text-lg font-semibold mb-3">材料</h2>
+                <h2 className="text-lg font-semibold mb-4">材料</h2>
               </div>
 
               <h3 className="text-base font-semibold mb-3 ml-2">
@@ -195,7 +195,7 @@ const RecipeDetail = ({ params }: Props) => {
               <ul>
                 {recipe.recipeSteps.map((recipestep) => (
                   <li key={recipestep.id}>
-                    <div className="flex py-1 px-2 border-b mb-4">
+                    <div className="flex items-start  py-1 px-3 border-b mt-2">
                       <div className="mx-1">{recipestep.stepNumber}</div>
                       {recipestep.instructionText}
                     </div>
@@ -206,8 +206,10 @@ const RecipeDetail = ({ params }: Props) => {
 
             {/* メモ */}
             <div>
-              <h2 className="text-lg font-semibold pb-5">メモ</h2>
-              <p className="border-b  ml-2">{recipe.memo}</p>
+              <h2 className="text-lg font-semibold mp-4">メモ</h2>
+              <p className="flex items-start  py-1 px-3 border-b mt-6">
+                {recipe.memo}
+              </p>
             </div>
           </div>
 

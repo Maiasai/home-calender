@@ -8,15 +8,9 @@ type Props = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   handleLogout: () => Promise<void>;
-  hasUnreadNonfications?: boolean;
 };
 
-export const Hamburger = ({
-  open,
-  setOpen,
-  handleLogout,
-  hasUnreadNonfications,
-}: Props) => {
+export const Hamburger = ({ open, setOpen, handleLogout }: Props) => {
   //メニュー開いた時、メニュー外スクロール不可にする
   useBodyScrollLock({ open });
 
@@ -53,16 +47,6 @@ export const Hamburger = ({
           ${open ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="flex flex-col gap-8 mt-20 p-2 m-6">
-          <Link
-            href="/notifications"
-            onClick={() => setOpen(false)}
-            className="relative inline-flex items-center border-b ml-3"
-          >
-            通知一覧
-            {hasUnreadNonfications && (
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
-            )}
-          </Link>
           <Link
             href="/home"
             onClick={() => setOpen(false)}
