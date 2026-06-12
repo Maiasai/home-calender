@@ -20,6 +20,26 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    const hash = decodeURIComponent(window.location.hash);
+
+    if (hash.includes('type=signup')) {
+      sessionStorage.setItem('emailConfirmed', 'true');
+      setLoginModalOpen(true);
+      return;
+    }
+
+    if (
+      hash.includes('Please proceed to confirm link sent to the other email')
+    ) {
+      alert(
+        '確認リンクを受け付けました。\nもう一方のメールにも確認リンクが届いている場合は、そちらも開いてください。',
+      );
+
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
     const syncEmailIfNeeded = async () => {
       const {
         data: { session },
