@@ -17,7 +17,8 @@ export const metadata: Metadata = {
   title: 'おうちカレンダー',
   description: '献立、レシピ、買い物リスト管理アプリ',
   icons: {
-    icon: '/icon.png',
+    icon: '/favicon.ico',
+    apple: '/icon.png',
   },
 };
 
