@@ -276,6 +276,19 @@ const LoginFlowModal = ({
 
       if (reset !== '1') return;
 
+      const openResetModal = () => {
+        setStep('resetPassword');
+        setLoginModalOpen(true);
+      };
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          openResetModal();
+        }
+      });
+
       //0.5秒だけまつ
       await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -284,9 +297,15 @@ const LoginFlowModal = ({
         data: { session },
       } = await supabase.auth.getSession();
 
+      if (session) {
+        openResetModal();
+        subscription.unsubscribe();
+        return;
+      }
+
       if (!session) {
         alert(
-          '認証情報が確認できません。もう一度パスワード再設定メールから開いてください。',
+          '認証情報が確認できませんでした。\nスマートフォンでは、再設定メールを送信したブラウザと同じブラウザでリンクを開いてください。\nうまくいかない場合は、もう一度パスワード再設定メールを送信してください。',
         );
         return;
       }
