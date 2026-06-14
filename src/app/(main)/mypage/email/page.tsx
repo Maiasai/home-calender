@@ -48,7 +48,18 @@ const EmailChange = () => {
     );
 
     if (error) {
-      alert(`status=${error.status}\nmessage=${error.message}`);
+      if (
+        error.status === 429 ||
+        error.message.includes('For security purposes') ||
+        error.message.includes('rate limit')
+      ) {
+        setError('email', {
+          type: 'manual',
+          message:
+            '短時間に複数回送信されています。少し時間をおいてから再度お試しください。',
+        });
+        return;
+      }
 
       if (
         error.message ===
@@ -57,18 +68,6 @@ const EmailChange = () => {
         setError('email', {
           type: 'manual',
           message: 'このメールアドレスは既に登録されています',
-        });
-        return;
-      }
-
-      if (
-        error.message.includes('rate limit') ||
-        error.message.includes('For security purposes')
-      ) {
-        setError('email', {
-          type: 'manual',
-          message:
-            '短時間に複数回送信されています。少し時間をおいてから再度お試しください。',
         });
         return;
       }
