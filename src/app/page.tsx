@@ -13,7 +13,6 @@ const Home = () => {
   useBodyScrollLock({ open: LoginModalOpen });
 
   useEffect(() => {
-    const url = new URL(window.location.href);
     //URLの # 以降を読む
     const hash = decodeURIComponent(window.location.hash);
 

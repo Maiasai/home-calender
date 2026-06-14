@@ -24,12 +24,10 @@ import { InputEmailData } from '../_typs/InputEmailData';
 import PageHeader from '@/app/(main)/recipes/_components/PageHeader';
 import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import ConfirmEmailModal from './ConfirmEmailModal';
 
 const titles = {
   email: 'メールアドレスを入力',
   verifyCode: '認証コード確認',
-  confirmEmail: 'メールアドレス確認',
   newregistration: '新規登録',
   login: 'ログイン',
   resetEmail: 'パスワード再設定',
@@ -83,16 +81,6 @@ const LoginFlowModal = ({
     }
   }, [step]);
 
-  useEffect(() => {
-    if (!open) return;
-    const confirmed = sessionStorage.getItem('emailConfirmed');
-
-    if (confirmed === 'true') {
-      setStep('email');
-      sessionStorage.removeItem('emailConfirmed');
-    }
-  }, []);
-
   //Email管理用
   const {
     register,
@@ -145,11 +133,7 @@ const LoginFlowModal = ({
       alert(data.message);
       return;
     }
-    if (data.needsEmailConfirmation) {
-      setStep('confirmEmail');
 
-      return;
-    }
     alert(isResend ? '認証コードを再送しました' : '認証コードを送信しました');
 
     setStep('verifyCode');
@@ -348,18 +332,6 @@ const LoginFlowModal = ({
                   isValid={isValid}
                 />
               </div>
-            </div>
-          </div>
-        )}
-        {/* メールアドレス確認 */}
-        {step === 'confirmEmail' && (
-          <div className="flex justify-center w-full">
-            <div className="w-[400px] flex flex-col items-center">
-              <div className="w-full">
-                <PageHeader title={titles[step]} />
-              </div>
-
-              <ConfirmEmailModal />
             </div>
           </div>
         )}

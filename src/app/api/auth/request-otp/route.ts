@@ -8,12 +8,6 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
-// Supabase Admin（サーバー専用）Authユーザーが存在するか確認する用
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
-
 export const POST = async (req: NextRequest) => {
   try {
     const { email } = await req.json();
@@ -30,12 +24,6 @@ export const POST = async (req: NextRequest) => {
         { status: 400 },
       );
     }
-    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
-
-    const authUser = usersData.users.find((u) => u.email === email);
-
-    const isNewAuthUser = !authUser;
-
     // ③ SupabaseでOTP送信
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -62,8 +50,6 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json({
       success: true,
-
-      needsEmailConfirmation: isNewAuthUser,
     });
   } catch (error) {
     //想定外エラー
