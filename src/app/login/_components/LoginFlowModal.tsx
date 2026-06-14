@@ -226,10 +226,28 @@ const LoginFlowModal = ({
     }
 
     //パスワードリセットメール送信
-    await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
       //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
       redirectTo: `${window.location.origin}/?reset=1`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
     });
+
+    if (error) {
+      if (
+        error.status === 429 ||
+        error.message.includes('For security purposes') ||
+        error.message.includes('rate limit')
+      ) {
+        alert(
+          '短時間に複数回送信されています。\n少し時間をおいてから再度お試しください。',
+        );
+
+        return;
+      }
+
+      alert('パスワードリセットメールの送信に失敗しました。');
+
+      return;
+    }
 
     alert(
       'パスワードリセット用のメールを送信しました。\nメール内のリンクをクリックして再設定を行ってください。',
