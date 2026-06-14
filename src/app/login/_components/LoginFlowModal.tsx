@@ -209,12 +209,10 @@ const LoginFlowModal = ({
       return;
     }
 
-    const next = encodeURIComponent('/?reset=1');
-
     //パスワードリセットメール送信
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=${next}`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/?reset=1`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
     });
 
     if (error) {
@@ -273,23 +271,18 @@ const LoginFlowModal = ({
   useEffect(() => {
     const handleResetPasswordLink = async () => {
       //ページ開かれたらURLに code か reset=1 があるか見る
-      const params = new URLSearchParams(window.location.search);
-      const reset = params.get('reset');
+      const url = new URL(window.location.href);
+      const hash = decodeURIComponent(window.location.hash).replaceAll(
+        '+',
+        ' ',
+      );
 
-      if (reset !== '1') return;
+      const isReset =
+        url.searchParams.get('reset') === '1' ||
+        hash.includes('type=recovery') ||
+        hash.includes('access_token');
 
-      const openResetModal = () => {
-        setStep('resetPassword');
-        setLoginModalOpen(true);
-      };
-
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((event) => {
-        if (event === 'PASSWORD_RECOVERY') {
-          openResetModal();
-        }
-      });
+      if (!isReset) return;
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -297,19 +290,17 @@ const LoginFlowModal = ({
       const {
         data: { session },
       } = await supabase.auth.getSession();
-
-      if (session) {
-        openResetModal();
-        subscription.unsubscribe();
+      if (!session) {
+        alert(
+          '認証情報が確認できませんでした。\nスマートフォンでは、再設定メールを送信したブラウザと同じブラウザでリンクを開いてください。\nうまくいかない場合は、もう一度パスワード再設定メールを送信してください。',
+        );
         return;
       }
 
-      alert(
-        '認証情報が確認できませんでした。\nスマートフォンでは、再設定メールを送信したブラウザと同じブラウザでリンクを開いてください。\nうまくいかない場合は、もう一度パスワード再設定メールを送信してください。',
-      );
-      subscription.unsubscribe();
+      setStep('resetPassword');
+      setLoginModalOpen(true);
     };
-    //この関数をこれで動かす
+
     handleResetPasswordLink();
   }, [setLoginModalOpen]);
 

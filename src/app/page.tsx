@@ -28,7 +28,11 @@ const Home = () => {
       return;
     }
     // パスワード再設定リンク
-    if (isReset) {
+    if (
+      isReset ||
+      hash.includes('type=recovery') ||
+      hash.includes('access_token')
+    ) {
       setLoginModalOpen(true);
       return;
     }
@@ -48,13 +52,11 @@ const Home = () => {
     ) {
       window.history.replaceState(null, '', window.location.pathname);
 
-      if (!isReset) {
-        alert(
-          'この確認リンクは期限切れ、またはすでに使用済みです。\nすでにメールアドレス変更が完了している場合は、そのままで大丈夫です。\n変更できていない場合は、もう一度メールアドレス変更をお試しください。',
-        );
-      }
+      alert(
+        'この確認リンクは期限切れ、またはすでに使用済みです。\nすでにメールアドレス変更が完了している場合は、そのままで大丈夫です。\n変更できていない場合は、もう一度メールアドレス変更をお試しください。',
+      );
 
-      window.history.replaceState(null, '', window.location.pathname);
+      return;
     }
   }, []);
 
