@@ -52,8 +52,9 @@ const ResetPassword = ({
     const { error } = await supabase.auth.updateUser({
       password: password,
     });
-
     if (error) {
+      console.error('Password update error:', error);
+
       if (error.message.includes('New password should be different')) {
         alert(
           '同じパスワードは使用できません。別のパスワードを入力してください。',
@@ -61,12 +62,14 @@ const ResetPassword = ({
         return;
       }
 
-      console.error(error);
-      alert('パスワードの更新に失敗しました');
+      alert(`パスワードの更新に失敗しました\n\n${error.message}`);
       return;
     }
 
     alert('パスワードを更新しました');
+    // URLの ?reset=1 を消す
+    window.history.replaceState(null, '', window.location.pathname);
+
     setStep('login');
   };
 
