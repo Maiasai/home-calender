@@ -209,10 +209,12 @@ const LoginFlowModal = ({
       return;
     }
 
+    const next = encodeURIComponent('/?reset=1');
+
     //パスワードリセットメール送信
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
-      redirectTo: `${window.location.origin}/?reset=1`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=${next}`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
     });
 
     if (error) {
@@ -289,8 +291,7 @@ const LoginFlowModal = ({
         }
       });
 
-      //0.5秒だけまつ
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       //今すでにSupabaseが持っているセッションを取り出す
       const {
@@ -303,14 +304,10 @@ const LoginFlowModal = ({
         return;
       }
 
-      if (!session) {
-        alert(
-          '認証情報が確認できませんでした。\nスマートフォンでは、再設定メールを送信したブラウザと同じブラウザでリンクを開いてください。\nうまくいかない場合は、もう一度パスワード再設定メールを送信してください。',
-        );
-        return;
-      }
-      setStep('resetPassword');
-      setLoginModalOpen(true);
+      alert(
+        '認証情報が確認できませんでした。\nスマートフォンでは、再設定メールを送信したブラウザと同じブラウザでリンクを開いてください。\nうまくいかない場合は、もう一度パスワード再設定メールを送信してください。',
+      );
+      subscription.unsubscribe();
     };
     //この関数をこれで動かす
     handleResetPasswordLink();
