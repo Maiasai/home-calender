@@ -221,7 +221,7 @@ const LoginFlowModal = ({
   //Reset専用
   const handleResetEmail = async (email: string, result: CheckEmailResult) => {
     if (!result.exists) {
-      alert('未登録です');
+      alert('入力されたアドレスが登録されていません');
       return;
     }
     //Googleアカウントで登録済みのアドレスが入った場合はここでエラーを出す

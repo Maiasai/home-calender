@@ -25,7 +25,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <div className="flex max-w-3xl mx-auto mt-10 gap-1 sm:gap-2">
+    <div className="flex max-w-3xl mx-auto mt-10 mb-10 gap-1 sm:gap-2">
       {/* 左側：サイドメニュー */}
 
       <aside className="w-[100px] sm:w-56 shrink-0">
