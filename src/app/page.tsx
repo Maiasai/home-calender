@@ -20,6 +20,14 @@ const Home = () => {
     const isReset =
       new URL(window.location.href).searchParams.get('reset') === '1';
 
+    if (
+      new URL(window.location.href).searchParams.get('emailChanged') ===
+      'complete'
+    ) {
+      alert('メールアドレス変更が完了しました');
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
     //その中に type=signup が含まれているか確認
     if (hash.includes('type=signup')) {
       //sessionStorage に emailConfirmed=true を保存
@@ -44,13 +52,6 @@ const Home = () => {
       window.history.replaceState(null, '', window.location.pathname);
     }
   }, []);
-  if (
-    new URL(window.location.href).searchParams.get('emailChanged') ===
-    'complete'
-  ) {
-    alert('メールアドレス変更が完了しました');
-    window.history.replaceState(null, '', window.location.pathname);
-  }
 
   return (
     <div>
