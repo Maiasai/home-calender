@@ -48,9 +48,7 @@ const EmailChange = () => {
     );
 
     if (error) {
-      console.log(error);
-      console.log(error.status);
-      console.log(error.message);
+      alert(`status=${error.status}\nmessage=${error.message}`);
 
       if (
         error.message ===
