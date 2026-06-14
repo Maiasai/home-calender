@@ -14,21 +14,22 @@ const Home = () => {
   useEffect(() => {
     //URLの # 以降を読む
     const hash = decodeURIComponent(window.location.hash).replaceAll('+', ' ');
+    const emailChanged = new URL(window.location.href).searchParams.get(
+      'emailChanged',
+    );
 
     //パスワードリセットリンクか判定
 
     const isReset =
       new URL(window.location.href).searchParams.get('reset') === '1';
 
-    if (
-      new URL(window.location.href).searchParams.get('emailChanged') ===
-      'complete'
-    ) {
+    if (emailChanged === 'complete') {
       alert('メールアドレス変更が完了しました');
       window.history.replaceState(null, '', window.location.pathname);
+      return;
     }
 
-    //その中に type=signup が含まれているか確認
+    //新規登録：その中に type=signup が含まれているか確認
     if (hash.includes('type=signup')) {
       //sessionStorage に emailConfirmed=true を保存
       sessionStorage.setItem('emailConfirmed', 'true');
