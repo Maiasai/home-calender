@@ -16,6 +16,11 @@ const Home = () => {
     //URLの # 以降を読む
     const hash = decodeURIComponent(window.location.hash);
 
+    //パスワードリセットリンクか判定
+
+    const isReset =
+      new URL(window.location.href).searchParams.get('reset') === '1';
+
     //その中に type=signup が含まれているか確認
     if (hash.includes('type=signup')) {
       //sessionStorage に emailConfirmed=true を保存
@@ -24,7 +29,7 @@ const Home = () => {
       return;
     }
 
-    //URLの # 以降に以下文言があったらアラート
+    //メール変更：旧メール側の確認完了 *URLの # 以降に以下文言があったらアラート
     if (hash.includes('confirm+link+sent+to+the+other+email')) {
       alert(
         '確認リンクを受け付けました。\nもう一方のメールにも確認リンクが届いている場合は、そちらも開いてください。',
@@ -35,13 +40,20 @@ const Home = () => {
       return;
     }
 
+    //リンク期限切れ・使用済み
     if (
       hash.includes('otp_expired') ||
       hash.includes('Email+link+is+invalid+or+has+expired')
     ) {
-      alert(
-        'この確認リンクは期限切れ、またはすでに使用済みです。\nすでにメールアドレス変更が完了している場合は、そのままで大丈夫です。\n変更できていない場合は、もう一度メールアドレス変更をお試しください。',
-      );
+      if (isReset) {
+        alert(
+          'このパスワード再設定リンクは期限切れ、またはすでに使用済みです。\nもう一度パスワード再設定メールを送信してください。',
+        );
+      } else {
+        alert(
+          'この確認リンクは期限切れ、またはすでに使用済みです。\nすでにメールアドレス変更が完了している場合は、そのままで大丈夫です。\n変更できていない場合は、もう一度メールアドレス変更をお試しください。',
+        );
+      }
 
       window.history.replaceState(null, '', window.location.pathname);
     }
