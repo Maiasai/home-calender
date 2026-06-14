@@ -5,7 +5,6 @@ import Image from 'next/image';
 import LoginFlowModal from './login/_components/LoginFlowModal';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
 import PrimaryButton from '@/components/button/PrimaryButton';
-import { supabase } from '@/lib/supabase';
 
 const Home = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
@@ -14,7 +13,7 @@ const Home = () => {
 
   useEffect(() => {
     //URLの # 以降を読む
-    const hash = decodeURIComponent(window.location.hash);
+    const hash = decodeURIComponent(window.location.hash).replaceAll('+', ' ');
 
     //パスワードリセットリンクか判定
 
@@ -30,7 +29,7 @@ const Home = () => {
     }
 
     //メール変更：旧メール側の確認完了 *URLの # 以降に以下文言があったらアラート
-    if (hash.includes('confirm+link+sent+to+the+other+email')) {
+    if (hash.includes('confirm link sent to the other email')) {
       alert(
         '確認リンクを受け付けました。\nもう一方のメールにも確認リンクが届いている場合は、そちらも開いてください。',
       );
@@ -43,7 +42,7 @@ const Home = () => {
     //リンク期限切れ・使用済み
     if (
       hash.includes('otp_expired') ||
-      hash.includes('Email+link+is+invalid+or+has+expired')
+      hash.includes('Email link is invalid or has expired')
     ) {
       if (!isReset) {
         alert(
@@ -53,56 +52,6 @@ const Home = () => {
 
       window.history.replaceState(null, '', window.location.pathname);
     }
-  }, []);
-
-  useEffect(() => {
-    const syncEmailIfNeeded = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session?.access_token) return;
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      const authEmail = user?.email;
-
-      if (!authEmail) return;
-
-      const res = await fetch('/api/users/me', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (!res.ok) return;
-
-      const meData = await res.json();
-
-      const dbEmail = meData.user?.email;
-
-      // AuthとPrismaが一致してたら何もしない
-      if (dbEmail === authEmail) return;
-
-      const syncRes = await fetch('/api/sync-email', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          email: authEmail,
-        }),
-      });
-
-      if (syncRes.ok) {
-        alert('メールアドレス変更が完了しました');
-      }
-    };
-
-    syncEmailIfNeeded();
   }, []);
 
   return (
