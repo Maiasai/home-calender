@@ -53,6 +53,44 @@ const LoginFlowModal = ({
 
   const [mode, setMode] = useState<Mode>('normal');
 
+  //パスワードリセットモーダル検知(ページを開いたときに自動で走る)
+  //※セッションは再設定メールリンクを踏んだときに、supabaseが本人確認して発行してくれてる。
+  useEffect(() => {
+    const handleResetPasswordLink = async () => {
+      //ページ開かれたらURLに code か reset=1 があるか見る
+      const url = new URL(window.location.href);
+      const hash = decodeURIComponent(window.location.hash).replaceAll(
+        '+',
+        ' ',
+      );
+
+      const isReset =
+        url.searchParams.get('reset') === '1' ||
+        hash.includes('type=recovery') ||
+        hash.includes('access_token');
+
+      if (!isReset) return;
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      //今すでにSupabaseが持っているセッションを取り出す
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        alert(
+          '認証情報が確認できませんでした。\nスマートフォンでは、再設定メールを送信したブラウザと同じブラウザでリンクを開いてください。\nうまくいかない場合は、もう一度パスワード再設定メールを送信してください。',
+        );
+        return;
+      }
+
+      setStep('resetPassword');
+      setLoginModalOpen(true);
+    };
+
+    handleResetPasswordLink();
+  }, [setLoginModalOpen]);
+
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -265,44 +303,6 @@ const LoginFlowModal = ({
     setStep('newregistration');
     setLoginModalOpen(true);
   };
-
-  //パスワードリセットモーダル検知(ページを開いたときに自動で走る)
-  //※セッションは再設定メールリンクを踏んだときに、supabaseが本人確認して発行してくれてる。
-  useEffect(() => {
-    const handleResetPasswordLink = async () => {
-      //ページ開かれたらURLに code か reset=1 があるか見る
-      const url = new URL(window.location.href);
-      const hash = decodeURIComponent(window.location.hash).replaceAll(
-        '+',
-        ' ',
-      );
-
-      const isReset =
-        url.searchParams.get('reset') === '1' ||
-        hash.includes('type=recovery') ||
-        hash.includes('access_token');
-
-      if (!isReset) return;
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      //今すでにSupabaseが持っているセッションを取り出す
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session) {
-        alert(
-          '認証情報が確認できませんでした。\nスマートフォンでは、再設定メールを送信したブラウザと同じブラウザでリンクを開いてください。\nうまくいかない場合は、もう一度パスワード再設定メールを送信してください。',
-        );
-        return;
-      }
-
-      setStep('resetPassword');
-      setLoginModalOpen(true);
-    };
-
-    handleResetPasswordLink();
-  }, [setLoginModalOpen]);
 
   if (!open) return null;
 
