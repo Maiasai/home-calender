@@ -21,10 +21,30 @@ import { DeleteInviteRequest } from '@/app/api/family/invite/_type/DeleteInviteR
 import { Loading } from '@/components/Loading';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { Empty } from '@/components/Empty';
+import FamilyGuideModal from './_components/FamilyGuideModal';
 
 const Share = () => {
   const { token } = useSupabaseSession();
   const { profile, mutateProfile } = useUserProfile(); //ユーザー情報取得
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
+  //初回説明モーダル
+  useEffect(() => {
+    const hideGuide = localStorage.getItem('hideFamilyGuide');
+
+    if (hideGuide !== 'true') {
+      setIsGuideOpen(true);
+    }
+  }, []);
+
+  const handleCloseGuide = () => {
+    if (dontShowAgain) {
+      localStorage.setItem('hideFamilyGuide', 'true');
+    }
+
+    setIsGuideOpen(false);
+  };
 
   //トグルスイッチ
   const [syncEnabled, setSyncEnabled] = useState(false);
@@ -164,6 +184,15 @@ const Share = () => {
 
   return (
     <div className="max-w-3xl mx-auto">
+      {/* 初回モーダル表示 */}
+      {isGuideOpen && (
+        <FamilyGuideModal
+          onClose={handleCloseGuide}
+          dontShowAgain={dontShowAgain}
+          setDontShowAgain={setDontShowAgain}
+        />
+      )}
+
       <nav className="flex justify-center border-b-2 mb-10 px-1">
         アプリの共有設定
       </nav>

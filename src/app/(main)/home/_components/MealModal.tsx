@@ -153,10 +153,12 @@ const MealModal = ({
         </p>
       )}
 
-      <div className="flex items-center justify-center w-full mt-10">
-        {/* 献立がない場合の表示 */}
-        {isEmpty && <p>まだ献立がありません</p>}
-      </div>
+      {/* 献立がない場合の表示 */}
+      {isEmpty && (
+        <div className="flex items-center justify-center w-full mt-20 mb-28">
+          <p>まだ献立がありません</p>
+        </div>
+      )}
 
       <div>
         {/* カテゴリごとにUIを作っている */}
@@ -191,7 +193,7 @@ const MealModal = ({
                       : '/images/noImage.jpg';
 
                   return (
-                    <div key={r.id} className="flex items-center gap-3 mb-3">
+                    <div key={r.id} className="flex items-center gap-3 mb-20">
                       {/* 画像 */}
                       <div className="w-[130px] h-[80px] overflow-hidden relative shrink-0 rounded-lg">
                         <Image
