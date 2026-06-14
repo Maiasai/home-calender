@@ -93,6 +93,7 @@ const ResetPassword = ({
           registersign={registersign}
           watch={watch}
           errorssign={errorssign}
+          title="新しいパスワードを入力"
         />
 
         <div className="flex justify-center">
