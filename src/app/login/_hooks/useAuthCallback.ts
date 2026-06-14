@@ -29,9 +29,6 @@ export const useAuthCallback = () => {
     try {
       //①GoogleがユーザーOK→一時的なコードを発行
       const code = new URL(window.location.href).searchParams.get('code');
-      const next = new URL(window.location.href).searchParams.get('next');
-
-      const isEmailChanged = next?.includes('emailChanged=true');
 
       if (!code) {
         router.push('/');
@@ -70,27 +67,6 @@ export const useAuthCallback = () => {
         return;
       }
 
-      if (isEmailChanged) {
-        await fetch('/api/sync-email', {
-          method: 'PUT',
-
-          headers: {
-            'Content-Type': 'application/json',
-
-            Authorization: `Bearer ${session.access_token}`,
-          },
-
-          body: JSON.stringify({
-            email: user.email,
-          }),
-        });
-
-        alert('メールアドレス変更が完了しました');
-
-        router.push('/');
-
-        return;
-      }
       await fetch('/api/auth/sync-user', {
         //③Supabaseのユーザー → DBに同期
         //※前提としてSupabase Authには自動保存されるが、Prismaで触るSupabase Databaseには保存されない

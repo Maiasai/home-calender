@@ -28,18 +28,6 @@ const Home = () => {
       return;
     }
 
-    //メール変更：旧メール側の確認完了 *URLの # 以降に以下文言があったらアラート
-    if (hash.includes('confirm link sent to the other email')) {
-      window.history.replaceState(null, '', window.location.pathname);
-      alert(
-        '確認リンクを受け付けました。\nもう一方のメールにも確認リンクが届いている場合は、そちらも開いてください。',
-      );
-
-      window.history.replaceState(null, '', window.location.pathname);
-
-      return;
-    }
-
     //リンク期限切れ・使用済み
     if (
       hash.includes('otp_expired') ||
@@ -56,6 +44,13 @@ const Home = () => {
       window.history.replaceState(null, '', window.location.pathname);
     }
   }, []);
+  if (
+    new URL(window.location.href).searchParams.get('emailChanged') ===
+    'complete'
+  ) {
+    alert('メールアドレス変更が完了しました');
+    window.history.replaceState(null, '', window.location.pathname);
+  }
 
   return (
     <div>

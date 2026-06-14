@@ -36,10 +36,10 @@ export const GET = async (request: NextRequest) => {
       });
     }
   }
-
-  if (error) {
-    console.error('OAuth callback error:', error);
-    return NextResponse.redirect(new URL('/', request.url));
+  if (isEmailChanged) {
+    return NextResponse.redirect(
+      new URL('/?emailChanged=complete', request.url),
+    );
   }
 
   return NextResponse.redirect(new URL(next, request.url));
