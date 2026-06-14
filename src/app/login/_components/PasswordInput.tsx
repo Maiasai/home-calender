@@ -11,8 +11,14 @@ type Props = {
   registersign: UseFormRegister<SignupData>;
   watch: UseFormWatch<SignupData>;
   errorssign: FieldErrors<SignupData>;
+  title?: string;
 };
-const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
+const PasswordInput = ({
+  registersign,
+  watch,
+  errorssign,
+  title = 'パスワードを入力',
+}: Props) => {
   const [showPassword, setShowPassword] = useState(false); //パスワード入力欄を 表示/非表示 にする boolean
   const [showConfirm, setShowConfirm] = useState(false);
   const password = watch('password'); // password の値を常に取得
@@ -20,7 +26,7 @@ const PasswordInput = ({ registersign, watch, errorssign }: Props) => {
   return (
     <div>
       <div className="flex items-center justify-center mb-2 text-base mt-8 font-semibold">
-        <label>新しく設定するパスワードを入力</label>
+        <label>{title}</label>
       </div>
       <div className="relative mb-2">
         <input
