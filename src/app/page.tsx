@@ -30,6 +30,7 @@ const Home = () => {
 
     //メール変更：旧メール側の確認完了 *URLの # 以降に以下文言があったらアラート
     if (hash.includes('confirm link sent to the other email')) {
+      window.history.replaceState(null, '', window.location.pathname);
       alert(
         '確認リンクを受け付けました。\nもう一方のメールにも確認リンクが届いている場合は、そちらも開いてください。',
       );
@@ -44,6 +45,8 @@ const Home = () => {
       hash.includes('otp_expired') ||
       hash.includes('Email link is invalid or has expired')
     ) {
+      window.history.replaceState(null, '', window.location.pathname);
+
       if (!isReset) {
         alert(
           'この確認リンクは期限切れ、またはすでに使用済みです。\nすでにメールアドレス変更が完了している場合は、そのままで大丈夫です。\n変更できていない場合は、もう一度メールアドレス変更をお試しください。',
