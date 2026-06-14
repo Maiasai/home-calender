@@ -13,19 +13,34 @@ const Home = () => {
   useBodyScrollLock({ open: LoginModalOpen });
 
   useEffect(() => {
+    //URLの # 以降を読む
     const hash = decodeURIComponent(window.location.hash);
 
+    //その中に type=signup が含まれているか確認
     if (hash.includes('type=signup')) {
+      //sessionStorage に emailConfirmed=true を保存
       sessionStorage.setItem('emailConfirmed', 'true');
       setLoginModalOpen(true);
       return;
     }
 
-    if (
-      hash.includes('Please proceed to confirm link sent to the other email')
-    ) {
+    //URLの # 以降に以下文言があったらアラート
+    if (hash.includes('confirm+link+sent+to+the+other+email')) {
       alert(
         '確認リンクを受け付けました。\nもう一方のメールにも確認リンクが届いている場合は、そちらも開いてください。',
+      );
+
+      window.history.replaceState(null, '', window.location.pathname);
+
+      return;
+    }
+
+    if (
+      hash.includes('otp_expired') ||
+      hash.includes('Email+link+is+invalid+or+has+expired')
+    ) {
+      alert(
+        'この確認リンクは期限切れ、またはすでに使用済みです。\nすでにメールアドレス変更が完了している場合は、そのままで大丈夫です。\n変更できていない場合は、もう一度メールアドレス変更をお試しください。',
       );
 
       window.history.replaceState(null, '', window.location.pathname);
@@ -81,6 +96,7 @@ const Home = () => {
 
     syncEmailIfNeeded();
   }, []);
+
   return (
     <div>
       {/* 背景画像 */}

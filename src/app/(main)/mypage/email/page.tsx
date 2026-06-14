@@ -57,6 +57,25 @@ const EmailChange = () => {
 
           message: 'このメールアドレスは既に登録されています',
         });
+        if (
+          error.message.includes('rate limit') ||
+          error.message.includes('For security purposes')
+        ) {
+          setError('email', {
+            type: 'manual',
+
+            message:
+              '短時間に複数回送信されています。少し時間をおいてから再度お試しください。',
+          });
+
+          return;
+        }
+
+        setError('email', {
+          type: 'manual',
+
+          message: 'メール送信に失敗しました。時間をおいて再度お試しください。',
+        });
 
         return;
       }
