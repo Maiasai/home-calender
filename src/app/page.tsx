@@ -13,7 +13,6 @@ const Home = () => {
 
   useEffect(() => {
     //URLの # 以降を読む
-    const url = new URL(window.location.href);
     const hash = decodeURIComponent(window.location.hash).replaceAll('+', ' ');
     const emailChanged = new URL(window.location.href).searchParams.get(
       'emailChanged',
