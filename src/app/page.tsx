@@ -13,19 +13,24 @@ const Home = () => {
 
   useEffect(() => {
     //URLの # 以降を読む
+    const url = new URL(window.location.href);
     const hash = decodeURIComponent(window.location.hash).replaceAll('+', ' ');
     const emailChanged = new URL(window.location.href).searchParams.get(
       'emailChanged',
     );
 
     //パスワードリセットリンクか判定
-
     const isReset =
       new URL(window.location.href).searchParams.get('reset') === '1';
 
     if (emailChanged === 'complete') {
       alert('メールアドレス変更が完了しました');
       window.history.replaceState(null, '', window.location.pathname);
+      return;
+    }
+    // パスワード再設定リンク
+    if (isReset) {
+      setLoginModalOpen(true);
       return;
     }
 
