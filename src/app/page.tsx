@@ -13,6 +13,7 @@ const Home = () => {
   useBodyScrollLock({ open: LoginModalOpen });
 
   useEffect(() => {
+    const url = new URL(window.location.href);
     //URLの # 以降を読む
     const hash = decodeURIComponent(window.location.hash);
 
@@ -45,11 +46,7 @@ const Home = () => {
       hash.includes('otp_expired') ||
       hash.includes('Email+link+is+invalid+or+has+expired')
     ) {
-      if (isReset) {
-        alert(
-          'このパスワード再設定リンクは期限切れ、またはすでに使用済みです。\nもう一度パスワード再設定メールを送信してください。',
-        );
-      } else {
+      if (!isReset) {
         alert(
           'この確認リンクは期限切れ、またはすでに使用済みです。\nすでにメールアドレス変更が完了している場合は、そのままで大丈夫です。\n変更できていない場合は、もう一度メールアドレス変更をお試しください。',
         );
