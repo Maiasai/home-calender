@@ -169,7 +169,7 @@ const IngredientList = ({
 
                       if (parsed < 0) return '0以上で入力してください';
 
-                      if (parsed > 500) return '500以下で入力してください';
+                      if (parsed > 1000) return '1000以下で入力してください';
 
                       return true;
                     },
