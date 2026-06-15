@@ -75,7 +75,7 @@ const GroupOwner = ({
     append({ email: '' }); //invites.push({ email: "" })してるのと同じ→invites: [{ email: '' },{ email: "" }]
   };
 
-  //参加中メンバー
+  //招待中メンバー
   const pendingInvites = invites ?? [];
 
   //参加中メンバー削除処理

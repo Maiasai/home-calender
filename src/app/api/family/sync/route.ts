@@ -21,6 +21,35 @@ export const PATCH = async (request: NextRequest) => {
     const currentFamilyId = dbUser.activeFamilyId;
     const homeFamilyId = dbUser.homeFamilyId;
 
+    if (!syncEnabled) {
+      const [memberCount, inviteCount] = await Promise.all([
+        prisma.familyMember.count({
+          where: {
+            familyId: currentFamilyId,
+            userId: {
+              not: dbUser.id,
+            },
+          },
+        }),
+
+        prisma.familyInvite.count({
+          where: {
+            familyId: currentFamilyId,
+          },
+        }),
+      ]);
+
+      if (memberCount > 0 || inviteCount > 0) {
+        return NextResponse.json(
+          {
+            message:
+              '参加中または招待中のメンバーがいるため、同期をOFFにできません。先にメンバー削除または招待の取り消しをしてください。',
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     const targetFamilyId = syncEnabled
       ? currentFamilyId //ON →　現在の共有状態維持
       : homeFamilyId; //OFF →　自分の元の世界に戻す

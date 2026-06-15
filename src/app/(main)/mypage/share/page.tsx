@@ -164,7 +164,7 @@ const Share = () => {
       return;
     }
 
-    await fetch('/api/family/sync', {
+    const res = await fetch('/api/family/sync', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -174,6 +174,12 @@ const Share = () => {
         syncEnabled: next,
       }),
     });
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || '同期設定の変更に失敗しました');
+      return;
+    }
     setSyncEnabled(next);
     await mutateowner();
   };
