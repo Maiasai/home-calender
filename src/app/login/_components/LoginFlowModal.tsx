@@ -237,7 +237,7 @@ const LoginFlowModal = ({
     //パスワードリセットメール送信
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       //window.location はブラウザが持ってる情報.今アクセスしているURLの情報全部が入ってる。
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/?reset=1`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/recovery`, //redirectTo「メールリンクを押した後、どの画面に戻すか」
     });
 
     if (error) {
