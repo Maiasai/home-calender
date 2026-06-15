@@ -9,14 +9,14 @@ const RecoveryPage = () => {
 
   useEffect(() => {
     const handleRecovery = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
       const url = new URL(window.location.href);
 
       const code = url.searchParams.get('code');
 
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+        await new Promise((resolve) => setTimeout(resolve, 1500));
 
         if (error) {
           console.error('Recovery exchange error:', error);
