@@ -10,48 +10,27 @@ const RecoveryPage = () => {
   useEffect(() => {
     const handleRecovery = async () => {
       const url = new URL(window.location.href);
-      const hash = decodeURIComponent(window.location.hash).replaceAll(
-        '+',
-        ' ',
-      );
 
-      const code = url.searchParams.get('code');
-      const errorCode = url.searchParams.get('error_code');
+      const tokenHash = url.searchParams.get('token_hash');
+      const type = url.searchParams.get('type');
 
-      if (
-        errorCode === 'otp_expired' ||
-        hash.includes('otp_expired') ||
-        hash.includes('Email link is invalid or has expired')
-      ) {
+      if (!tokenHash || type !== 'recovery') {
         alert(
-          'この再設定リンクは期限切れ、またはすでに使用済みです。\nもう一度パスワード再設定メールを送信してください。',
+          '再設定リンクが正しくありません。\nもう一度パスワード再設定メールを送信してください。',
         );
         router.replace('/');
         return;
       }
 
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: 'recovery',
+      });
 
-        if (error) {
-          console.error('Recovery exchange error:', error);
-          alert(
-            '認証情報が確認できませんでした。\nもう一度パスワード再設定メールを送信してください。',
-          );
-          router.replace('/');
-          return;
-        }
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session) {
+      if (error) {
+        console.error('Recovery verify error:', error);
         alert(
-          '認証情報が確認できませんでした。\nメールアプリ内ブラウザではなく、SafariやChromeで最新の再設定リンクを1回だけ開いてください。',
+          'この再設定リンクは期限切れ、またはすでに使用済みです。\nもう一度パスワード再設定メールを送信してください。',
         );
         router.replace('/');
         return;
