@@ -12,7 +12,6 @@ const RecoveryPage = () => {
       const url = new URL(window.location.href);
 
       const tokenHash = url.searchParams.get('token_hash');
-      const type = url.searchParams.get('type');
 
       if (!tokenHash) {
         alert(
