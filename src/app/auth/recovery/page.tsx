@@ -13,10 +13,13 @@ const RecoveryPage = () => {
 
       const code = url.searchParams.get('code');
 
+      console.log('recovery href:', window.location.href);
+      console.log('recovery search:', window.location.search);
+      console.log('recovery hash:', window.location.hash);
+      console.log('recovery code:', code);
+
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-        await new Promise((resolve) => setTimeout(resolve, 1500));
 
         if (error) {
           console.error('Recovery exchange error:', error);
@@ -27,6 +30,14 @@ const RecoveryPage = () => {
           return;
         }
       }
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      console.log('recovery session:', session);
 
       router.replace('/?reset=1');
     };
