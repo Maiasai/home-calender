@@ -2,7 +2,10 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
-  if (req.nextUrl.pathname.startsWith('/auth/callback')) {
+  if (
+    req.nextUrl.pathname.startsWith('/auth/callback') ||
+    req.nextUrl.pathname.startsWith('/auth/recovery')
+  ) {
     return NextResponse.next();
   }
 
@@ -38,5 +41,6 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|favicon.ico|auth/callback|login).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|auth/callback|auth/recovery|login).*)',
   ],
 };
