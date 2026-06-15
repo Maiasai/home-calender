@@ -74,7 +74,7 @@ const Header = () => {
           </Link>
 
           {/* スマホ用通知アイコン */}
-          <div className="absolute top-7 right-12 z-20 md:hidden">
+          <div className="absolute top-7 right-14 z-20 md:hidden">
             <Link href="/notifications" className="relative block">
               <Image
                 src="/images/bell.png"
