@@ -13,11 +13,6 @@ const RecoveryPage = () => {
 
       const code = url.searchParams.get('code');
 
-      console.log('recovery href:', window.location.href);
-      console.log('recovery search:', window.location.search);
-      console.log('recovery hash:', window.location.hash);
-      console.log('recovery code:', code);
-
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -37,8 +32,13 @@ const RecoveryPage = () => {
         data: { session },
       } = await supabase.auth.getSession();
 
-      console.log('recovery session:', session);
-
+      if (!session) {
+        alert(
+          '認証情報が確認できませんでした。\nメールアプリ内ブラウザではなく、SafariやChromeで最新の再設定リンクを1回だけ開いてください。',
+        );
+        router.replace('/');
+        return;
+      }
       router.replace('/?reset=1');
     };
 
