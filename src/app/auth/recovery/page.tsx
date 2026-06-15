@@ -14,7 +14,7 @@ const RecoveryPage = () => {
       const tokenHash = url.searchParams.get('token_hash');
       const type = url.searchParams.get('type');
 
-      if (!tokenHash || type !== 'recovery') {
+      if (!tokenHash) {
         alert(
           '再設定リンクが正しくありません。\nもう一度パスワード再設定メールを送信してください。',
         );
