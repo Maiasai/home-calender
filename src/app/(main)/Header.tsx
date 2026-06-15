@@ -62,7 +62,7 @@ const Header = () => {
           )}
         </div>
 
-        <div className="relative justify-between pt-4 pl-4 md:justify-center w-full shrink-0">
+        <div className="relative  flex justify-between pt-4 pl-4 md:justify-center w-full shrink-0">
           <Link href="/home">
             <Image
               src="/images/rogo.png"
@@ -74,7 +74,7 @@ const Header = () => {
           </Link>
 
           {/* スマホ用通知アイコン */}
-          <div className="absolute top-7 right-12 z-50 md:hidden">
+          <div className="absolute top-7 right-12 z-20 md:hidden">
             <Link href="/notifications" className="relative block">
               <Image
                 src="/images/bell.png"
