@@ -85,7 +85,7 @@ const RecipesPage = () => {
         mutate={mutate}
       />
 
-      <div className="max-w-3xl mx-auto p-2">
+      <div className="max-w-3xl mx-auto p-2  mb-10">
         <nav className="flex justify-center border-b-2 mb-4">レシピ一覧</nav>
 
         {/* 検索・絞り込み項目 */}

@@ -180,7 +180,7 @@ const TopPage = () => {
   if (error) return <ErrorMessage />;
 
   return (
-    <div className="max-w-3xl mx-auto sm:p-2">
+    <div className="max-w-3xl mx-auto sm:p-2 mb-10">
       <nav className="flex justify-center border-b-2 max mb-4">
         献立カレンダー
       </nav>
