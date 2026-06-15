@@ -9,6 +9,8 @@ const RecoveryPage = () => {
 
   useEffect(() => {
     const handleRecovery = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       const url = new URL(window.location.href);
 
       const code = url.searchParams.get('code');
