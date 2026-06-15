@@ -41,7 +41,11 @@ const RecoveryPage = () => {
     handleRecovery();
   }, [router]);
 
-  return <div>パスワード再設定画面を開いています...</div>;
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      パスワード再設定画面を開いています...
+    </div>
+  );
 };
 
 export default RecoveryPage;
