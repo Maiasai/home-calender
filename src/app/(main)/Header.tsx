@@ -62,28 +62,26 @@ const Header = () => {
           )}
         </div>
 
-        <div className="flex justify-between pt-4 pl-4 md:justify-center w-full shrink-0">
+        <div className="relative justify-between pt-4 pl-4 md:justify-center w-full shrink-0">
           <Link href="/home">
             <Image
               src="/images/rogo.png"
               alt="サイトのロゴ"
               width={233}
               height={51}
+              className="min-w-[233px] min-h-[51px]"
             />
           </Link>
 
           {/* スマホ用通知アイコン */}
-          <div className="flex items-center space-x-10 mr-8 mb-4  md:hidden ">
-            <Link
-              href="/notifications"
-              className="relative inline-block mt-3 ml-8"
-            >
+          <div className="absolute top-7 right-12 z-50 md:hidden">
+            <Link href="/notifications" className="relative block">
               <Image
                 src="/images/bell.png"
                 alt="通知アイコン"
                 width={30}
-                height={20}
-                className="w-6 h-6 md:w-[30px] md:h-[30px]"
+                height={30}
+                className="w-[26px] h-[26px] min-w-[26px] min-h-[26px]"
               />
               {hasUnreadNonfications && (
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
