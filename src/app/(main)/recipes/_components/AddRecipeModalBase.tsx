@@ -34,7 +34,7 @@ const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="relative bg-white p-6 min-h-[240px] min-w-[200px] rounded-lg">
+      <div className="relative bg-white p-2 min-h-[240px] min-w-[200px] rounded-lg m-1">
         {/* ヘッダーを props で制御 */}
         <PageHeader
           title={titles[step]} //（例）step="URL"　→ url入ってきたらtitlesのurlテキストがヘッダーに設定

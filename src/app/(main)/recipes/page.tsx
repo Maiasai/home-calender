@@ -109,7 +109,7 @@ const RecipesPage = () => {
         <CategoryFilterButtons category={category} setCategory={setCategory} />
 
         {/* レシピ部分だけスクロール */}
-        <div className="max-h-[60vh] overflow-y-auto mt-3">
+        <div className="max-h-[40vh] md:max-h-[60vh]  overflow-y-auto mt-3">
           {/* 一括操作モード */}
           {isBulkMode && (
             <div className="flex items-center mb-5 gap-3">

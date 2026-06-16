@@ -103,78 +103,79 @@ const MealModalBase = ({
     <>
       <div className="fixed inset-0 bg-black/40 flex  items-center justify-center">
         {/* モーダル内 */}
-        <div className="relative bg-white rounded-lg w-full max-w-[480px] max-h-[90vh] overflow-y-auto">
-          <div className="sticky top-0 z-30 bg-white px-2 pt-6 pb-3">
-            <div>
-              <PageHeader
-                title={baseTitle}
-                showBack={step !== 'select'}
-                onBack={() => setStep('select')}
-                onClose={handleClose}
-                showClose
-              />
+        <div className="relative bg-white rounded-lg w-full max-w-[480px] max-h-[90vh] mx-1 p-2 overflow-hidden">
+          <div>
+            <PageHeader
+              title={baseTitle}
+              showBack={step !== 'select'}
+              onBack={() => setStep('select')}
+              onClose={handleClose}
+              showClose
+            />
 
-              <h2 className="flex justify-center">{displayDate} の献立</h2>
-            </div>
-
-            {step === 'select' && ( //ボタンが押されたらstep変更を依頼
-              <MealModalHeader
-                selectedRecipes={selectedRecipes}
-                onSelect={setStep}
-                onClose={onClose}
-                selectedDate={selectedDate}
-                isDisabled={isDisabled}
-                hasUnselected={hasUnselected}
-                mutate={mutate}
-                mode={mode}
-                targetMeal={targetMeal}
-              />
-            )}
-
-            {step === 'customize' && ( //ボタンが押されたらstep変更を依頼
-              <CustomizeViewHeader
-                isDisabled={isDisabled}
-                isEmpty={isEmpty}
-                hasUnselected={hasUnselected}
-                onBack={() => setStep('select')}
-              />
-            )}
-
-            {step === 'recipeSelect' && ( //ボタンが押されたらstep変更を依頼
-              <MealRecipeSelectHeader
-                inputKeyword={inputKeyword}
-                setInputKeyword={setInputKeyword}
-                setKeyword={setKeyword}
-                favoriteFilter={favoriteFilter}
-                setFavoriteFilter={setFavoriteFilter}
-                cookedFilter={cookedFilter}
-                setCookedFilter={setCookedFilter}
-                category={category}
-                setCategory={setCategory}
-                selectedRecipes={selectedRecipes}
-                onBack={() => setStep('select')}
-              />
-            )}
+            <h2 className="flex justify-center">{displayDate} の献立</h2>
           </div>
 
           {step === 'select' && ( //ボタンが押されたらstep変更を依頼
-            <MealModal selectedRecipes={selectedRecipes} isEmpty={isEmpty} />
-          )}
-
-          {step === 'recipeSelect' && ( //ボタンが押されたらstep変更を依頼
-            <MealRecipeSelect
-              recipes={recipes}
+            <MealModalHeader
               selectedRecipes={selectedRecipes}
-              setSelectedRecipes={setSelectedRecipes}
+              onSelect={setStep}
+              onClose={onClose}
+              selectedDate={selectedDate}
+              isDisabled={isDisabled}
+              hasUnselected={hasUnselected}
+              mutate={mutate}
+              mode={mode}
+              targetMeal={targetMeal}
             />
           )}
 
           {step === 'customize' && ( //ボタンが押されたらstep変更を依頼
-            <CustomizeView
-              selectedRecipes={selectedRecipes}
-              setSelectedRecipes={setSelectedRecipes}
+            <CustomizeViewHeader
+              isDisabled={isDisabled}
+              isEmpty={isEmpty}
+              hasUnselected={hasUnselected}
+              onBack={() => setStep('select')}
             />
           )}
+
+          {step === 'recipeSelect' && ( //ボタンが押されたらstep変更を依頼
+            <MealRecipeSelectHeader
+              inputKeyword={inputKeyword}
+              setInputKeyword={setInputKeyword}
+              setKeyword={setKeyword}
+              favoriteFilter={favoriteFilter}
+              setFavoriteFilter={setFavoriteFilter}
+              cookedFilter={cookedFilter}
+              setCookedFilter={setCookedFilter}
+              category={category}
+              setCategory={setCategory}
+              selectedRecipes={selectedRecipes}
+              onBack={() => setStep('select')}
+            />
+          )}
+
+          {/* ここだけスクロール */}
+          <div className="overflow-y-auto max-h-[calc(80vh-220px)] px-2 pb-6">
+            {step === 'select' && ( //ボタンが押されたらstep変更を依頼
+              <MealModal selectedRecipes={selectedRecipes} isEmpty={isEmpty} />
+            )}
+
+            {step === 'recipeSelect' && ( //ボタンが押されたらstep変更を依頼
+              <MealRecipeSelect
+                recipes={recipes}
+                selectedRecipes={selectedRecipes}
+                setSelectedRecipes={setSelectedRecipes}
+              />
+            )}
+
+            {step === 'customize' && ( //ボタンが押されたらstep変更を依頼
+              <CustomizeView
+                selectedRecipes={selectedRecipes}
+                setSelectedRecipes={setSelectedRecipes}
+              />
+            )}
+          </div>
         </div>
       </div>
     </>

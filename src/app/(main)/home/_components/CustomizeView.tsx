@@ -45,7 +45,7 @@ const CustomizeView = ({ selectedRecipes, setSelectedRecipes }: Props) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4 mt-2">
         {selectedRecipes?.map((recipe) => (
           <div key={recipe.id} className="flex items-center gap-4">
             {/* 画像 */}
@@ -79,7 +79,7 @@ const CustomizeView = ({ selectedRecipes, setSelectedRecipes }: Props) => {
                     {type === 'UNSELECTED' && '未'}
                     {type === 'BREAKFAST' && '朝'}
                     {type === 'LUNCH' && '昼'}
-                    {type === 'DINNER' && '晩'}
+                    {type === 'DINNER' && '夜'}
                   </label>
                 ))}
               </div>

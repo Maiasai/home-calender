@@ -48,8 +48,8 @@ const CustomizeViewHeader = ({
           {isEmpty && <p>まだ献立がありません</p>}
 
           {!isEmpty && (
-            <p className="text-xs text-red-500">
-              ※朝・昼・晩それぞれ最大3品まで選択できます
+            <p className="text-xs text-red-500 mb-2">
+              ※朝・昼・夜それぞれ最大3品まで選択できます
             </p>
           )}
         </div>
