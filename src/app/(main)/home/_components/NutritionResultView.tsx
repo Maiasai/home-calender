@@ -72,7 +72,8 @@ const NutritionResultView = ({ result, onClose, displayDate }: Props) => {
             出典：文部科学省 食品成分データベース
           </p>
           <p className="text-xs text-gray-500 mt-2">
-            ※ 一部の食材は表記ゆれのため、正確に判定できない場合があります。
+            ※ 栄養分析は登録された材料名と分量をもとに判定しています。
+            食材名の表記ゆれや未対応の食材、分量が未入力の場合は正しく分析できないことがあります。
           </p>
         </div>
       </div>
