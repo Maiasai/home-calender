@@ -17,6 +17,9 @@ import { Meal } from '../_typs/Meal';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import { ErrorMessage } from '@/components/ErrorMessage';
+import MealModalHeader from './MealModalHeader';
+import CustomizeViewHeader from './CustomizeViewHeader';
+import MealRecipeSelectHeader from './MealRecipeSelectHeader';
 
 type Props = {
   open: boolean;
@@ -100,49 +103,69 @@ const MealModalBase = ({
     <>
       <div className="fixed inset-0 bg-black/40 flex  items-center justify-center">
         {/* モーダル内 */}
-        <div className="relative bg-white rounded-lg w-full max-w-[480px] max-h-[90vh] overflow-y-auto p-6">
-          <div>
-            <PageHeader
-              title={baseTitle}
-              showBack={step !== 'select'}
-              onBack={() => setStep('select')}
-              onClose={handleClose}
-              showClose
-            />
+        <div className="relative bg-white rounded-lg w-full max-w-[480px] max-h-[90vh] overflow-y-auto">
+          <div className="sticky top-0 z-30 bg-white px-2 pt-6 pb-3">
+            <div>
+              <PageHeader
+                title={baseTitle}
+                showBack={step !== 'select'}
+                onBack={() => setStep('select')}
+                onClose={handleClose}
+                showClose
+              />
 
-            <h2 className="flex justify-center">{displayDate} の献立</h2>
+              <h2 className="flex justify-center">{displayDate} の献立</h2>
+            </div>
+
+            {step === 'select' && ( //ボタンが押されたらstep変更を依頼
+              <MealModalHeader
+                selectedRecipes={selectedRecipes}
+                onSelect={setStep}
+                onClose={onClose}
+                selectedDate={selectedDate}
+                isDisabled={isDisabled}
+                hasUnselected={hasUnselected}
+                mutate={mutate}
+                mode={mode}
+                targetMeal={targetMeal}
+              />
+            )}
+
+            {step === 'customize' && ( //ボタンが押されたらstep変更を依頼
+              <CustomizeViewHeader
+                isDisabled={isDisabled}
+                isEmpty={isEmpty}
+                hasUnselected={hasUnselected}
+                onBack={() => setStep('select')}
+              />
+            )}
+
+            {step === 'recipeSelect' && ( //ボタンが押されたらstep変更を依頼
+              <MealRecipeSelectHeader
+                inputKeyword={inputKeyword}
+                setInputKeyword={setInputKeyword}
+                setKeyword={setKeyword}
+                favoriteFilter={favoriteFilter}
+                setFavoriteFilter={setFavoriteFilter}
+                cookedFilter={cookedFilter}
+                setCookedFilter={setCookedFilter}
+                category={category}
+                setCategory={setCategory}
+                selectedRecipes={selectedRecipes}
+                onBack={() => setStep('select')}
+              />
+            )}
           </div>
 
           {step === 'select' && ( //ボタンが押されたらstep変更を依頼
-            <MealModal
-              selectedRecipes={selectedRecipes}
-              onSelect={setStep}
-              onClose={onClose}
-              selectedDate={selectedDate}
-              isDisabled={isDisabled}
-              hasUnselected={hasUnselected}
-              isEmpty={isEmpty}
-              mutate={mutate}
-              mode={mode}
-              targetMeal={targetMeal}
-            />
+            <MealModal selectedRecipes={selectedRecipes} isEmpty={isEmpty} />
           )}
 
           {step === 'recipeSelect' && ( //ボタンが押されたらstep変更を依頼
             <MealRecipeSelect
               recipes={recipes}
-              inputKeyword={inputKeyword}
-              setInputKeyword={setInputKeyword}
-              setKeyword={setKeyword}
-              favoriteFilter={favoriteFilter}
-              setFavoriteFilter={setFavoriteFilter}
-              cookedFilter={cookedFilter}
-              setCookedFilter={setCookedFilter}
-              category={category}
-              setCategory={setCategory}
               selectedRecipes={selectedRecipes}
               setSelectedRecipes={setSelectedRecipes}
-              onBack={() => setStep('select')}
             />
           )}
 
@@ -150,10 +173,6 @@ const MealModalBase = ({
             <CustomizeView
               selectedRecipes={selectedRecipes}
               setSelectedRecipes={setSelectedRecipes}
-              isDisabled={isDisabled}
-              hasUnselected={hasUnselected}
-              onBack={() => setStep('select')}
-              isEmpty={isEmpty}
             />
           )}
         </div>

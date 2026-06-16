@@ -84,30 +84,34 @@ const RecipesPage = () => {
         onClose={() => setRecipeModalOpen(false)}
         mutate={mutate}
       />
-
       <div className="max-w-3xl mx-auto p-2  mb-10">
-        <nav className="flex justify-center border-b-2 mb-4">レシピ一覧</nav>
+        <div className="sticky top-[56px] md:top-[80px] z-20 bg-white pb-3">
+          <nav className="flex justify-center border-b-2 mb-4">レシピ一覧</nav>
 
-        {/* 検索・絞り込み項目 */}
-        <SearchBar
-          inputKeyword={inputKeyword}
-          setInputKeyword={setInputKeyword}
-          setKeyword={setKeyword}
-          setRecipeModalOpen={setRecipeModalOpen}
-          setIsBulkMode={setIsBulkMode}
-          isBulkMode={isBulkMode}
-        />
+          {/* 検索・絞り込み項目 */}
+          <SearchBar
+            inputKeyword={inputKeyword}
+            setInputKeyword={setInputKeyword}
+            setKeyword={setKeyword}
+            setRecipeModalOpen={setRecipeModalOpen}
+            setIsBulkMode={setIsBulkMode}
+            isBulkMode={isBulkMode}
+          />
 
-        {/* お気に入りと作ったことある絞り込み */}
-        <FilterPanel
-          favoriteFilter={favoriteFilter}
-          setFavoriteFilter={setFavoriteFilter}
-          cookedFilter={cookedFilter}
-          setCookedFilter={setCookedFilter}
-        />
+          {/* お気に入りと作ったことある絞り込み */}
+          <FilterPanel
+            favoriteFilter={favoriteFilter}
+            setFavoriteFilter={setFavoriteFilter}
+            cookedFilter={cookedFilter}
+            setCookedFilter={setCookedFilter}
+          />
 
-        {/* カテゴリ絞り込み※クリック時にセット */}
-        <CategoryFilterButtons category={category} setCategory={setCategory} />
+          {/* カテゴリ絞り込み※クリック時にセット */}
+          <CategoryFilterButtons
+            category={category}
+            setCategory={setCategory}
+          />
+        </div>
 
         {/* 一括操作モード */}
         {isBulkMode && (
@@ -154,7 +158,7 @@ const RecipesPage = () => {
         )}
 
         {/* レシピカード */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-2">
           {recipes?.map((recipe) => (
             <RecipeCard
               key={recipe.id}

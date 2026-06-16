@@ -40,7 +40,7 @@ const RecipeCard = ({
       : '/images/noImage.jpg';
 
   return (
-    <div className="relative mb-8">
+    <div className="relative mb-4">
       {isBulkMode && (
         <input
           type="checkbox"
