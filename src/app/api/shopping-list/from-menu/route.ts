@@ -148,8 +148,9 @@ export const POST = async (request: NextRequest) => {
         const existing = await prisma.shoppingItem.findFirst({
           where: {
             userId: user.id,
+            familyId,
             name: item.name.trim(),
-            unitId: item.unitId,
+            ...(item.unitId ? { unitId: item.unitId } : { unitId: null }),
           },
         });
 

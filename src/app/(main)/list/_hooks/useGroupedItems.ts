@@ -10,7 +10,9 @@ export const createGroupedItems = (data: Shoppinglist[]): GroupedItem[] => {
 
   data.forEach((item) => {
     //同じもの判定用ラベル（keyに名前 or id 入れてる）
-    const key = item.name.trim() ? item.name : item.id; //名前が空欄だったらidをkeyとする
+    const key = item.name.trim()
+      ? `${item.name.trim()}-${item.unit?.id ?? 'no-unit'}`
+      : item.id; //名前が空欄だったらidをkeyとする
     const existing = map.get(key);
 
     if (!existing) {
