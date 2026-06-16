@@ -85,90 +85,88 @@ const RecipesPage = () => {
         mutate={mutate}
       />
       <div className="max-w-3xl mx-auto p-2  mb-10">
-        <div className="sticky top-[56px] md:top-[80px] z-20 bg-white pb-3">
-          <nav className="flex justify-center border-b-2 mb-4">レシピ一覧</nav>
+        <nav className="flex justify-center border-b-2 mb-4">レシピ一覧</nav>
 
-          {/* 検索・絞り込み項目 */}
-          <SearchBar
-            inputKeyword={inputKeyword}
-            setInputKeyword={setInputKeyword}
-            setKeyword={setKeyword}
-            setRecipeModalOpen={setRecipeModalOpen}
-            setIsBulkMode={setIsBulkMode}
-            isBulkMode={isBulkMode}
-          />
+        {/* 検索・絞り込み項目 */}
+        <SearchBar
+          inputKeyword={inputKeyword}
+          setInputKeyword={setInputKeyword}
+          setKeyword={setKeyword}
+          setRecipeModalOpen={setRecipeModalOpen}
+          setIsBulkMode={setIsBulkMode}
+          isBulkMode={isBulkMode}
+        />
 
-          {/* お気に入りと作ったことある絞り込み */}
-          <FilterPanel
-            favoriteFilter={favoriteFilter}
-            setFavoriteFilter={setFavoriteFilter}
-            cookedFilter={cookedFilter}
-            setCookedFilter={setCookedFilter}
-          />
+        {/* お気に入りと作ったことある絞り込み */}
+        <FilterPanel
+          favoriteFilter={favoriteFilter}
+          setFavoriteFilter={setFavoriteFilter}
+          cookedFilter={cookedFilter}
+          setCookedFilter={setCookedFilter}
+        />
 
-          {/* カテゴリ絞り込み※クリック時にセット */}
-          <CategoryFilterButtons
-            category={category}
-            setCategory={setCategory}
-          />
-        </div>
+        {/* カテゴリ絞り込み※クリック時にセット */}
+        <CategoryFilterButtons category={category} setCategory={setCategory} />
 
-        {/* 一括操作モード */}
-        {isBulkMode && (
-          <div className="flex items-center mb-5 gap-3">
-            <div className="text-sm text-gray200">
-              {selectedIds.length}件選択中
+        {/* レシピ部分だけスクロール */}
+        <div className="max-h-[60vh] overflow-y-auto mt-3">
+          {/* 一括操作モード */}
+          {isBulkMode && (
+            <div className="flex items-center mb-5 gap-3">
+              <div className="text-sm text-gray200">
+                {selectedIds.length}件選択中
+              </div>
+
+              <div className="flex items-center gap-x-4 ml-6">
+                <button
+                  type="button"
+                  onClick={() => setConfirmOpen(true)}
+                  disabled={selectedIds.length === 0}
+                  className={`transition${
+                    selectedIds.length === 0
+                      ? 'opacity-50 grayscale cursor-not-allowed'
+                      : ''
+                  }`}
+                >
+                  <Image
+                    src="/images/deleate.png"
+                    alt="削除ボタン"
+                    width={70}
+                    height={70}
+                  />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedIds([]);
+                    setIsBulkMode(false);
+                  }}
+                >
+                  <label className="text-sm">キャンセル</label>
+                </button>
+              </div>
             </div>
+          )}
 
-            <div className="flex items-center gap-x-4 ml-6">
-              <button
-                type="button"
-                onClick={() => setConfirmOpen(true)}
-                disabled={selectedIds.length === 0}
-                className={`transition${
-                  selectedIds.length === 0
-                    ? 'opacity-50 grayscale cursor-not-allowed'
-                    : ''
-                }`}
-              >
-                <Image
-                  src="/images/deleate.png"
-                  alt="削除ボタン"
-                  width={70}
-                  height={70}
-                />
-              </button>
+          {/* 検索結果ない場合 */}
+          {!isLoading && recipes?.length === 0 && (
+            <p className="text-center mt-10">該当のレシピがありませんでした</p>
+          )}
 
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedIds([]);
-                  setIsBulkMode(false);
-                }}
-              >
-                <label className="text-sm">キャンセル</label>
-              </button>
-            </div>
+          {/* レシピカード */}
+          <div className="grid grid-cols-3 gap-2">
+            {recipes?.map((recipe) => (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                isBulkMode={isBulkMode}
+                selectedIds={selectedIds}
+                setSelectedIds={setSelectedIds}
+                mutate={mutate}
+              />
+            ))}
           </div>
-        )}
-
-        {/* 検索結果ない場合 */}
-        {!isLoading && recipes?.length === 0 && (
-          <p className="text-center mt-10">該当のレシピがありませんでした</p>
-        )}
-
-        {/* レシピカード */}
-        <div className="grid grid-cols-3 gap-2">
-          {recipes?.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              isBulkMode={isBulkMode}
-              selectedIds={selectedIds}
-              setSelectedIds={setSelectedIds}
-              mutate={mutate}
-            />
-          ))}
         </div>
 
         {/* 削除確認ダイアログ */}
