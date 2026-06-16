@@ -13,6 +13,20 @@ type Props = {
 };
 
 const MenuButton = ({ onEdit, onDelete, onList, onNutrition }: Props) => {
+  const handleOpenNutrition = () => {
+    const hasSeen = localStorage.getItem('nutritionNoticeSeen');
+    if (!hasSeen) {
+      const ok = window.confirm(
+        '栄養分析は、登録されたレシピの材料をもとに判定します。\n\nURLのみで登録したレシピや、材料が未登録のレシピは正しく分析できない場合があります。\n\nより正確な分析を行うには、レシピに材料を登録してください。',
+      );
+
+      if (!ok) return;
+
+      localStorage.setItem('nutritionNoticeSeen', 'true');
+    }
+    onNutrition();
+  };
+
   return (
     <DropdownMenu.Root>
       {/* ↑メニュー全体の管理者 */}
@@ -57,7 +71,7 @@ const MenuButton = ({ onEdit, onDelete, onList, onNutrition }: Props) => {
 
           {/* 栄養バランス */}
           <DropdownMenu.Item
-            onSelect={onNutrition}
+            onSelect={handleOpenNutrition}
             className="cursor-pointer rounded px-4 py-2 outline-none hover:bg-gray-100"
           >
             栄養バランスを見る
