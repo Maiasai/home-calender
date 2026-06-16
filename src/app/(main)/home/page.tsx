@@ -138,7 +138,9 @@ const TopPage = () => {
       (r) => r.recipe.ingredients && r.recipe.ingredients.length > 0,
     );
     if (!hasIngredients) {
-      alert('材料が登録されていません。編集画面から追加してください');
+      alert(
+        'この献立には、買い物リストに追加できる材料が登録されていません。\n\nレシピ編集画面で材料を追加するか、買い物リスト画面で必要な材料を直接追加できます。',
+      );
       return;
     }
 
@@ -158,7 +160,9 @@ const TopPage = () => {
 
       await globalMutate('/api/shopping-list/from-menu');
 
-      alert('買い物リストに追加しました');
+      alert(
+        '買い物リストに追加しました。\n\n※レシピに登録されている材料をまとめて追加しました。必要に応じて買い物リストで調整してください。',
+      );
     } catch (error) {
       console.log(error);
       alert('エラーが発生しました');
