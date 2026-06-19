@@ -225,26 +225,48 @@ const List = () => {
         買い物リスト
       </nav>
 
-      <div className=" rounded-3xl md:p-2 min-h-[500px] bg-[#FAF7F2] p-2">
-        <button
-          onClick={() => {
-            if (confirm('削除すると元に戻せません。本当に削除しますか？')) {
-              deleateItems(groupedItems);
-            }
-          }}
-          className="flex items-center text-[#e95c5c] font-bold mb-6 ml-2 bg-white shadow-md rounded-lg p-2 m-2"
-        >
-          <Image
-            src="/images/delete_50dp.png"
-            alt="削除"
-            width={20}
-            height={20}
-          />
-          <p className="mx-1 text-sm">全削除</p>
-        </button>
+      <div className="rounded-3xl md:p-2 min-h-[500px] bg-[#FAF7F2] p-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex gap-2">
+            <div className="ml-2">
+              <PrimaryButton
+                className="w-[60px] h-[30px]"
+                onClick={addItem}
+                variant="primary"
+              >
+                ＋追加
+              </PrimaryButton>
+            </div>
+            <div className="flex justify-center">
+              <PrimaryButton
+                className="w-[100px] h-[30px]"
+                onClick={addLabel}
+                variant="primary"
+              >
+                ＋ラベル追加
+              </PrimaryButton>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              if (confirm('削除すると元に戻せません。本当に削除しますか？')) {
+                deleateItems(groupedItems);
+              }
+            }}
+            className="flex items-center text-[#e95c5c] font-bold ml-2 bg-white shadow-md rounded-sm mr-4"
+          >
+            <Image
+              src="/images/delete_24dp_red.png"
+              alt="削除"
+              width={20}
+              height={20}
+            />
+            一括
+          </button>
+        </div>
 
         <div className="max-h-[60vh] overflow-y-auto mt-3">
-          <div className="flex flex-col justify-between items-center p-1">
+          <div className="flex flex-col items-center p-1">
             <div className="w-full mx-auto max-w-sm md:max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
               {groupedItems.length === 0 && (
                 <p className="p-8 flex justify-center">
@@ -268,25 +290,14 @@ const List = () => {
                       {/* listeners が「この部分を掴んだらドラッグ開始していいよ」という設定 */}
                       {(listeners) =>
                         item.itemType === 'LABEL' ? (
-                          <div className="flex justify-between w-full p-2 bg-orange-200">
+                          <div className="flex justify-between w-full p-2 bg-orange-100">
                             {/* 削除アイコン */}
-                            <div className="flex w-full items-center gap-1 md:gap-2 min-w-0">
-                              <button
-                                className="shrink-0"
-                                onClick={() => deleateItem(item.id)}
-                              >
-                                <Image
-                                  src="/images/close_24dp.png"
-                                  alt="削除アイコン"
-                                  width={20}
-                                  height={20}
-                                />
-                              </button>
-                              <div className="min-w-0 flex-1">
+                            <div className="flex w-full items-center gap-1 md:gap-2">
+                              <div className="flex-1">
                                 {/* テキスト（左揃え） */}
                                 {/* ラベル名 */}
                                 <input
-                                  className="flex-1  min-w-0 max-w-[200px] md:max-w-[220px] pl-2 border border-gray-300 rounded-lg p-1"
+                                  className="w-full max-w-[500px] md:max-w-[600px] pl-2 border border-gray-300 rounded-lg p-1"
                                   defaultValue={item.name}
                                   onBlur={(e) =>
                                     updateItem(item.id, {
@@ -296,10 +307,21 @@ const List = () => {
                                 />
                               </div>
                               {/* このdivをつかんだらドラッグ開始できるという意味 */}
+                              <button
+                                className="shrink-0"
+                                onClick={() => deleateItem(item.id)}
+                              >
+                                <Image
+                                  src="/images/delete_24dp_black.png"
+                                  alt="削除アイコン"
+                                  width={20}
+                                  height={20}
+                                />
+                              </button>
                               <div
                                 {...(listeners ?? {})}
                                 onContextMenu={(e) => e.preventDefault()}
-                                className="shrink-0 cursor-grab ml-3 mr-1 mt-1 touch-none"
+                                className="shrink-0 cursor-grab mt-1 touch-none"
                                 style={{
                                   WebkitTouchCallout: 'none',
                                   WebkitUserSelect: 'none',
@@ -326,18 +348,6 @@ const List = () => {
                               <div className="min-w-0 flex-1">
                                 {/* 削除アイコン */}
                                 <div className="flex w-full items-center gap-1 md:gap-2 min-w-0">
-                                  <button
-                                    className="shrink-0"
-                                    onClick={() => deleateItem(item.id)}
-                                  >
-                                    <Image
-                                      src="/images/close_24dp.png"
-                                      alt="削除アイコン"
-                                      width={20}
-                                      height={20}
-                                    />
-                                  </button>
-
                                   {/* チェック */}
                                   <button
                                     type="button"
@@ -425,11 +435,23 @@ const List = () => {
                                   </select>
                                 </div>
                               </div>
+                              <button
+                                className="shrink-0"
+                                onClick={() => deleateItem(item.id)}
+                              >
+                                <Image
+                                  src="/images/delete_24dp_black.png"
+                                  alt="削除アイコン"
+                                  width={20}
+                                  height={20}
+                                  className="ml-1"
+                                />
+                              </button>
 
                               <div
                                 {...(listeners ?? {})}
                                 onContextMenu={(e) => e.preventDefault()} //スマホ長押しや右クリック時のメニューを出さないようにしてる。
-                                className="shrink-0 cursor-grab ml-3 mr-1 mt-1 touch-none"
+                                className="shrink-0 cursor-grab ml-1 mt-1 touch-none"
                                 style={{
                                   //スマホ長押しで画像保存メニューが出たり、文字選択されたりするのを防ぐため。
                                   WebkitTouchCallout: 'none',
@@ -455,25 +477,6 @@ const List = () => {
               </DndContext>
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-center">
-          <PrimaryButton
-            className="w-[148px] h-[30px] mt-8"
-            onClick={addItem}
-            variant="primary"
-          >
-            ＋追加
-          </PrimaryButton>
-        </div>
-        <div className="flex justify-center mt-4">
-          <PrimaryButton
-            className="w-[148px] h-[30px] mb-8"
-            onClick={addLabel}
-            variant="primary"
-          >
-            ＋ラベル追加
-          </PrimaryButton>
         </div>
       </div>
     </div>
