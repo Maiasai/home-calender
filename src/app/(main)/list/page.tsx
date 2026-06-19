@@ -225,7 +225,7 @@ const List = () => {
         買い物リスト
       </nav>
 
-      <div className="rounded-3xl md:p-2 min-h-[500px] bg-[#FAF7F2] p-2">
+      <div className="rounded-3xl md:p-2 min-h-[500px] bg-[#FAF7F2] p-2 ">
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
             <div className="ml-2">
@@ -265,7 +265,7 @@ const List = () => {
           </button>
         </div>
 
-        <div className="max-h-[60vh] mt-3">
+        <div className="mt-3 mb-10">
           <div className="flex flex-col items-center p-1">
             <div className="w-full mx-auto max-w-sm md:max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
               {groupedItems.length === 0 && (
