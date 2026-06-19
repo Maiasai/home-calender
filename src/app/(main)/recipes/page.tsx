@@ -84,10 +84,10 @@ const RecipesPage = () => {
         onClose={() => setRecipeModalOpen(false)}
         mutate={mutate}
       />
-      <div className="max-w-3xl mx-auto  mb-10">
-        <nav className="flex justify-center border-b-2 mb-4 ">レシピ一覧</nav>
+      <div className="max-w-3xl mx-auto mb-10">
+        <nav className="flex justify-center border-b-2 mb-2">レシピ一覧</nav>
 
-        <div className=" p-2">
+        <div className="p-2">
           {/* 検索・絞り込み項目 */}
           <SearchBar
             inputKeyword={inputKeyword}
@@ -113,7 +113,7 @@ const RecipesPage = () => {
           />
 
           {/* レシピ部分だけスクロール */}
-          <div className="max-h-[60vh] md:max-h-[60vh]  overflow-y-auto mt-3">
+          <div className="max-h-[50vh] md:max-h-[50vh]  overflow-y-auto mt-1 p-1">
             {/* 一括操作モード */}
             {isBulkMode && (
               <div className="flex items-center mb-5 gap-3">
