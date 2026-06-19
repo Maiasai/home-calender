@@ -69,11 +69,13 @@ const List = () => {
     if (!over) return;
     if (active.id === over.id) return;
 
-    const oldIndex = groupedItems.findIndex((i) => i.id === active.id);
-    const newIndex = groupedItems.findIndex((i) => i.id === over.id);
+    //ドラッグが終わるとこの２行が動く
+    const oldIndex = groupedItems.findIndex((i) => i.id === active.id); //掴んで動かした行のid
+    const newIndex = groupedItems.findIndex((i) => i.id === over.id); //最後に重なった行のid
 
-    const newItems = arrayMove(groupedItems, oldIndex, newIndex);
+    const newItems = arrayMove(groupedItems, oldIndex, newIndex); //配列の順番を入れ替えてる。
 
+    //ここで番号を振り直している
     const updated = newItems.map((item, index) => ({
       ...item,
       sortOrder: index,
@@ -106,7 +108,7 @@ const List = () => {
   //update関数
   const updateItem = async (
     id: string,
-    body: Omit<UpdateShoppingData, 'id'>,
+    body: Omit<UpdateShoppingData, 'id'>, //UpdateShoppingDataからidだけ除外した型という意味
   ) => {
     await fetch('/api/shopping-list/from-menu', {
       method: 'PUT',
@@ -123,7 +125,7 @@ const List = () => {
     mutate();
   };
 
-  //追加処理
+  //追加処理（通常アイテム）
   const addItem = async () => {
     try {
       const res = await fetch('/api/shopping-list', {
@@ -133,6 +135,7 @@ const List = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          itemType: 'ITEM',
           name: '',
           quantityText: 1,
           unitId: null,
@@ -141,6 +144,33 @@ const List = () => {
       if (!res.ok) {
         throw new Error('追加に失敗しました');
       }
+      mutate();
+    } catch (error) {
+      console.log(error);
+      alert('エラーが発生しました');
+    }
+  };
+
+  //追加処理（ラベルアイテム）
+  const addLabel = async () => {
+    try {
+      const res = await fetch('/api/shopping-list', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          itemType: 'LABEL',
+          name: '',
+          quantityText: null,
+          unitId: null,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error('ラベル追加に失敗しました');
+      }
+
       mutate();
     } catch (error) {
       console.log(error);
@@ -227,62 +257,36 @@ const List = () => {
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
               >
+                {/* このid達を並び替え対象にしてとdnd-kitに伝えてる */}
                 <SortableContext
                   items={groupedItems.map((i) => i.id)}
                   strategy={verticalListSortingStrategy}
                 >
+                  {/* 1行ずつここで並び替え可能な部品に変換 */}
                   {groupedItems.map((item) => (
                     <SortableItem key={item.id} item={item}>
-                      {(listeners) => (
-                        <div
-                          className={`w-full flex items-center p-2 border-b last:border-none transition ${
-                            item.checked ? 'opacity-40' : 'hover:bg-gray-50'
-                          }`}
-                        >
-                          <div className="flex justify-between w-full">
-                            <div className="min-w-0 flex-1">
-                              {/* 削除アイコン */}
-                              <div className="flex w-full items-center gap-1 md:gap-2 min-w-0">
-                                <button
-                                  className="shrink-0"
-                                  onClick={() => deleateItem(item.id)}
-                                >
-                                  <Image
-                                    src="/images/close_24dp.png"
-                                    alt="削除アイコン"
-                                    width={20}
-                                    height={20}
-                                  />
-                                </button>
-
-                                {/* チェック */}
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    updateItem(item.id, {
-                                      checked: !item.checked,
-                                    });
-                                  }}
-                                  className={`w-6 h-6 rounded-full border flex items-center justify-center
-                            ${
-                              item.checked
-                                ? 'bg-orange-400 border-orange-400'
-                                : 'bg-white border-gray-300'
-                            }`}
-                                >
-                                  {item.checked && (
-                                    <span className="text-white text-sm">
-                                      ✓
-                                    </span>
-                                  )}
-                                </button>
-
+                      {/* listeners が「この部分を掴んだらドラッグ開始していいよ」という設定 */}
+                      {(listeners) =>
+                        item.itemType === 'LABEL' ? (
+                          <div className="flex justify-between w-full p-2 bg-orange-200">
+                            {/* 削除アイコン */}
+                            <div className="flex w-full items-center gap-1 md:gap-2 min-w-0">
+                              <button
+                                className="shrink-0"
+                                onClick={() => deleateItem(item.id)}
+                              >
+                                <Image
+                                  src="/images/close_24dp.png"
+                                  alt="削除アイコン"
+                                  width={20}
+                                  height={20}
+                                />
+                              </button>
+                              <div className="min-w-0 flex-1">
                                 {/* テキスト（左揃え） */}
-                                {/* 品名 */}
+                                {/* ラベル名 */}
                                 <input
-                                  className="flex-1  min-w-0 max-w-[140px] md:max-w-[220px] pl-2 border border-gray-300 rounded-lg p-1"
-                                  disabled={item.checked}
+                                  className="flex-1  min-w-0 max-w-[200px] md:max-w-[220px] pl-2 border border-gray-300 rounded-lg p-1"
                                   defaultValue={item.name}
                                   onBlur={(e) =>
                                     updateItem(item.id, {
@@ -290,80 +294,161 @@ const List = () => {
                                     })
                                   }
                                 />
-                                {/* 数量 */}
-                                <input
-                                  type="number"
-                                  className="w-12 md:w-20 px-2 border border-gray-300 rounded-lg p-1"
-                                  disabled={item.checked}
-                                  defaultValue={item.totalQuantity}
-                                  onBlur={(e) => {
-                                    const value = e.currentTarget.value;
-                                    {
-                                      /* currentTargetはイベントを書いた要素を指定。※currentTarget.valueにより、onBlurを書いたinput自身から入力された値が取れる */
-                                    }
-                                    const parsed = Number(value);
-                                    {
-                                      /* ここで入力された値を数字に変換 */
-                                    }
-                                    if (Number.isNaN(parsed)) return;
-
-                                    updateItem(item.id, {
-                                      quantityText: parsed,
-                                    });
-                                  }}
+                              </div>
+                              {/* このdivをつかんだらドラッグ開始できるという意味 */}
+                              <div
+                                {...(listeners ?? {})}
+                                onContextMenu={(e) => e.preventDefault()}
+                                className="shrink-0 cursor-grab ml-3 mr-1 mt-1 touch-none"
+                                style={{
+                                  WebkitTouchCallout: 'none',
+                                  WebkitUserSelect: 'none',
+                                  userSelect: 'none',
+                                }}
+                              >
+                                <Image
+                                  src="/images/Sort_50dp.png"
+                                  alt="並び替えアイコン"
+                                  width={30}
+                                  height={30}
+                                  draggable={false}
                                 />
-                                <select
-                                  className="w-17 h-9 px-2 border border-gray-300 rounded-lg"
-                                  disabled={item.checked}
-                                  value={item.unit?.id ?? ''} //ここで最初に何を表示するか指定＊このValueはoptionのvalueから来ている
-                                  onChange={(
-                                    //！「e」の中にイベント「発生元：target」「登録元：currentTarget」両方が入ってる。子要素で発生したイベントを親でも受け取れるようにするために2つ存在してる。
-                                    // ※　target = 実際にイベントが発生した要素//currentTarget = イベントを書いた要素
-                                    // その中それぞれに変更されたvalueが入ってる
-                                    //　→発火したらReactがこのイベント情報「e」を作って送ってくる
-                                    e,
-                                  ) =>
-                                    //表示上はunit.nameだが、DBに保存したいのはunit.idのためこの書き方になる
-                                    //item.id→shoppingItemのid
-                                    updateItem(item.id, {
-                                      unitId: e.currentTarget.value, //"選択された単位のuuid"
-                                      //target.valueにすると子要素が多い時イベントがどこから飛んできたのか分かりずらいが、currentTarget.valueにすることで確実に
-                                      //イベントがどこから飛んできたのかわかりやすくできるメリットがある
-                                    })
-                                  }
-                                >
-                                  <option value="">未選択</option>
-
-                                  {units.map((unit) => (
-                                    <option key={unit.id} value={unit.id}>
-                                      {unit?.name}
-                                    </option>
-                                  ))}
-                                </select>
                               </div>
                             </div>
+                          </div>
+                        ) : (
+                          <div
+                            className={`w-full flex items-center p-2 border-b last:border-none transition ${
+                              item.checked ? 'opacity-40' : 'hover:bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex justify-between w-full">
+                              <div className="min-w-0 flex-1">
+                                {/* 削除アイコン */}
+                                <div className="flex w-full items-center gap-1 md:gap-2 min-w-0">
+                                  <button
+                                    className="shrink-0"
+                                    onClick={() => deleateItem(item.id)}
+                                  >
+                                    <Image
+                                      src="/images/close_24dp.png"
+                                      alt="削除アイコン"
+                                      width={20}
+                                      height={20}
+                                    />
+                                  </button>
 
-                            <div
-                              {...(listeners ?? {})}
-                              onContextMenu={(e) => e.preventDefault()}
-                              className="shrink-0 cursor-grab ml-3 mr-1 mt-1 touch-none"
-                              style={{
-                                WebkitTouchCallout: 'none',
-                                WebkitUserSelect: 'none',
-                                userSelect: 'none',
-                              }}
-                            >
-                              <Image
-                                src="/images/Sort_50dp.png"
-                                alt="並び替えアイコン"
-                                width={30}
-                                height={30}
-                                draggable={false}
-                              />
+                                  {/* チェック */}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      updateItem(item.id, {
+                                        checked: !item.checked,
+                                      });
+                                    }}
+                                    className={`w-6 h-6 rounded-full border flex items-center justify-center
+                                    ${
+                                      item.checked
+                                        ? 'bg-orange-400 border-orange-400'
+                                        : 'bg-white border-gray-300'
+                                    }`}
+                                  >
+                                    {item.checked && (
+                                      <span className="text-white text-sm">
+                                        ✓
+                                      </span>
+                                    )}
+                                  </button>
+
+                                  {/* テキスト（左揃え） */}
+                                  {/* 品名 */}
+                                  <input
+                                    className="flex-1  min-w-0 max-w-[140px] md:max-w-[220px] pl-2 border border-gray-300 rounded-lg p-1"
+                                    disabled={item.checked}
+                                    defaultValue={item.name}
+                                    onBlur={(e) =>
+                                      updateItem(item.id, {
+                                        name: e.currentTarget.value,
+                                      })
+                                    }
+                                  />
+                                  {/* 数量 */}
+                                  <input
+                                    type="number"
+                                    className="w-12 md:w-20 px-2 border border-gray-300 rounded-lg p-1"
+                                    disabled={item.checked}
+                                    defaultValue={item.totalQuantity}
+                                    onBlur={(e) => {
+                                      const value = e.currentTarget.value;
+                                      {
+                                        /* currentTargetはイベントを書いた要素を指定。※currentTarget.valueにより、onBlurを書いたinput自身から入力された値が取れる */
+                                      }
+                                      const parsed = Number(value);
+                                      {
+                                        /* ここで入力された値を数字に変換 */
+                                      }
+                                      if (Number.isNaN(parsed)) return;
+
+                                      updateItem(item.id, {
+                                        quantityText: parsed,
+                                      });
+                                    }}
+                                  />
+                                  <select
+                                    className="w-17 h-9 px-2 border border-gray-300 rounded-lg"
+                                    disabled={item.checked}
+                                    value={item.unit?.id ?? ''} //ここで最初に何を表示するか指定＊このValueはoptionのvalueから来ている
+                                    onChange={(
+                                      //！「e」の中にイベント「発生元：target」「登録元：currentTarget」両方が入ってる。子要素で発生したイベントを親でも受け取れるようにするために2つ存在してる。
+                                      // ※　target = 実際にイベントが発生した要素//currentTarget = イベントを書いた要素
+                                      // その中それぞれに変更されたvalueが入ってる
+                                      //　→発火したらReactがこのイベント情報「e」を作って送ってくる
+                                      e,
+                                    ) =>
+                                      //表示上はunit.nameだが、DBに保存したいのはunit.idのためこの書き方になる
+                                      //item.id→shoppingItemのid
+                                      updateItem(item.id, {
+                                        unitId: e.currentTarget.value, //"選択された単位のuuid"
+                                        //target.valueにすると子要素が多い時イベントがどこから飛んできたのか分かりずらいが、currentTarget.valueにすることで確実に
+                                        //イベントがどこから飛んできたのかわかりやすくできるメリットがある
+                                      })
+                                    }
+                                  >
+                                    <option value="">未選択</option>
+
+                                    {units.map((unit) => (
+                                      <option key={unit.id} value={unit.id}>
+                                        {unit?.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              </div>
+
+                              <div
+                                {...(listeners ?? {})}
+                                onContextMenu={(e) => e.preventDefault()} //スマホ長押しや右クリック時のメニューを出さないようにしてる。
+                                className="shrink-0 cursor-grab ml-3 mr-1 mt-1 touch-none"
+                                style={{
+                                  //スマホ長押しで画像保存メニューが出たり、文字選択されたりするのを防ぐため。
+                                  WebkitTouchCallout: 'none',
+                                  WebkitUserSelect: 'none',
+                                  userSelect: 'none',
+                                }}
+                              >
+                                <Image
+                                  src="/images/Sort_50dp.png"
+                                  alt="並び替えアイコン"
+                                  width={30}
+                                  height={30}
+                                  draggable={false}
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        )
+                      }
                     </SortableItem>
                   ))}
                 </SortableContext>
@@ -374,11 +459,20 @@ const List = () => {
 
         <div className="flex justify-center">
           <PrimaryButton
-            className="w-[148px] h-[30px] mt-8 mb-8"
+            className="w-[148px] h-[30px] mt-8"
             onClick={addItem}
             variant="primary"
           >
             ＋追加
+          </PrimaryButton>
+        </div>
+        <div className="flex justify-center mt-4">
+          <PrimaryButton
+            className="w-[148px] h-[30px] mb-8"
+            onClick={addLabel}
+            variant="primary"
+          >
+            ＋ラベル追加
           </PrimaryButton>
         </div>
       </div>

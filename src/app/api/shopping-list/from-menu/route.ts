@@ -44,6 +44,7 @@ export const GET = async (request: NextRequest) => {
       checked: item.checked,
       sortOrder: item.sortOrder,
       unit: item.unit ?? null,
+      itemType: item.itemType,
     }));
 
     return NextResponse.json(formatted, { status: 200 });

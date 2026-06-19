@@ -9,10 +9,13 @@ export const createGroupedItems = (data: Shoppinglist[]): GroupedItem[] => {
   const map = new Map<string, GroupedItem>();
 
   data.forEach((item) => {
-    //同じもの判定用ラベル（keyに名前 or id 入れてる）
-    const key = item.name.trim()
-      ? `${item.name.trim()}-${item.unit?.id ?? 'no-unit'}`
-      : item.id; //名前が空欄だったらidをkeyとする
+    const isLabel = item.itemType === 'LABEL';
+    //同じもの判定用ラベル（keyに名前 or id 入れてる）※Labelの場合はidをkeyにしてグループ化はしない
+    const key = isLabel
+      ? item.id
+      : item.name.trim()
+        ? `${item.name.trim()}-${item.unit?.id ?? 'no-unit'}`
+        : item.id; //名前が空欄だったらidをkeyとする
     const existing = map.get(key);
 
     if (!existing) {
@@ -25,6 +28,7 @@ export const createGroupedItems = (data: Shoppinglist[]): GroupedItem[] => {
         count: 1,
         checked: item.checked, //買ったかどうか　ture/false
         sortOrder: item.sortOrder ?? 0, //見た目の順番をデータ化したもの
+        itemType: item.itemType,
       });
     } else {
       //同じ名前が出た回数

@@ -53,6 +53,12 @@ enum VegetableType {
   LIGHT
 }
 
+//買い物リスト　ラベルタイプ
+enum ShoppingItemType {
+  ITEM
+  LABEL
+}
+
 //通知タイプ
 enum NotificationType {
   RECIPE_CREATED
@@ -242,7 +248,7 @@ model Menu {
   createdAt DateTime     @default(now())//献立がいつ作られたか
 
   
-family Family @relation(fields: [familyId], references: [id])
+  family Family @relation(fields: [familyId], references: [id])
   menuRecipes MenuRecipe[]//この献立に属するレシピ一覧（フロントで取得した時、ここに献立レシピが格納されている）
 
   @@unique([familyId, date])//家族ごとに1日の献立が1つ
@@ -271,6 +277,7 @@ model ShoppingItem {
   familyId     String   @db.Uuid @map("family_id")
   ingredientId String?
   name         String
+  itemType     ShoppingItemType @default(ITEM)
   quantityText Float?
   unitId       String?   @db.Uuid//材料の単位カラム
   checked      Boolean  @default(false)

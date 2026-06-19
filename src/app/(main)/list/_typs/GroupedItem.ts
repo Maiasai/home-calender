@@ -1,5 +1,7 @@
 //買い物リストデータ　UI専用型
 
+import { ShoppingItemType } from '@/generated/prisma';
+
 export type GroupedItem = {
   id: string;
   name: string;
@@ -11,4 +13,5 @@ export type GroupedItem = {
   count: number;
   checked: boolean;
   sortOrder: number;
+  itemType: ShoppingItemType;
 };

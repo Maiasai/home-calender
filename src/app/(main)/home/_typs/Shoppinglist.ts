@@ -1,5 +1,7 @@
 //買い物リスト型（フロント用）
 
+import { ShoppingItemType } from '@/generated/prisma';
+
 export type Shoppinglist = {
   id: string;
   name: string;
@@ -11,4 +13,5 @@ export type Shoppinglist = {
     id: string;
     name: string;
   } | null;
+  itemType: ShoppingItemType;
 };
