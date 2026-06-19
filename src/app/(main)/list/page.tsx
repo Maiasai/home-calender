@@ -265,7 +265,7 @@ const List = () => {
           </button>
         </div>
 
-        <div className="max-h-[60vh] overflow-y-auto mt-3">
+        <div className="max-h-[60vh] mt-3">
           <div className="flex flex-col items-center p-1">
             <div className="w-full mx-auto max-w-sm md:max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
               {groupedItems.length === 0 && (
