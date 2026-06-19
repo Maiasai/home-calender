@@ -22,7 +22,6 @@ import ResetPassword from './ResetPassword';
 import { Mode } from '../_typs/mode';
 import { InputEmailData } from '../_typs/InputEmailData';
 import PageHeader from '@/app/(main)/recipes/_components/PageHeader';
-import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 import LoadingOverlay from '@/components/LoadingOverlay';
 
 const titles = {
@@ -45,8 +44,6 @@ const LoginFlowModal = ({
   onClose,
   setLoginModalOpen,
 }: LoginModalProps) => {
-  const { token } = useSupabaseSession();
-
   const [step, setStep] = useState<ModalStep>('select');
   const [email, setEmail] = useState(''); //verifyCode ステップや signup ステップでも email を参照するため用
   const [isGoogleUser, setIsGoogleUser] = useState(false);
@@ -147,7 +144,6 @@ const LoginFlowModal = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email: targetEmail }),
     });
@@ -187,7 +183,6 @@ const LoginFlowModal = ({
       method: 'POST', //POST→データを渡して、存在するかどうか調べてもらうため（GETを使わないのは、セキュリティ的なところもある）
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email: inputEmail }),
     });

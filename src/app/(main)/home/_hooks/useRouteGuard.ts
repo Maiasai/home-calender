@@ -1,23 +1,29 @@
 //未ログイン時の画面遷移制御（副作用のコンポーネント）
 //useSupabaseSession が「ログイン状態」を取得→ state 更新した後に、ここにいていいかをここで判断
 
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { useSupabaseSession } from './useSupabaseSession'
+import { Session } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-export const useRouteGuard = () => {
-  const router = useRouter()
-  const { session, isLoading } = useSupabaseSession()
+type Props = {
+  session: Session | null | undefined;
+
+  isLoading: boolean;
+};
+
+export const useRouteGuard = ({ session, isLoading }: Props) => {
+  const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return // sessionの取得中は何もしない
+    if (isLoading) return; // sessionの取得中は何もしない
 
     const fetcher = async () => {
-      if (session === null) { // sessionがnull（未ログイン）だったら強制的にTOPへ
-        router.replace('/')
+      if (session === null) {
+        // sessionがnull（未ログイン）だったら強制的にTOPへ
+        router.replace('/');
       }
-    }
+    };
 
-    fetcher()
-  }, [router, isLoading, session])
-}
+    fetcher();
+  }, [router, isLoading, session]);
+};

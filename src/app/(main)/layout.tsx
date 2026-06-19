@@ -2,24 +2,14 @@
 
 'use client';
 
-import { useRouter } from 'next/navigation'; //App Router
-
 import { useRouteGuard } from './home/_hooks/useRouteGuard';
 import { useSupabaseSession } from './home/_hooks/useSupabaseSession';
-import { useEffect } from 'react';
 import Header from './Header';
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
-  useRouteGuard();
   const { session, isLoading } = useSupabaseSession();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoading && !session) {
-      //セッションがない場合、トップ画面に遷移
-      router.replace('/'); //replace は置き換える
-    }
-  }, [session, isLoading, router]);
+  useRouteGuard({ session, isLoading });
 
   if (isLoading) {
     return (

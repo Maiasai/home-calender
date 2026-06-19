@@ -9,11 +9,8 @@ export const supabase = createBrowserClient(
   {
     auth: {
       flowType: 'implicit',
-
       detectSessionInUrl: true,
-
       persistSession: true,
-
       autoRefreshToken: true,
     },
   },
