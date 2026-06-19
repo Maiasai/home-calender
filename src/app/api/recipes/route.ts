@@ -222,7 +222,7 @@ export const POST = async (request: NextRequest) => {
           const displayName = ingre.name?.trim();
           const normalizedName = displayName?.toLowerCase();
 
-          if (!displayName || !normalizedName) continue;
+          if (!displayName || !normalizedName) continue; //材料名が空なら、この行はスキップする
           const amount =
             typeof ingre.amount === 'number' && !Number.isNaN(ingre.amount)
               ? ingre.amount

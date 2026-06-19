@@ -2,7 +2,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import {
+  Control,
+  FieldErrors,
+  useFieldArray,
+  useForm,
+  UseFormGetValues,
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormTrigger,
+} from 'react-hook-form';
 import IngredientList from './IngredientList';
 import StepList from './StepList';
 import ImageUpload from './ImageUpload';
@@ -11,7 +20,10 @@ import MemoForm from './MemoForm';
 import CategorySelector from './CategorySelector';
 import { RecipeCategory } from '@/generated/prisma';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
-import { RecipeFormValues } from '../_types/RecipeFormValues';
+import {
+  RecipeFormValues,
+  RecipeIngredientFormPart,
+} from '../_types/RecipeFormValues';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import { RecipeData } from '../_types/RecipeTypes';
@@ -28,7 +40,7 @@ type Props = {
 };
 
 type CreateRecipeRequest = RecipeFormValues & {
-  servings: number;
+  servings?: number;
   category?: RecipeCategory;
 };
 
@@ -121,7 +133,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
       ...data, //useFormの値(フォームに入力された値)
       thumbnailImageUrl,
       category: category || undefined,
-      servings: Number(data.servings), // 念のため明示的に数値化
+      servings: data.servings ? Number(data.servings) : undefined, // 念のため明示的に数値化
     };
     try {
       const res = await fetch('/api/recipes', {
@@ -182,14 +194,24 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
           {/* 人数・材料 (必須)*/}
           <div className="flex items-center gap-6 bg-white m-5 p-4 rounded-lg">
             <IngredientList
-              control={control} //{}内が親から渡すもの、左はprops名
-              register={register}
-              registerServings={register}
-              errors={errors}
-              setValue={setValue}
+              control={control as unknown as Control<RecipeIngredientFormPart>}
+              register={
+                register as unknown as UseFormRegister<RecipeIngredientFormPart>
+              }
+              registerServings={
+                register as unknown as UseFormRegister<RecipeIngredientFormPart>
+              }
+              errors={errors as FieldErrors<RecipeIngredientFormPart>}
+              setValue={
+                setValue as unknown as UseFormSetValue<RecipeIngredientFormPart>
+              }
+              getValues={
+                getValues as unknown as UseFormGetValues<RecipeIngredientFormPart>
+              }
+              trigger={
+                trigger as unknown as UseFormTrigger<RecipeIngredientFormPart>
+              }
               units={units}
-              getValues={getValues}
-              trigger={trigger}
             />
           </div>
 

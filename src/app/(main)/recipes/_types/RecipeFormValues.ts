@@ -3,18 +3,22 @@
 
 import { Step } from '../_hooks/useSteps';
 
-export interface RecipeFormValues {
+export type RecipeFormValues = RecipeIngredientFormPart & {
   title: string;
   memo?: string;
-  servings?: number;
   thumbnailImageUrl?: string;
   thumbnailFile?: File | null; //画像ファイルそのもの、または null、または未定義
-  ingredients: {
-    name?: string;
-    amount?: number; //DB では小数で保存されるが、TS では number として扱うだけでOK
-    unitId?: string;
-  }[];
-
   steps: Step[];
   sourceUrl?: string;
-}
+};
+
+export type RecipeIngredientFormPart = {
+  servings?: number;
+  ingredients: IngredientFormValue[];
+};
+
+export type IngredientFormValue = {
+  name?: string;
+  amount?: number; //DB では小数で保存されるが、TS では number として扱うだけでOK
+  unitId?: string;
+};

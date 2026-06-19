@@ -5,10 +5,17 @@
 import TitleForm from './TitleForm';
 import MemoForm from './MemoForm';
 import CategorySelector from './CategorySelector';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RecipeCategory } from '@/generated/prisma';
-import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import {
+  Control,
+  FieldErrors,
+  useForm,
+  UseFormGetValues,
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormTrigger,
+} from 'react-hook-form';
 import { CreateRecipeByUrlRequest } from '../_types/CreateRecipeByUrlRequest';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import UrlForm from './UrlForm';
@@ -17,6 +24,9 @@ import PrimaryButton from '@/components/button/PrimaryButton';
 import { KeyedMutator } from 'swr';
 import { RecipeData } from '../_types/RecipeTypes';
 import { mutate as globalMutate } from 'swr';
+import IngredientList from './IngredientList';
+import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
+import { RecipeIngredientFormPart } from '../_types/RecipeFormValues';
 
 type Props = {
   onClose: () => void;
@@ -29,26 +39,48 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
 
   const [category, setCategory] = useState<RecipeCategory | ''>('');
 
-  const router = useRouter();
+  const [units, setUnits] = useState<UnitData[]>([]); //ここで選択肢を管理
+
   const {
     register,
     handleSubmit,
+    control,
+    setValue,
+    getValues,
+    trigger,
     formState: { errors, isValid, isSubmitting },
   } = useForm<CreateRecipeByUrlRequest>({
     mode: 'onChange',
     defaultValues: {
       title: '',
       sourceUrl: '',
+
+      servings: undefined,
+      ingredients: [
+        {
+          name: '',
+          amount: undefined,
+          unitId: '',
+        },
+      ],
       memo: '',
     },
   });
 
+  useEffect(() => {
+    const fetchUnits = async () => {
+      const res = await fetch('/api/units');
+      const data: GetUnitsResponse = await res.json();
+      setUnits(data.units);
+    };
+    fetchUnits();
+  }, []);
+
   const onSubmit = async (data: CreateRecipeByUrlRequest) => {
     const payload: CreateRecipeByUrlRequest = {
-      title: data.title,
-      sourceUrl: data.sourceUrl,
-      category: category || undefined, //未選択なら送らない
-      memo: data.memo || undefined,
+      ...data,
+      category: category || undefined, //未選択なら送らない\
+      servings: data.servings ? Number(data.servings) : undefined,
     };
 
     try {
@@ -64,8 +96,6 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
         const errorData = await res.json();
         throw new Error(errorData.message || 'レシピ登録に失敗しました');
       }
-
-      router.push(`/recipes/`);
 
       onClose();
       await mutate?.();
@@ -86,10 +116,10 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
     <div className="bg-gray-100 w-full max-w-[800px] max-h-[80vh] overflow-y-auto ">
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col items-center md:h-[280px] h-[300px] bg-white m-5 p-4 rounded-lg">
+          <div className="flex flex-col items-center md:h-[260px] h-[250px] bg-white m-5 p-4 rounded-lg">
             {/* タイトル */}
             <div className="w-full mb-6">
-              <p className="text-xs text-red-400 mb-4 ml-2">
+              <p className="text-xs text-red-400 mb-2 ml-2">
                 * マークがついている項目は必須です
               </p>
               <TitleForm registerTitle={register} errors={errors} step={step} />
@@ -99,14 +129,39 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
               <UrlForm registerUrl={register} errors={errors} />
             </div>
           </div>
-          <div className="text-sm mx-8">
-            ※URLから登録したレシピは著作権保護の観点から、タイトルとURLのみ保存されます。
-            編集画面から材料や手順を追加することもできます。
+          <div className="text-sm mx-8 text-gray-600">
+            ※URLを入力しても、レシピ本文・材料・手順は自動で取り込まれません。
+            必要に応じて材料を手入力できます。
+            入力した材料は買い物リストに使用されます。
+            また、栄養チェックでは野菜・肉類・卵・豆腐などの入力内容をもとに判定を行います。
           </div>
 
           {/* カテゴリ */}
           <div className="flex items-center h-[80px] gap-6 bg-white m-5 p-4 rounded-lg">
             <CategorySelector category={category} setCategory={setCategory} />
+          </div>
+
+          <div className="flex items-center gap-6 bg-white m-5 p-4 rounded-lg">
+            <IngredientList
+              control={control as unknown as Control<RecipeIngredientFormPart>}
+              register={
+                register as unknown as UseFormRegister<RecipeIngredientFormPart>
+              }
+              registerServings={
+                register as unknown as UseFormRegister<RecipeIngredientFormPart>
+              }
+              errors={errors as FieldErrors<RecipeIngredientFormPart>}
+              setValue={
+                setValue as unknown as UseFormSetValue<RecipeIngredientFormPart>
+              }
+              getValues={
+                getValues as unknown as UseFormGetValues<RecipeIngredientFormPart>
+              }
+              trigger={
+                trigger as unknown as UseFormTrigger<RecipeIngredientFormPart>
+              }
+              units={units}
+            />
           </div>
 
           {/* メモ */}

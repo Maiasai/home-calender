@@ -24,7 +24,7 @@ const SearchBar = ({
   return (
     <div className="flex flex-col md:flex-row justify-center mb-4 gap-2">
       <div className="flex justify-center">
-        <div className="relative">
+        <div className="relative flex">
           <input
             value={inputKeyword}
             onChange={(e) => setInputKeyword(e.currentTarget.value)}
@@ -44,20 +44,19 @@ const SearchBar = ({
             width={20}
             height={20}
           />
+          <PrimaryButton
+            className="flex items-center justify-center gap-1 w-[84px] h-[34px] ml-2"
+            onClick={() => setKeyword(inputKeyword)}
+            variant="secondary"
+          >
+            検索
+          </PrimaryButton>
         </div>
       </div>
 
       <div className="flex justify-center gap-2">
         <PrimaryButton
-          className="flex items-center justify-center gap-1 w-[114px] h-[34px]"
-          onClick={() => setKeyword(inputKeyword)}
-          variant="secondary"
-        >
-          検索
-        </PrimaryButton>
-
-        <PrimaryButton
-          className="w-[114px] h-[34px]"
+          className="w-[100px] h-[34px]"
           variant="primary"
           onClick={() => setRecipeModalOpen(true)}
         >
@@ -65,7 +64,7 @@ const SearchBar = ({
         </PrimaryButton>
 
         <PrimaryButton
-          className="w-[149px] h-[34px]"
+          className="w-[120px] h-[34px]"
           variant="primary"
           onClick={() => setIsBulkMode(!isBulkMode)}
         >

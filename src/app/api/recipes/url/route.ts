@@ -59,6 +59,61 @@ export const POST = async (request: NextRequest) => {
         updatedByUserId: user.id, // 最終更新者
       },
     });
+
+    const ingredients = body.ingredients;
+
+    if (ingredients) {
+      for (let index = 0; index < ingredients.length; index++) {
+        const ingre = ingredients[index];
+        const displayName = ingre.name?.trim();
+        const normalizedName = displayName?.toLowerCase();
+
+        if (!displayName || !normalizedName) continue;
+        const amount =
+          typeof ingre.amount === 'number' && !Number.isNaN(ingre.amount) //ingre.amount が NaN じゃないか確認
+            ? ingre.amount
+            : null;
+
+        const unitId = ingre.unitId?.trim() || null;
+
+        await prisma.recipeIngredient.create({
+          data: {
+            quantityText: amount,
+            sortOrder: index,
+            //ここで先に作ったレシピに繋ぐ
+            recipe: {
+              connect: {
+                id: recipe.id,
+              },
+            },
+            //食材名と繋ぐ部分(入ってきた材料が同じ家族のid内にあるか)
+            ingredient: {
+              connectOrCreate: {
+                where: {
+                  familyId_normalizedName: {
+                    familyId: dbUser.activeFamilyId,
+                    normalizedName,
+                  },
+                },
+                create: {
+                  familyId: dbUser.activeFamilyId,
+                  name: displayName,
+                  normalizedName,
+                },
+              },
+            },
+            unit: unitId
+              ? {
+                  connect: {
+                    id: unitId,
+                  },
+                }
+              : undefined,
+          },
+        });
+      }
+    }
+
     return NextResponse.json(recipe, { status: 200 });
   } catch (error) {
     console.log(error);

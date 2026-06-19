@@ -11,7 +11,7 @@ import {
   UseFormSetValue,
   UseFormTrigger,
 } from 'react-hook-form';
-import { RecipeFormValues } from '../_types/RecipeFormValues';
+import { RecipeIngredientFormPart } from '../_types/RecipeFormValues';
 import { normalizeFraction, parseFraction } from './parseFraction';
 import ErrorMessage from './ErrorMessage';
 import DeleteIcon from '@/app/components/image/deleteicon';
@@ -20,14 +20,14 @@ import PrimaryButton from '@/components/button/PrimaryButton';
 
 type Props = {
   //このコンポーネントが親から受け取る「データと関数の一覧」
-  registerServings: UseFormRegister<RecipeFormValues>;
-  errors: FieldErrors<RecipeFormValues>; //RHFのエラーの型
-  control: Control<RecipeFormValues>;
-  register: UseFormRegister<RecipeFormValues>;
-  setValue: UseFormSetValue<RecipeFormValues>;
+  registerServings: UseFormRegister<RecipeIngredientFormPart>;
+  errors: FieldErrors<RecipeIngredientFormPart>; //RHFのエラーの型
+  control: Control<RecipeIngredientFormPart>;
+  register: UseFormRegister<RecipeIngredientFormPart>;
+  setValue: UseFormSetValue<RecipeIngredientFormPart>;
   units: UnitData[];
-  getValues: UseFormGetValues<RecipeFormValues>;
-  trigger: UseFormTrigger<RecipeFormValues>;
+  getValues: UseFormGetValues<RecipeIngredientFormPart>;
+  trigger: UseFormTrigger<RecipeIngredientFormPart>;
 };
 
 const IngredientList = ({
@@ -116,7 +116,7 @@ const IngredientList = ({
                 </button>
               )}
 
-              <div className="flec flex-col">
+              <div className="flex flex-col">
                 <input
                   className="w-[260px] px-2 py-1 border-b mb-1"
                   {...register(`ingredients.${index}.name`, {
@@ -135,7 +135,6 @@ const IngredientList = ({
                           ? true
                           : '材料名を入力してください';
                       }
-
                       return true; // 空行はOK
                     },
                   })}
