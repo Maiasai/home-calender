@@ -66,13 +66,14 @@ const List = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (!over) return;
+    if (!over) return; //どのアイテムの上にも乗らずにドラッグ終了したら何もしない
     if (active.id === over.id) return;
 
     //ドラッグが終わるとこの２行が動く
     const oldIndex = groupedItems.findIndex((i) => i.id === active.id); //掴んで動かした行のid
     const newIndex = groupedItems.findIndex((i) => i.id === over.id); //最後に重なった行のid
 
+    //groupedItems の oldIndex 番目を、newIndex 番目に移動した新しい配列を作る
     const newItems = arrayMove(groupedItems, oldIndex, newIndex); //配列の順番を入れ替えてる。
 
     //ここで番号を振り直している
@@ -321,7 +322,7 @@ const List = () => {
                               <div
                                 {...(listeners ?? {})}
                                 onContextMenu={(e) => e.preventDefault()}
-                                className="shrink-0 cursor-grab mt-1 touch-none"
+                                className="shrink-0 cursor-grab mt-1 ml-3 touch-none"
                                 style={{
                                   WebkitTouchCallout: 'none',
                                   WebkitUserSelect: 'none',
@@ -444,14 +445,14 @@ const List = () => {
                                   alt="削除アイコン"
                                   width={20}
                                   height={20}
-                                  className="ml-1"
+                                  className="ml-2"
                                 />
                               </button>
 
                               <div
                                 {...(listeners ?? {})}
                                 onContextMenu={(e) => e.preventDefault()} //スマホ長押しや右クリック時のメニューを出さないようにしてる。
-                                className="shrink-0 cursor-grab ml-1 mt-1 touch-none"
+                                className="shrink-0 cursor-grab ml-4 mt-1 touch-none"
                                 style={{
                                   //スマホ長押しで画像保存メニューが出たり、文字選択されたりするのを防ぐため。
                                   WebkitTouchCallout: 'none',
