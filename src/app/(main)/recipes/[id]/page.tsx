@@ -88,11 +88,11 @@ const RecipeDetail = ({ params }: Props) => {
   };
 
   return (
-    <div className="flex flex-col max-w-xl mx-auto pb-24 p-2">
+    <div className="flex flex-col max-w-xl mx-auto pb-24 p-2 h-full overflow-hidden">
       {/* ページタイトル */}
       <PageTitle>レシピ詳細</PageTitle>
 
-      <div className="flex justify-between w-full">
+      <div className="flex justify-between w-full shrink-0">
         <div className="ml-2">
           <button onClick={handleBack}>
             <BackIcon />
@@ -124,7 +124,7 @@ const RecipeDetail = ({ params }: Props) => {
         </div>
       </div>
 
-      <div className="w-full">
+      <div className="w-full flex-1 min-h-0 overflow-y-auto overscroll-contain pb-24">
         {/* レシピ画像 */}
         <div className="w-full aspect-[4/3] relative">
           <Image
