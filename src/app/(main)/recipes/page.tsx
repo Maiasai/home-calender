@@ -84,12 +84,12 @@ const RecipesPage = () => {
         onClose={() => setRecipeModalOpen(false)}
         mutate={mutate}
       />
-      <div className="max-w-3xl mx-auto h-[calc(100dvh-120px)] overflow-hidden flex flex-col">
+      <div className="max-w-3xl mx-auto h-full overflow-hidden flex flex-col">
         <nav className="flex justify-center border-b-2 mb-2 shrink-0">
           レシピ一覧
         </nav>
 
-        <div className="p-2 flex flex-col flex-1 min-h-0">
+        <div className="p-2 flex flex-col flex-1 min-h-0 overflow-hidden">
           {/* 検索・絞り込み項目 */}
           <SearchBar
             inputKeyword={inputKeyword}

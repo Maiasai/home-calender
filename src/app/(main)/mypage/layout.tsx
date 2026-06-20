@@ -25,10 +25,10 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <div className="flex max-w-3xl mx-auto mt-10 mb-10 gap-1 sm:gap-2">
+    <div className="flex max-w-3xl mx-auto mt-10 gap-1 sm:gap-2  h-full overflow-hidden">
       {/* 左側：サイドメニュー */}
 
-      <aside className="w-[100px] sm:w-56 shrink-0">
+      <aside className="w-[100px] sm:w-56 shrink-0 overflow-y-auto">
         <nav className="bg-white rounded-xl shadow-sm p-1 sm:p-4">
           {/* アカウント */}
           <h2 className="font-bold text-sm sm:text-lg mb-4 border-b ml-2">
@@ -79,7 +79,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
             アプリについて
           </h2>
 
-          <div className="flex flex-col gap-1 ml-2">
+          <div className="flex flex-col gap-1 ml-2 mb-20">
             {aboutApp.map((a) => (
               <Link
                 key={a.href}
@@ -99,7 +99,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
       </aside>
 
       {/* 右側：メインコンテンツ */}
-      <main className="flex-1 bg-white pr-1 sm:p-4 rounded-xl shadow-smr">
+      <main className="flex-1 min-h-0 overflow-y-auto bg-white pr-1 sm:p-4 rounded-xl shadow-smr mb-10">
         {children}
       </main>
     </div>

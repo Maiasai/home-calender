@@ -109,104 +109,106 @@ const Notifications = () => {
   if (error) return <ErrorMessage />;
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto flex flex-col">
       <nav className="flex justify-center border-b-2 max mb-8">通知リスト</nav>
 
-      <div className="mb-10">
-        <div className="bg-gray-200 p-1 rounded-lg shadow-sm">
-          <div className="flex flex-col rounded-lg">
-            <h1 className="flex justify-center font-bold shadow-sm bg-white rounded-lg p-1 m-2">
-              招待通知
-            </h1>
-            <div className="p-2">
-              {invites.length === 0 && (
-                <p className="text-center rounded-lg p-10 shadow-sm bg-white my-2">
-                  通知はありません
-                </p>
-              )}
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+        <div className="mb-10">
+          <div className="bg-gray-200 p-1 rounded-lg shadow-sm">
+            <div className="flex flex-col rounded-lg">
+              <h1 className="flex justify-center font-bold shadow-sm bg-white rounded-lg p-1 m-2">
+                招待通知
+              </h1>
+              <div className="p-2">
+                {invites.length === 0 && (
+                  <p className="text-center rounded-lg p-10 shadow-sm bg-white my-2">
+                    通知はありません
+                  </p>
+                )}
 
-              {invites.map((d: InviteNotificationsType) => (
-                <div
-                  key={d.id}
-                  className="border rounded-lg p-4 shadow-sm bg-white"
-                >
-                  <div className="relative">
-                    <p className="font-semibold mb-3 ml-6">
-                      {d.nickname}さんから招待が届いています
-                    </p>
-                    {/* クリックで招待レコードのIDが呼ばれる */}
-                    <div className="flex gap-3 ml-6">
-                      <PrimaryButton
-                        disabled={joiningInviteId === d.id}
-                        onClick={() => Join(d.id)}
-                        className="w-[80px] h-[25px]"
-                        variant="primary"
-                      >
-                        {joiningInviteId === d.id ? '参加中...' : '参加'}
-                      </PrimaryButton>
+                {invites.map((d: InviteNotificationsType) => (
+                  <div
+                    key={d.id}
+                    className="border rounded-lg p-4 shadow-sm bg-white"
+                  >
+                    <div className="relative">
+                      <p className="font-semibold mb-3 ml-6">
+                        {d.nickname}さんから招待が届いています
+                      </p>
+                      {/* クリックで招待レコードのIDが呼ばれる */}
+                      <div className="flex gap-3 ml-6">
+                        <PrimaryButton
+                          disabled={joiningInviteId === d.id}
+                          onClick={() => Join(d.id)}
+                          className="w-[80px] h-[25px]"
+                          variant="primary"
+                        >
+                          {joiningInviteId === d.id ? '参加中...' : '参加'}
+                        </PrimaryButton>
 
-                      <button
-                        onClick={() => onCancel({ id: d.id })}
-                        className="w-[80px] h-[25px] rounded-lg bg-red-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-red-600 active:scale-95 active:shadow-sm"
-                      >
-                        辞退
-                      </button>
+                        <button
+                          onClick={() => onCancel({ id: d.id })}
+                          className="w-[80px] h-[25px] rounded-lg bg-red-500 text-white text-sm font-semibold shadow-md transition-all duration-150 hover:bg-red-600 active:scale-95 active:shadow-sm"
+                        >
+                          辞退
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="bg-gray-200 p-1 rounded-lg shadow-sm">
-        <div className="flex flex-col rounded-lg">
-          <h1 className="flex justify-center font-bold shadow-sm bg-white rounded-lg p-1 m-2">
-            更新通知
-          </h1>
-          <div>
-            <div className="p-2">
-              {notifications.length === 0 && (
-                <p className="text-center rounded-lg p-10 shadow-sm bg-white my-2">
-                  通知はありません
-                </p>
-              )}
+        <div className="bg-gray-200 p-1 rounded-lg shadow-sm mb-10">
+          <div className="flex flex-col rounded-lg">
+            <h1 className="flex justify-center font-bold shadow-sm bg-white rounded-lg p-1 m-2">
+              更新通知
+            </h1>
+            <div>
+              <div className="p-2">
+                {notifications.length === 0 && (
+                  <p className="text-center rounded-lg p-10 shadow-sm bg-white my-2">
+                    通知はありません
+                  </p>
+                )}
 
-              {notifications
-                .slice(0, visibleCount)
-                .map((n: NotificationsType) => {
-                  const date = new Date(n.createdAt);
-                  const displayDate = date.toLocaleDateString('ja-JP', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  });
+                {notifications
+                  .slice(0, visibleCount)
+                  .map((n: NotificationsType) => {
+                    const date = new Date(n.createdAt);
+                    const displayDate = date.toLocaleDateString('ja-JP', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    });
 
-                  return (
-                    <div
-                      key={n.id}
-                      className="border rounded-lg p-4 shadow-sm bg-white"
-                    >
-                      <div className="relative">
-                        <p className="ml-6">{displayDate}</p>
-                        <p className="flex items-center font-semibold ml-8">
-                          {n.nickname}さんが{typesName[n.type]}しました
-                        </p>
+                    return (
+                      <div
+                        key={n.id}
+                        className="border rounded-lg p-4 shadow-sm bg-white"
+                      >
+                        <div className="relative">
+                          <p className="ml-6">{displayDate}</p>
+                          <p className="flex items-center font-semibold ml-8">
+                            {n.nickname}さんが{typesName[n.type]}しました
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+              </div>
             </div>
-          </div>
 
-          {notifications.length > visibleCount && (
-            <button onClick={() => setVisibleCount((prev) => prev + 10)}>
-              もっと見る
-            </button>
-          )}
+            {notifications.length > visibleCount && (
+              <button onClick={() => setVisibleCount((prev) => prev + 10)}>
+                もっと見る
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

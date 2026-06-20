@@ -19,13 +19,13 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     );
   }
   return (
-    <div>
-      <nav className="!font-hui">
+    <div className="h-dvh overflow-hidden flex flex-col">
+      <nav className="!font-hui shrink-0">
         <Header />
         {/* Header.tsx で定義したコンポーネントを ここに表示する */}
       </nav>
 
-      <main>
+      <main className="flex-1 min-h-0 overflow-hidden">
         {children}
         {/*ここに page.tsx の表示結果が入る */}
       </main>

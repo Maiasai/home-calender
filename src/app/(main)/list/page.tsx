@@ -221,12 +221,12 @@ const List = () => {
   if (error) return <ErrorMessage />;
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto h-full overflow-hidden flex flex-col">
       <nav className="flex justify-center border-b-2 max mb-4">
         買い物リスト
       </nav>
 
-      <div className="rounded-3xl md:p-2 min-h-[500px] bg-[#FAF7F2] p-2 ">
+      <div className="rounded-3xl md:p-2 flex flex-col flex-1 min-h-0 overflow-hidden bg-[#FAF7F2] p-2 ">
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
             <div className="ml-2">
@@ -266,9 +266,9 @@ const List = () => {
           </button>
         </div>
 
-        <div className="mt-3 mb-10">
+        <div className="mt-3 flex-1 min-h-0 overflow-y-auto overscroll-contain">
           <div className="flex flex-col items-center p-1">
-            <div className="w-full mx-auto max-w-sm md:max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="w-full mx-auto max-w-sm md:max-w-3xl bg-white rounded-lg shadow-md overflow-hidden  my-4">
               {groupedItems.length === 0 && (
                 <p className="p-8 flex justify-center">
                   買い物リストがありません

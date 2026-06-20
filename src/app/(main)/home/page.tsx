@@ -184,8 +184,8 @@ const TopPage = () => {
   if (error) return <ErrorMessage />;
 
   return (
-    <div className="max-w-3xl mx-auto sm:p-2 mb-10">
-      <nav className="flex justify-center border-b-2 max mb-4">
+    <div className="max-w-3xl mx-auto sm:p-2 h-full flex flex-col">
+      <nav className="flex justify-center border-b-2 max mb-4  shrink-0">
         献立カレンダー
       </nav>
       <PrimaryButton
@@ -195,57 +195,60 @@ const TopPage = () => {
       >
         ＋レシピを追加
       </PrimaryButton>
-      {isRecipeModalOpen && (
-        <AddRecipeModalBase
-          open={isRecipeModalOpen}
-          onClose={() => setIsRecipeModalOpen(false)}
-        />
-      )}
-      {/* カレンダー(7列、gap-1でマスの間隔) */}
-      <Calender
-        data={data}
-        days={days}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        year={year}
-        month={month}
-        setCurrentMonth={setCurrentMonth}
-      />
-      <Image
-        src="/images/homeimage.png"
-        alt="ホームの画像"
-        width={1300}
-        height={90}
-      />
-      {/* 選択日 */}
-      {selectedDate && (
-        <CalenderSelectedDate
+
+      <div className="h-full flex-1 min-h-0 overflow-y-auto overscroll-contain my-4">
+        {isRecipeModalOpen && (
+          <AddRecipeModalBase
+            open={isRecipeModalOpen}
+            onClose={() => setIsRecipeModalOpen(false)}
+          />
+        )}
+        {/* カレンダー(7列、gap-1でマスの間隔) */}
+        <Calender
           data={data}
+          days={days}
           selectedDate={selectedDate}
-          setModalOpen={setModalOpen}
-          onEdit={handleEdit} //ユーザーが編集押下＞MenuButtonのonClickが感知→onEditにその日の献立がくっついてここにくる。
-          onList={handleAddList}
-          displayDate={displayDate}
+          setSelectedDate={setSelectedDate}
+          year={year}
+          month={month}
+          setCurrentMonth={setCurrentMonth}
+        />
+        <Image
+          src="/images/homeimage.png"
+          alt="ホームの画像"
+          width={1300}
+          height={90}
+        />
+        {/* 選択日 */}
+        {selectedDate && (
+          <CalenderSelectedDate
+            data={data}
+            selectedDate={selectedDate}
+            setModalOpen={setModalOpen}
+            onEdit={handleEdit} //ユーザーが編集押下＞MenuButtonのonClickが感知→onEditにその日の献立がくっついてここにくる。
+            onList={handleAddList}
+            displayDate={displayDate}
+            mutate={mutate}
+          />
+        )}
+        <MealModalBase
+          open={modalOpen} //modalOpen === true のとき開く
+          onClose={handleCloseModal}
+          selectedDate={selectedDate}
           mutate={mutate}
+          mode={mode}
+          initialRecipes={initialRecipes}
+          targetMeal={targetMeal}
+          displayDate={displayDate}
         />
-      )}
-      <MealModalBase
-        open={modalOpen} //modalOpen === true のとき開く
-        onClose={handleCloseModal}
-        selectedDate={selectedDate}
-        mutate={mutate}
-        mode={mode}
-        initialRecipes={initialRecipes}
-        targetMeal={targetMeal}
-        displayDate={displayDate}
-      />
-      {isGuideOpen && (
-        <TopGuideModal
-          onClose={handleCloseGuide}
-          dontShowAgain={dontShowAgain}
-          setDontShowAgain={setDontShowAgain}
-        />
-      )}
+        {isGuideOpen && (
+          <TopGuideModal
+            onClose={handleCloseGuide}
+            dontShowAgain={dontShowAgain}
+            setDontShowAgain={setDontShowAgain}
+          />
+        )}
+      </div>
     </div>
   );
 };
