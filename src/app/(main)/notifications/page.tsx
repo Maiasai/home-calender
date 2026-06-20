@@ -109,10 +109,12 @@ const Notifications = () => {
   if (error) return <ErrorMessage />;
 
   return (
-    <div className="max-w-3xl mx-auto flex flex-col">
-      <nav className="flex justify-center border-b-2 max mb-8">通知リスト</nav>
+    <div className="max-w-3xl mx-auto h-full overflow-hidden  flex flex-col">
+      <nav className="flex justify-center border-b-2 max mb-8 shrink-0">
+        通知リスト
+      </nav>
 
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain mb-10">
         <div className="mb-10">
           <div className="bg-gray-200 p-1 rounded-lg shadow-sm">
             <div className="flex flex-col rounded-lg">
@@ -161,7 +163,7 @@ const Notifications = () => {
           </div>
         </div>
 
-        <div className="bg-gray-200 p-1 rounded-lg shadow-sm mb-10">
+        <div className="bg-gray-200 p-1 rounded-lg shadow-sm">
           <div className="flex flex-col rounded-lg">
             <h1 className="flex justify-center font-bold shadow-sm bg-white rounded-lg p-1 m-2">
               更新通知
