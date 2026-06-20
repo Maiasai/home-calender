@@ -76,7 +76,7 @@ const Header = () => {
           </Link>
 
           {/* スマホ用通知アイコン */}
-          <div className="flex absolute top-5 right-12 z-20 md:hidden">
+          <div className="flex absolute top-5 right-12 z-0 md:hidden">
             <Link href="/notifications" className="relative block">
               <Image
                 src="/images/bell.png"
