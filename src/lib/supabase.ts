@@ -10,8 +10,8 @@ export const supabase = createBrowserClient(
     auth: {
       flowType: 'implicit',
       detectSessionInUrl: true,
-      persistSession: true,
-      autoRefreshToken: true,
+      persistSession: true, //ログイン情報をブラウザに保存するかどうか
+      autoRefreshToken: true, //アクセストークンの期限が切れそうになったら自動で更新するかどうか
     },
   },
 );

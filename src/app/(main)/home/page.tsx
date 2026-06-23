@@ -27,8 +27,8 @@ const TopPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false); //レシピ追加ボタン用
-  const [isGuideOpen, setIsGuideOpen] = useState(false); //初回説明モーダル
-  const [dontShowAgain, setDontShowAgain] = useState(false); //初回説明モーダル(現在チェックがついてるか)
+  const [isGuideOpen, setIsGuideOpen] = useState(false); //初回説明モーダル　表示/非表示管理用
+  const [dontShowAgain, setDontShowAgain] = useState(false); //初回説明モーダル(次回から表示しないにチェックがついてるかのstate)
 
   //初回説明モーダル処理
   useEffect(() => {
@@ -39,6 +39,7 @@ const TopPage = () => {
     }
   }, []);
 
+  //閉じるボタンを押す＞onCloseが発火してdontShowAgainがtrueならここの関数が動く
   const handleCloseGuide = () => {
     if (dontShowAgain) {
       localStorage.setItem('hideTopGuide', 'true'); //ブラウザにチェック状態をここで保存
@@ -46,26 +47,34 @@ const TopPage = () => {
     setIsGuideOpen(false);
   };
 
-  //initialRecipesで編集モーダルを開いた瞬間の初期値を管理（編集用）*一切変更しない元データ
+  // ==============================
+  // 編集モーダル用 state　※initialRecipesで編集モーダルを開いた瞬間の初期値を管理（編集用）*一切変更しない元データ
+  // ==============================
   const [initialRecipes, setInitialRecipes] = useState<SelectedRecipe[]>([]); //selectedRecipesを正しく初期化するために存在
-  const [targetMeal, setTargetMeal] = useState<Meal | null>(null); //今ユーザーが操作してる作業中の献立データを管理（編集用）
+  const [targetMeal, setTargetMeal] = useState<Meal | null>(null); // 編集対象の献立データ
 
+  // ==============================
+  // 日付・月の管理
+  // ==============================
   const today = new Date(); //今日の日付を取得
 
   const searchParams = useSearchParams();
   const dateParam = searchParams.get('date');
-  //ユーザーがクリックした日を管理（上で取得したtodayを入れることで初期値を本日）
-  const initialDate = dateParam ? new Date(dateParam) : today; //もしURLに date があるならその date を Date型に変換して使う
-  const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
 
-  //今表示している月を管理(Dateは「日付の箱」)※このstateは、今表示している月
+  //ユーザーが見ている日を管理
+  const initialDate = dateParam ? new Date(dateParam) : today; //newDateで「Sun Jun 21 2026 09:00:00 GMT+0900」みたいなDateオブジェクトになる
+  const [selectedDate, setSelectedDate] = useState<Date>(initialDate); // 選択中の日付
+
+  // 表示中の月（currentMonth=Mon Jun 01 2026 00:00:00 GMT+0900)
   const [currentMonth, setCurrentMonth] = useState(
     new Date(initialDate.getFullYear(), initialDate.getMonth(), 1), //年月を取得しこの形になる　→ new Dateで今の月の1日を作成(2026, 2, 1)
   );
 
-  //今表示しているカレンダーの情報を取得
-  const year = currentMonth.getFullYear(); //年を取得
-  const month = currentMonth.getMonth(); //月を取得　※month = 0〜11（1月は0）
+  // ==============================
+  // カレンダー表示用データ作成　※今表示しているカレンダーの情報を取得
+  // ==============================
+  const year = currentMonth.getFullYear(); //年を取得(year = 2026)
+  const month = currentMonth.getMonth(); //月を取得(month = 0〜11（1月は0）)
 
   //カレンダーの前の空白を作るために取得(その月の1日を作っている)
   const firstDay = new Date(year, month, 1).getDay(); //firstday=いくつ空白を入れるか //その日が「何曜日か」を数字で返す//（例）日曜日なら0
@@ -93,7 +102,9 @@ const TopPage = () => {
     days.push(new Date(year, month, i)); //例の場合は[null,null,Date(2026-03-01),〜Date(2026-03-31)]
   }
 
-  //献立取得
+  // ==============================
+  // 献立データ取得
+  // ==============================
   //Date型から文字列に変換（"2026-04-01"）→（"2026-04"）にしてる
   //slice(0, 7)→0以上7未満の文字の一部を切り取る。slice(開始位置, 終了位置)
   const monthdata = currentMonth.toLocaleDateString('sv-SE').slice(0, 7);

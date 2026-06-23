@@ -17,7 +17,7 @@ export const useRouteGuard = ({ session, isLoading }: Props) => {
   useEffect(() => {
     if (isLoading) return; // sessionの取得中は何もしない
 
-    const fetcher = async () => {
+    const fetcher = () => {
       if (session === null) {
         // sessionがnull（未ログイン）だったら強制的にTOPへ
         router.replace('/');

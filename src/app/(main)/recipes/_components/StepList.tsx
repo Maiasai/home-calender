@@ -4,7 +4,7 @@
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import ErrorMessage from './ErrorMessage';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
-import DeleteIcon from '@/app/components/image/deleteicon';
+import DeleteIcon from '@/app/components/image/DeleteIcon';
 import PrimaryButton from '@/components/button/PrimaryButton';
 
 export type Step = {

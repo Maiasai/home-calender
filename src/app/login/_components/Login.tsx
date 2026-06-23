@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useState } from 'react';
 import Image from 'next/image';
-import { Mode } from '../_typs/mode';
+import { Mode } from '../_typs/Mode';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import PrimaryButton from '@/components/button/PrimaryButton';
 

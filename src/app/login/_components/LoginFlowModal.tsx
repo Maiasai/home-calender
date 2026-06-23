@@ -19,7 +19,7 @@ import NewRegistration from './NewRegistration';
 
 import ResetEmail from './ResetEmail';
 import ResetPassword from './ResetPassword';
-import { Mode } from '../_typs/mode';
+import { Mode } from '../_typs/Mode';
 import { InputEmailData } from '../_typs/InputEmailData';
 import PageHeader from '@/app/(main)/recipes/_components/PageHeader';
 import LoadingOverlay from '@/components/LoadingOverlay';

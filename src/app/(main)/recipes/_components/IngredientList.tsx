@@ -14,7 +14,7 @@ import {
 import { RecipeIngredientFormPart } from '../_types/RecipeFormValues';
 import { normalizeFraction, parseFraction } from './parseFraction';
 import ErrorMessage from './ErrorMessage';
-import DeleteIcon from '@/app/components/image/deleteicon';
+import DeleteIcon from '@/app/components/image/DeleteIcon';
 import { UnitData } from '@/app/api/units/route';
 import PrimaryButton from '@/components/button/PrimaryButton';
 

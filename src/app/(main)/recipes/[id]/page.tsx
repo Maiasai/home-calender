@@ -2,7 +2,7 @@
 
 'use client';
 
-import BackIcon from '@/app/components/image/backicon';
+import BackIcon from '@/app/components/image/BackIcon';
 import CategoryBadge from '@/app/components/image/CategoryBadge';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';

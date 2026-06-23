@@ -1,7 +1,7 @@
 //コンポーネントヘッダー
 'use client';
 
-import BackIcon from '@/app/components/image/backicon';
+import BackIcon from '@/app/components/image/BackIcon';
 import CloseButton from '@/app/components/image/CloseButton';
 
 type Props = {

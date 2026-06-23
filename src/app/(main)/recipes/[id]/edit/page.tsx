@@ -2,7 +2,7 @@
 
 'use client';
 
-import BackIcon from '@/app/components/image/backicon';
+import BackIcon from '@/app/components/image/BackIcon';
 
 import { RecipeCategory } from '@/generated/prisma';
 import { useEffect, useState } from 'react';
