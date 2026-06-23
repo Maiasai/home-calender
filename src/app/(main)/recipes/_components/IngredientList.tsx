@@ -14,9 +14,9 @@ import {
 import { RecipeIngredientFormPart } from '../_types/RecipeFormValues';
 import { normalizeFraction, parseFraction } from './parseFraction';
 import ErrorMessage from './ErrorMessage';
-import DeleteIcon from '@/app/components/image/DeleteIcon';
 import { UnitData } from '@/app/api/units/route';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import DeleteIcon from '@/app/components/image/DeleteIcon';
 
 type Props = {
   //このコンポーネントが親から受け取る「データと関数の一覧」
