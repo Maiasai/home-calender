@@ -13,7 +13,6 @@ import { fetcher } from '@/lib/featcher';
 
 import { NotificationsResponse } from './notifications/page';
 import { useFamilyChangeWatcher } from './_hoocks/useFamilyChangeWatcher';
-import PrimaryButton from '@/components/button/PrimaryButton';
 
 const Header = () => {
   const [open, setOpen] = useState(false); //ハンバーガーメニュー用
@@ -111,33 +110,6 @@ const Header = () => {
             <Link href="/list">買い物リスト</Link>
             <Link href="/mypage">マイページ</Link>
           </div>
-        </div>
-
-        <div className="mt-3">
-          <Link href="/home">
-            <PrimaryButton
-              className="md:hidden w-[110px] h-[30px] ml-4"
-              variant="fourth"
-            >
-              献立
-            </PrimaryButton>
-          </Link>
-          <Link href="/recipes">
-            <PrimaryButton
-              className="md:hidden w-[110px] h-[30px] ml-4"
-              variant="fourth"
-            >
-              レシピ
-            </PrimaryButton>
-          </Link>
-          <Link href="/list">
-            <PrimaryButton
-              className="md:hidden w-[110px] h-[30px] ml-4"
-              variant="fourth"
-            >
-              買い物リスト
-            </PrimaryButton>
-          </Link>
         </div>
       </div>
     </nav>

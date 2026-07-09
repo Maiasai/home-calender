@@ -5,6 +5,7 @@
 import { useRouteGuard } from './home/_hooks/useRouteGuard';
 import { useSupabaseSession } from './home/_hooks/useSupabaseSession';
 import Header from './Header';
+import FooterNavigation from './FooterNavigation';
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const { session, isLoading } = useSupabaseSession();
@@ -25,10 +26,12 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Header.tsx で定義したコンポーネントを ここに表示する */}
       </nav>
 
-      <main className="flex-1 min-h-0 overflow-hidden">
+      <main className="flex-1 min-h-0 overflow-hidden pb-16 md:pb-0">
         {children}
         {/*ここに page.tsx の表示結果が入る */}
       </main>
+
+      <FooterNavigation />
     </div>
   );
 };
