@@ -12,9 +12,9 @@ const FooterNavigation = () => {
       <nav className="flex justify-around py-3 items-center">
         <Link
           href="/home"
-          className={
+          className={`flex flex-col items-center gap-1 text-xs ${
             pathname === '/home' ? 'text-[#fb923c] font-bold' : 'text-[#999999]'
-          }
+          }`}
         >
           <Image
             src={
@@ -23,20 +23,20 @@ const FooterNavigation = () => {
                 : '/images/carendericon2.png'
             }
             alt="献立アイコン"
-            width={22}
-            height={22}
-            className="ml-1"
+            width={24}
+            height={24}
+            className="object-contain"
           />
           <label>献立</label>
         </Link>
 
         <Link
           href="/recipes"
-          className={
+          className={`flex flex-col items-center gap-1 text-xs ${
             pathname === '/recipes'
               ? 'text-[#fb923c] font-bold'
               : 'text-[#999999]'
-          }
+          }`}
         >
           <Image
             src={
@@ -45,18 +45,18 @@ const FooterNavigation = () => {
                 : '/images/recipeicon2.png'
             }
             alt="レシピアイコン"
-            width={22}
-            height={22}
-            className="ml-3"
+            width={24}
+            height={24}
+            className="object-contain"
           />
           <label>レシピ</label>
         </Link>
 
         <Link
           href="/list"
-          className={
+          className={`flex flex-col items-center gap-1 text-xs ${
             pathname === '/list' ? 'text-[#fb923c] font-bold' : 'text-[#999999]'
-          }
+          }`}
         >
           <Image
             src={
@@ -65,9 +65,9 @@ const FooterNavigation = () => {
                 : '/images/carticon2.png'
             }
             alt="買い物リストアイコン"
-            width={26}
-            height={26}
-            className="ml-3"
+            width={24}
+            height={24}
+            className="object-contain"
           />
           <label>買い物</label>
         </Link>
