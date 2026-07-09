@@ -20,5 +20,5 @@ export const fetcher = async (url: string) => {
   });
   if (!res.ok) throw new Error('取得失敗');
 
-  return res.json();
+  return res.json(); //Apiから返ってきた、この返り値はSWRのデータに入る
 };

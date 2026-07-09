@@ -20,6 +20,7 @@ const toggleStatus = async (
   token: string | null,
 ) => {
   // UIの先行更新（optimistic update）
+  //mutateは再取得だけじゃない。mutate((現在のキャッシュ) => 新しいキャッシュ, false)でキャッシュだけ先に書き換えができてしまう
   mutate((recipes: RecipeData[] | undefined) => {
     //このrecipesは/api/recipesから取ってきたキャッシュデータ
     if (!recipes) return recipes;
@@ -34,12 +35,14 @@ const toggleStatus = async (
             ...reciper,
             userRecipeStatus: [
               {
-                //既存状態を保持しつつ切り替える
+                //既存の userRecipeStatus[0] があればコピー
+                // reciper.userRecipeStatus?.[0]がundefinedのまま展開するとエラーになるから、
+                // なければ { isFavorite: false } を仮で使う
                 ...(reciper.userRecipeStatus?.[0] ?? {
                   isFavorite: false,
-                  hasCooked: false,
                 }),
                 isFavorite: !current,
+                // その後で isFavorite: !current で上書き
               },
             ],
           };
@@ -59,16 +62,16 @@ const toggleStatus = async (
           };
         }
       }
-      return reciper; //APIを再取得しない（SWRキャッシュだけ更新）
+      return reciper; //変更対象じゃないレシピはそのまま返す
     });
-  }, false);
+  }, false); //false→このmutate直後に再取得しない
 
   //API更新
   const apiPath = key === 'isFavorite' ? 'favorite' : 'cooked'; //（意味）もしkeyがisFavoriteならfavorite、それ以外ならcooked
 
   //送られてきたお気に入り（true/false）状態を!で反転→PATCHでAPIからDB更新
   const requestBody: CookedAndIsFavoriteRequestBody = {
-    [key]: !current,
+    [key]: !current, //keyの名前をそのままプロパティ名にする
   };
 
   await fetch(`/api/recipes/${id}/${apiPath}`, {

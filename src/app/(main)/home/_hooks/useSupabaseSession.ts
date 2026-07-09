@@ -13,10 +13,9 @@ export const useSupabaseSession = () => {
     const fetchSession = async () => {
       const {
         data: { session },
-        //ログインするとsupabaseがブラウザ側にセッション情報を保存してくれる。ブラウザに保存されているログイン情報をgetSessionで見て、
+        //ログインするとsupabase-jsがブラウザ側にセッション情報を保存してくれる。ブラウザに保存されているログイン情報をgetSessionで見て、
         //ログイン中ならsession.未ログインならnullを返す
       } = await supabase.auth.getSession();
-      console.log('getSession結果', session);
       setSession(session);
     };
 

@@ -31,6 +31,7 @@ const RecipeCard = ({
   //親からmapしてきたものがここに入る。
   //ここで「このレシピはお気に入り/作ったことある済みか？」を true / false に変換している
   //　※　!!undefinedは「false」にしてる
+  //ここから取り出してる。 { id: 'recipe1', title: 'カレー', userRecipeStatus: [ { isFavorite: true }],familyRecipeStatus: [{ hasCooked: false }]}
   const isFav = !!recipe.userRecipeStatus?.[0]?.isFavorite; //!!→返ってくるものをbooleanに変換できる。undefinedの可能性もあるため、ここでfalseにしてる
   const isCoo = !!recipe.familyRecipeStatus?.[0]?.hasCooked;
 
@@ -45,10 +46,11 @@ const RecipeCard = ({
         <input
           type="checkbox"
           className="absolute sm:top-4 sm:left-4 top-2 left-2 z-10 sm:scale-150 rounded-3xl"
+          //レシピidがselectedIdに入ってたらチェックONで表示
           checked={selectedIds.includes(String(recipe.id))}
           onChange={(e) => {
-            e.stopPropagation();
-            const idStr = String(recipe.id);
+            e.stopPropagation(); //イベントの親への伝播を止める
+            const idStr = String(recipe.id); //操作されたレシピidがここに入る
 
             if (e.target.checked) {
               setSelectedIds([...selectedIds, idStr]);
@@ -75,6 +77,7 @@ const RecipeCard = ({
           }
         }}
         className={`block ${
+          //リンクをカード全体の箱として扱うためblock
           selectedIds.includes(String(recipe.id)) ? 'opacity-60' : ''
         }`}
       >
@@ -83,7 +86,7 @@ const RecipeCard = ({
             src={imageSrc}
             alt="レシピ画像ない場合の画像"
             fill //Image が親の箱いっぱいに広がる
-            className="object-cover"
+            className="object-cover" //画像の比率を保ったまま箱いっぱいに表示はみ出る部分は切り取る
           />
 
           <div className="absolute flex gap-x-2 md:top-4 md:right-4 top-1 right-1">

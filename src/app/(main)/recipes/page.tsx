@@ -26,19 +26,21 @@ const RecipesPage = () => {
 
   const [RecipeModalOpen, setRecipeModalOpen] = useState(false);
 
+  const [inputKeyword, setInputKeyword] = useState(''); //検索欄に入力中の文字
+  const [keyword, setKeyword] = useState(''); // 検索実行用キーワード。ここに入った値がuseRecipesに渡る
   const [category, setCategory] = useState<CategoryFilter>(''); // "" は「すべて」
-  const [inputKeyword, setInputKeyword] = useState(''); //→ 入力中
-  const [keyword, setKeyword] = useState(''); //→検索
-  const [isBulkMode, setIsBulkMode] = useState(false); //一括操作モード
-  const [confirmOpen, setConfirmOpen] = useState(false); //削除確認モーダル
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [favoriteFilter, setFavoriteFilter] = useState(false); //お気に入りフィルター
   const [cookedFilter, setCookedFilter] = useState(false); //作ったことあるフィルター
+
+  const [isBulkMode, setIsBulkMode] = useState(false); //一括操作モード
+  const [confirmOpen, setConfirmOpen] = useState(false); //削除確認モーダル
+  const [selectedIds, setSelectedIds] = useState<string[]>([]); //一括選択モードで選択されているレシピ
 
   //レシピ情報を取得
   //mutateはもう一度fetch("/api/recipes")する（これによってUIが更新）
   const { recipes, isLoading, isError, mutate } = useRecipes({
     //レンダリング時に毎回実行されるもの（setStateされ再レンダリング後に実行）
+    //下記４つがuseRecipesのfilterとして渡される
     keyword,
     category, //選択中のカテゴリが入る
     favorite: favoriteFilter, //意味）APIパラメータ名 : UIのstate

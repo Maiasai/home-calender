@@ -9,6 +9,7 @@ import { createNotification } from '@/lib/notification';
 
 export const runtime = 'nodejs';
 
+//フロントからきたurlからsearchParamして、whereでどのレシピをとるか絞ってる。そのあと取得したレシピからselectで何を返すか決めてる。
 export const GET = async (request: NextRequest) => {
   try {
     const user = await requireUser(request);
@@ -36,8 +37,12 @@ export const GET = async (request: NextRequest) => {
 
     //trim()→前後の空白を削除
     //split→"キャベツ にんじん".split(/\s+/)が["キャベツ", "にんじん"]なる
-    //filter(Boolean)→でから文字捨ててる
+    //filter(Boolean)→でfalseぽい値を消しているので、空欄をこれで消している
     const keywords = keyword?.trim().split(/\s+/).filter(Boolean) ?? [];
+    const validCategory =
+      category === 'MAIN' || category === 'SIDE' || category === 'UNCLASSIFIED'
+        ? category
+        : null;
 
     const recipeget = await prisma.recipe.findMany({
       //レシピテーブル全件を取得
@@ -48,14 +53,17 @@ export const GET = async (request: NextRequest) => {
         //レシピ名検索
         ...(keywords.length > 0 && {
           OR: keywords?.flatMap((word) => [
-            //OR[{条件1},{条件2},]→レシピ名or材料名
+            //OR[{条件1},{条件2},]→レシピ名or材料名に当てはまるなら取得
+
+            //条件１
             {
               title: {
+                //titleにwordが含まれている,大文字小文字は区別しない
                 contains: word,
                 mode: 'insensitive',
               },
             },
-
+            //条件２
             {
               recipeIngredients: {
                 some: {
@@ -73,8 +81,8 @@ export const GET = async (request: NextRequest) => {
         }),
 
         //カテゴリ絞り込み
-        ...(category && {
-          category: category as RecipeCategory, //searchParams.get() は常に string | null を返す。→カテゴリenumだから合わないため
+        ...(validCategory && {
+          category: validCategory,
         }),
 
         //お気に入り絞り込み
@@ -104,6 +112,7 @@ export const GET = async (request: NextRequest) => {
         createdAt: 'desc',
       },
 
+      //上記のwhereはどのレシピを取得するか。以下selectは取得したレシピの中から、どの項目を返すかを決めている
       select: {
         //includeは追加するものを指定する仕組みだが、selectは残すものを指定する仕組み
         id: true,
@@ -132,7 +141,7 @@ export const GET = async (request: NextRequest) => {
 
     return NextResponse.json(recipeget, { status: 200 });
   } catch (error) {
-    console.log('GET /api/recipes error:', error);
+    console.error('GET /api/recipes error:', error);
 
     return NextResponse.json(
       { message: 'エラーが発生しました' },

@@ -6,7 +6,7 @@ import { NextRequest } from 'next/server';
 import { supabase } from './supabase';
 
 const requireUser = async (request: NextRequest): Promise<User> => {
-  const token =
+  const token = //Authorizarionがあるときだけreplaceしてねという意味
     request.headers.get('Authorization')?.replace('Bearer ', '') ?? ''; //①リクエスト中のBearerの中身だけを取り出す
 
   //②リクエストにくっついてきた「トークン」からユーザーを特定

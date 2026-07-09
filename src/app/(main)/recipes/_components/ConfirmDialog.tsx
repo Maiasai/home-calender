@@ -23,6 +23,7 @@ const ConfirmDialog = ({
   return (
     <Modal
       open={open}
+      //onOpenChange：モーダルの開閉状態が変わろうとした時に呼ばれる
       onOpenChange={(nextOpen) => {
         if (!nextOpen) onCancel();
       }}
