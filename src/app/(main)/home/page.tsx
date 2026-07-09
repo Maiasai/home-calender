@@ -196,18 +196,18 @@ const TopPage = () => {
 
   return (
     <div className="max-w-3xl mx-auto sm:p-2 h-full flex flex-col">
-      <nav className="flex justify-center border-b-2 max mb-4  shrink-0">
+      <nav className="flex justify-center border-b-2 max mb-1 md:mb-4  shrink-0">
         献立カレンダー
       </nav>
       <PrimaryButton
         onClick={() => setIsRecipeModalOpen(true)}
-        className="md:hidden w-[110px] h-[30px] ml-4 mb-4"
+        className="md:hidden w-[110px] h-[30px] ml-4 md:mb-4 mb-1"
         variant="primary"
       >
         ＋レシピを追加
       </PrimaryButton>
 
-      <div className="h-full flex-1 min-h-0 overflow-y-auto overscroll-contain my-4">
+      <div className="h-full flex-1 min-h-0 overflow-y-auto overscroll-contain md:my-4 my-1">
         {isRecipeModalOpen && (
           <AddRecipeModalBase
             open={isRecipeModalOpen}

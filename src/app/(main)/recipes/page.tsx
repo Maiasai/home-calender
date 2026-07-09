@@ -87,7 +87,7 @@ const RecipesPage = () => {
         mutate={mutate}
       />
       <div className="max-w-3xl mx-auto h-full overflow-hidden flex flex-col">
-        <nav className="flex justify-center border-b-2 mb-2 shrink-0">
+        <nav className="flex justify-center border-b-2 md:mb-2 mb-1 shrink-0">
           レシピ一覧
         </nav>
 

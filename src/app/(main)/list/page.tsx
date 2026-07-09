@@ -222,12 +222,12 @@ const List = () => {
 
   return (
     <div className="max-w-3xl mx-auto h-full overflow-hidden flex flex-col">
-      <nav className="flex justify-center border-b-2 max mb-4">
+      <nav className="flex justify-center border-b-2 md:mb-4 mb-1">
         買い物リスト
       </nav>
 
-      <div className="rounded-3xl md:p-2 flex flex-col flex-1 min-h-0 overflow-hidden bg-[#FAF7F2] p-2 ">
-        <div className="flex items-center justify-between gap-2">
+      <div className="rounded-3xl md:p-2 flex flex-col flex-1 min-h-0 overflow-hidden bg-[#FAF7F2] p-1">
+        <div className="flex items-center justify-between">
           <div className="flex gap-2">
             <div className="ml-2">
               <PrimaryButton
@@ -254,7 +254,7 @@ const List = () => {
                 deleateItems(groupedItems);
               }
             }}
-            className="flex items-center text-[#e95c5c] font-bold ml-2 bg-white shadow-md rounded-sm mr-4"
+            className="flex items-center text-[#e95c5c] font-bold ml-2 bg-white shadow-md rounded-lg mr-4 p-2"
           >
             <Image
               src="/images/delete_24dp_red.png"

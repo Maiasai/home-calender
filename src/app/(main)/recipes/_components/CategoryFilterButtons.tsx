@@ -11,7 +11,7 @@ type Props = {
 
 const CategoryFilterButtons = ({ category, setCategory }: Props) => {
   return (
-    <div className="flex justify-center mb-4 gap-x-2">
+    <div className="flex justify-center md:mb-4 mb-2 gap-x-2">
       <ClassificationButton
         isActive={category === ''} //押される→onClick動いてStete更新　→　stateで今選ばれているかここで見る
         onClick={() => setCategory('')} // 押された時の処理（すべて）
