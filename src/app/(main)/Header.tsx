@@ -91,7 +91,7 @@ const Header = () => {
           </div>
 
           {/* 設定アイコン */}
-          <div className="flex absolute top-5 right-2 z-20 md:hidden">
+          <div className="flex absolute top-5 right-2 z-10 md:hidden">
             <button onClick={() => setOpen(!open)} className="relative block">
               <Image
                 src="/images/settings_24.png"
