@@ -84,6 +84,12 @@ export const POST = async (request: NextRequest) => {
         { status: 404 },
       );
     }
+    if (recipes.length === 0) {
+      return NextResponse.json(
+        { message: 'レシピを１件以上選択してください' },
+        { status: 400 },
+      );
+    }
     const activeFamilyId = dbUser.activeFamilyId;
 
     await prisma.$transaction(async (tx) => {
@@ -132,6 +138,9 @@ export const PUT = async (request: NextRequest) => {
       where: {
         id: user.id,
       },
+      select: {
+        activeFamilyId: true,
+      },
     });
     const body: MealRequestBodyEdit = await request.json();
 
@@ -159,6 +168,15 @@ export const PUT = async (request: NextRequest) => {
     }
 
     await prisma.$transaction(async (tx) => {
+      if (body.recipes.length === 0) {
+        await tx.menu.deleteMany({
+          where: {
+            id: body.id,
+            familyId: activeFamilyId,
+          },
+        });
+        return;
+      }
       await tx.menuRecipe.deleteMany({
         where: { menuId: body.id },
       });
@@ -192,11 +210,25 @@ export const DELETE = async (request: NextRequest) => {
   try {
     const user = await requireUser(request);
     const body: MealId = await request.json();
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      select: {
+        activeFamilyId: true,
+      },
+    });
 
+    if (!dbUser?.activeFamilyId) {
+      return NextResponse.json(
+        { message: 'family not found' },
+        { status: 404 },
+      );
+    }
     const result = await prisma.menu.deleteMany({
       where: {
         id: body.id,
-        userId: user.id,
+        familyId: dbUser.activeFamilyId,
       },
     });
 

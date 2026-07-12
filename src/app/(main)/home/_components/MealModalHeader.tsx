@@ -137,6 +137,12 @@ const MealModalHeader = ({
             カスタマイズから分類してください。
           </p>
         )}
+
+        {!hasUnselected && (
+          <p className="text-red-500 text-xs mt-1">
+            登録済みのレシピを解除したい場合は、レシピから選択から再度レシピを選択して解除できます
+          </p>
+        )}
       </div>
     </>
   );

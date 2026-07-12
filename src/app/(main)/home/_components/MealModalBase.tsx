@@ -7,7 +7,6 @@ import MealRecipeSelect from './MealRecipeSelect';
 import { MealModalStep } from '../_typs/MealModalStep';
 import { SelectedRecipe } from '../_typs/SelectedRecipe';
 import CustomizeView from './CustomizeView';
-import { useForm } from 'react-hook-form';
 import { useRecipes } from '../../recipes/_hooks/useRecipes';
 import PageHeader from '../../recipes/_components/PageHeader';
 import { CategoryFilter } from '../../recipes/_types/category/CategoryFilter';
@@ -51,17 +50,13 @@ const MealModalBase = ({
   const [cookedFilter, setCookedFilter] = useState(false); //作ったことあるフィルター
   const [selectedRecipes, setSelectedRecipes] = useState<SelectedRecipe[]>([]); //ユーザーが今操作してる状態→選択されたレシピをここで管理（配列の中に、選択済みレシピのオブジェクトが入ってる）
 
-  const {
-    formState: { isSubmitting },
-  } = useForm();
-
   //未カテゴリ
   const hasUnselected = selectedRecipes.some(
     (r) => r.mealType === 'UNSELECTED',
   );
   // 未カテゴリがある場合はボタンを無効化
   const isDisabled =
-    isSubmitting || hasUnselected || selectedRecipes.length === 0;
+    hasUnselected || (mode === 'create' && selectedRecipes.length === 0);
   const isEmpty = selectedRecipes.length === 0;
 
   //レシピ情報を取得
@@ -152,6 +147,7 @@ const MealModalBase = ({
               setCategory={setCategory}
               selectedRecipes={selectedRecipes}
               onBack={() => setStep('select')}
+              mode={mode}
             />
           )}
 

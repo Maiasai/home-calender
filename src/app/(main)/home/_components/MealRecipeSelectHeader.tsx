@@ -24,6 +24,7 @@ type Props = {
   setCategory: (v: CategoryFilter) => void;
   selectedRecipes: SelectedRecipe[];
   onBack: () => void;
+  mode: 'create' | 'edit';
 };
 
 const MealRecipeSelectHeader = ({
@@ -38,9 +39,10 @@ const MealRecipeSelectHeader = ({
   setCategory,
   selectedRecipes,
   onBack,
+  mode,
 }: Props) => {
   const hasSelectedRecipes = selectedRecipes.length > 0;
-  const isDisabled = !hasSelectedRecipes; //選択なしなら非活性
+  const isDisabled = mode === 'create' && !hasSelectedRecipes; //選択なしなら非活性
 
   return (
     <>
