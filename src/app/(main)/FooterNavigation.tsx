@@ -8,8 +8,8 @@ const FooterNavigation = () => {
   const pathname = usePathname();
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 border-t bg-white md:hidden">
-      <nav className="flex justify-around py-3 items-center">
+    <footer className="fixed bottom-0 left-0 right-0 z-50 border-t bg-white md:hidden">
+      <nav className="flex justify-around py-5 items-center">
         <Link
           href="/home"
           className={`flex flex-col items-center gap-1 text-xs ${
