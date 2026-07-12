@@ -110,12 +110,12 @@ const Notifications = () => {
 
   return (
     <div className="max-w-3xl mx-auto h-full overflow-hidden  flex flex-col">
-      <nav className="flex justify-center border-b-2 max mb-8 shrink-0">
+      <nav className="flex justify-center border-b-2 mb-4 md:mb-8 shrink-0">
         通知リスト
       </nav>
 
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain mb-10">
-        <div className="mb-10">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pb-4">
+        <div className="mb-4">
           <div className="bg-gray-200 p-1 rounded-lg shadow-sm">
             <div className="flex flex-col rounded-lg">
               <h1 className="flex justify-center font-bold shadow-sm bg-white rounded-lg p-1 m-2">
