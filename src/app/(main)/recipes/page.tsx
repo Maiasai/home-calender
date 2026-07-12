@@ -87,7 +87,7 @@ const RecipesPage = () => {
         onClose={() => setRecipeModalOpen(false)}
         mutate={mutate}
       />
-      <div className="max-w-3xl mx-auto h-full overflow-hidden flex flex-col">
+      <div className="max-w-3xl mx-auto h-full overflow-hidden flex flex-col ">
         <nav className="flex justify-center border-b-2 md:mb-2 mb-1 shrink-0">
           レシピ一覧
         </nav>

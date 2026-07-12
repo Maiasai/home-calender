@@ -8,11 +8,11 @@ const FooterNavigation = () => {
   const pathname = usePathname();
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50 border-t bg-white md:hidden">
-      <nav className="flex justify-around py-3 items-center">
+    <footer className="fixed inset-x-0 bottom-0 z-[9999] isolate h-20 border-t bg-white md:hidden">
+      <nav className="flex h-full w-full items-stretch">
         <Link
           href="/home"
-          className={`flex flex-col items-center gap-1 text-xs ${
+          className={`flex h-full flex-1 flex-col items-center justify-center gap-1 text-xs ${
             pathname === '/home' ? 'text-[#fb923c] font-bold' : 'text-[#999999]'
           }`}
         >
@@ -27,12 +27,12 @@ const FooterNavigation = () => {
             height={24}
             className="object-contain"
           />
-          <label>献立</label>
+          <span>献立</span>
         </Link>
 
         <Link
           href="/recipes"
-          className={`flex flex-col items-center gap-1 text-xs ${
+          className={`flex h-full flex-1 flex-col items-center justify-center gap-1 text-xs ${
             pathname === '/recipes'
               ? 'text-[#fb923c] font-bold'
               : 'text-[#999999]'
@@ -49,12 +49,12 @@ const FooterNavigation = () => {
             height={24}
             className="object-contain"
           />
-          <label>レシピ</label>
+          <span>レシピ</span>
         </Link>
 
         <Link
           href="/list"
-          className={`flex flex-col items-center gap-1 text-xs ${
+          className={`flex h-full flex-1 flex-col items-center justify-center gap-1 text-xs ${
             pathname === '/list' ? 'text-[#fb923c] font-bold' : 'text-[#999999]'
           }`}
         >
@@ -69,7 +69,7 @@ const FooterNavigation = () => {
             height={24}
             className="object-contain"
           />
-          <label>買い物</label>
+          <span>買い物</span>
         </Link>
       </nav>
     </footer>
