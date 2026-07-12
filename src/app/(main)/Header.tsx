@@ -5,16 +5,23 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useUserProfile } from './home/_hooks/useUserProfile';
 import { Setting } from './Setting';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/featcher';
-
+import { motion } from 'motion/react';
 import { NotificationsResponse } from './notifications/page';
 import { useFamilyChangeWatcher } from './_hoocks/useFamilyChangeWatcher';
 
 const Header = () => {
+  const MENUS = [
+    { href: '/home', label: '献立' },
+    { href: '/recipes', label: 'レシピ' },
+    { href: '/list', label: '買い物リスト' },
+    { href: '/mypage', label: 'マイページ' },
+  ];
+
   const [open, setOpen] = useState(false); //ハンバーガーメニュー用
   useFamilyChangeWatcher();
   const { data } = useSWR<NotificationsResponse>('/api/notifications', fetcher);
@@ -22,6 +29,7 @@ const Header = () => {
   const hasUnreadNonfications = data?.hasUnread; //未読判定用
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const { profile } = useUserProfile();
 
@@ -105,10 +113,22 @@ const Header = () => {
 
           {/* PC表示 */}
           <div className="pt-4 ml-10 space-x-10 hidden md:block">
-            <Link href="/home">献立</Link>
-            <Link href="/recipes">レシピ</Link>
-            <Link href="/list">買い物リスト</Link>
-            <Link href="/mypage">マイページ</Link>
+            {MENUS.map((menu) => (
+              <Link
+                key={menu.href}
+                href={menu.href}
+                className="inline-flex flex-col items-center"
+              >
+                <span>{menu.label}</span>
+                {pathname === menu.href && (
+                  <motion.div
+                    layoutId="underline"
+                    className="mt-1 h-[2px] w-full bg-orange-300"
+                    transition={{ duration: 0.3 }}
+                  />
+                )}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

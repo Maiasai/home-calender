@@ -20,6 +20,7 @@ import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import ErrorMessage from './_components/ErrorMessage';
+import { AnimatePresence, motion } from 'motion/react';
 
 const RecipesPage = () => {
   const { token } = useSupabaseSession();
@@ -103,23 +104,32 @@ const RecipesPage = () => {
             isBulkMode={isBulkMode}
           />
 
-          {menuOpen && (
-            <>
-              {/* お気に入りと作ったことある絞り込み */}
-              <FilterPanel
-                favoriteFilter={favoriteFilter}
-                setFavoriteFilter={setFavoriteFilter}
-                cookedFilter={cookedFilter}
-                setCookedFilter={setCookedFilter}
-              />
+          {/* 開閉される部分 */}
 
-              {/* カテゴリ絞り込み※クリック時にセット */}
-              <CategoryFilterButtons
-                category={category}
-                setCategory={setCategory}
-              />
-            </>
-          )}
+          <AnimatePresence>
+            {menuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.1 }}
+              >
+                {/* お気に入りと作ったことある絞り込み */}
+                <FilterPanel
+                  favoriteFilter={favoriteFilter}
+                  setFavoriteFilter={setFavoriteFilter}
+                  cookedFilter={cookedFilter}
+                  setCookedFilter={setCookedFilter}
+                />
+
+                {/* カテゴリ絞り込み※クリック時にセット */}
+                <CategoryFilterButtons
+                  category={category}
+                  setCategory={setCategory}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <button
             className="flex justify-center"
