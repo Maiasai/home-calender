@@ -8,7 +8,7 @@ const FooterNavigation = () => {
   const pathname = usePathname();
 
   return (
-    <footer className="inset-x-0 bottom-0 z-[9999] isolate h-20 border-t bg-white md:hidden">
+    <footer className="inset-x-0 bottom-0 z-20 isolate h-20 border-t bg-white md:hidden">
       <nav className="flex h-full w-full items-stretch">
         <Link
           href="/home"
