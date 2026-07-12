@@ -33,8 +33,8 @@ const Header = () => {
   };
 
   return (
-    <nav className="site-header md:mt-20 w-full">
-      <div className="flex justify-center flex-col w-full max-w-[900px] mx-auto  mb-4 md:mb-8">
+    <nav className="site-header md:mt-2 w-full">
+      <div className="flex justify-center flex-col w-full max-w-[900px] mx-auto  mb-4 md:mb-2">
         <div className="flex">
           {profile && (
             <div className="flex justify-end w-full">
