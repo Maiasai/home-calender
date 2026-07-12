@@ -101,7 +101,7 @@ const MealModalBase = ({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/40 flex  items-center justify-center">
+      <div className="fixed inset-0 bg-black/40 flex  items-center justify-center z-50">
         {/* モーダル内 */}
         <div className="relative bg-white rounded-lg w-full max-w-[480px] max-h-[90vh] mx-1 p-2 overflow-hidden">
           <div>
