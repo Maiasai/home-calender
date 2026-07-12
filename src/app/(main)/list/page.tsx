@@ -292,7 +292,6 @@ const List = () => {
                       {(listeners) =>
                         item.itemType === 'LABEL' ? (
                           <div className="flex justify-between w-full p-2 bg-orange-100">
-                            {/* 削除アイコン */}
                             <div className="flex w-full items-center gap-1 md:gap-2">
                               <div className="flex-1">
                                 {/* テキスト（左揃え） */}
@@ -347,7 +346,6 @@ const List = () => {
                           >
                             <div className="flex justify-between w-full">
                               <div className="min-w-0 flex-1">
-                                {/* 削除アイコン */}
                                 <div className="flex w-full items-center gap-1 md:gap-2 min-w-0">
                                   {/* チェック */}
                                   <button
@@ -466,6 +464,7 @@ const List = () => {
                                   width={30}
                                   height={30}
                                   draggable={false}
+                                  className="md:ml-1"
                                 />
                               </div>
                             </div>
