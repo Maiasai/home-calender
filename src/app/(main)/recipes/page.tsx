@@ -26,6 +26,7 @@ const RecipesPage = () => {
 
   const [RecipeModalOpen, setRecipeModalOpen] = useState(false);
 
+  const [menuOpen, setMenuOpen] = useState(false);
   const [inputKeyword, setInputKeyword] = useState(''); //検索欄に入力中の文字
   const [keyword, setKeyword] = useState(''); // 検索実行用キーワード。ここに入った値がuseRecipesに渡る
   const [category, setCategory] = useState<CategoryFilter>(''); // "" は「すべて」
@@ -102,19 +103,40 @@ const RecipesPage = () => {
             isBulkMode={isBulkMode}
           />
 
-          {/* お気に入りと作ったことある絞り込み */}
-          <FilterPanel
-            favoriteFilter={favoriteFilter}
-            setFavoriteFilter={setFavoriteFilter}
-            cookedFilter={cookedFilter}
-            setCookedFilter={setCookedFilter}
-          />
+          {menuOpen && (
+            <>
+              {/* お気に入りと作ったことある絞り込み */}
+              <FilterPanel
+                favoriteFilter={favoriteFilter}
+                setFavoriteFilter={setFavoriteFilter}
+                cookedFilter={cookedFilter}
+                setCookedFilter={setCookedFilter}
+              />
 
-          {/* カテゴリ絞り込み※クリック時にセット */}
-          <CategoryFilterButtons
-            category={category}
-            setCategory={setCategory}
-          />
+              {/* カテゴリ絞り込み※クリック時にセット */}
+              <CategoryFilterButtons
+                category={category}
+                setCategory={setCategory}
+              />
+            </>
+          )}
+
+          <button
+            className="flex justify-center"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span className="mr-4">絞り込みメニュー</span>
+            <Image
+              src={
+                menuOpen
+                  ? '/images/menubutton02.png'
+                  : '/images/menubutton01.png'
+              }
+              alt="絞り込みボタン"
+              height={20}
+              width={20}
+            />
+          </button>
 
           {/* レシピ部分だけスクロール */}
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain mt-1 p-1">

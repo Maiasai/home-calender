@@ -16,7 +16,7 @@ const FilterPanel = ({
   setCookedFilter,
 }: Props) => {
   return (
-    <div className="flex flex-col gap-y-2 mb-4">
+    <div className="flex flex-col gap-y-2 mb-2 md:mb-4">
       <div className="flex justify-center items-center gap-2">
         <div>
           <label className="flex text-sm items-center">
