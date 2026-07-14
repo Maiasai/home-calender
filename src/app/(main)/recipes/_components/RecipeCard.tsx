@@ -10,6 +10,7 @@ import FavoriteButton from '@/app/components/image/FavoriteButton';
 import CookedButton from '@/app/components/image/CookedButton';
 import toggleStatus from '../../home/_hooks/toggleStatus';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
+import { RecipeListTitle } from '@/utils/format';
 
 type Props = {
   recipe: RecipeData;
@@ -115,7 +116,7 @@ const RecipeCard = ({
           </div>
 
           <div className="flex  md:text-base text-sm mt-1 ml-2">
-            {recipe.title}
+            {RecipeListTitle(recipe.title)}
           </div>
         </div>
       </Link>

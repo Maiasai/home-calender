@@ -32,7 +32,7 @@ const RecipeCardSimple = ({ recipe, selectedRecipes, toggleSelect }: Props) => {
           className="relative"
           onClick={() => toggleSelect(recipe)} //選択されたレシピが、オブジェクトで関数に渡される
         >
-          <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded-sm">
+          <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded-md">
             <Image
               src={imageSrc}
               alt="レシピ画像"
@@ -41,7 +41,7 @@ const RecipeCardSimple = ({ recipe, selectedRecipes, toggleSelect }: Props) => {
             />
           </div>
 
-          <div className="flex justify-between ml-1">
+          <div className="flex justify-between text-sm ml-1">
             {truncateRecipeListTitle(recipe.title)}
           </div>
         </div>
