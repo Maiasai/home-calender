@@ -45,7 +45,7 @@ const SearchBar = ({
   return (
     <div className="flex flex-col justify-center">
       <div className="md:flex justify-center gap-2 mb-2">
-        <div className="relative flex mb-1">
+        <div className="relative flex mb-2">
           <input
             value={inputKeyword}
             onChange={(e) => setInputKeyword(e.currentTarget.value)}
