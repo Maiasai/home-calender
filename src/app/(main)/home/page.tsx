@@ -195,7 +195,7 @@ const TopPage = () => {
   if (error) return <ErrorMessage />;
 
   return (
-    <div className="max-w-3xl mx-auto sm:p-2 h-full flex flex-col">
+    <div className="max-w-3xl mx-auto sm:p-2 h-full flex flex-col overflow-hidden">
       <nav className="flex justify-center border-b-2 max mb-1 md:mb-4  shrink-0">
         献立カレンダー
       </nav>
@@ -207,7 +207,7 @@ const TopPage = () => {
         ＋レシピを追加
       </PrimaryButton>
 
-      <div className="h-full flex-1 min-h-0 overflow-y-auto overscroll-contain md:my-4 my-1">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain  py-1 md:py-4">
         {isRecipeModalOpen && (
           <AddRecipeModalBase
             open={isRecipeModalOpen}
