@@ -3,7 +3,7 @@
 
 import PrimaryButton from '@/components/button/PrimaryButton';
 import Image from 'next/image';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import FilterPanel from './FilterPanel';
 import CategoryFilterButtons from './CategoryFilterButtons';
