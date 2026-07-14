@@ -124,11 +124,11 @@ const RecipeDetail = ({ params }: Props) => {
         </div>
       </div>
 
-      <div className="w-full flex-1 min-h-0 overflow-y-auto overscroll-contain">
+      <div className="w-full flex-1 min-h-0 overflow-y-auto overscroll-contain p-2">
         {/* レシピ画像 */}
         <div className="w-full aspect-[4/3] relative">
           <Image
-            className="object-cover rounded-2xl"
+            className="object-cover rounded-md"
             alt="レシピ画像"
             src={imageSrc}
             fill

@@ -49,7 +49,7 @@ const CustomizeView = ({ selectedRecipes, setSelectedRecipes }: Props) => {
         {selectedRecipes?.map((recipe) => (
           <div key={recipe.id} className="flex items-center gap-4">
             {/* 画像 */}
-            <div className="w-[130px] h-[80px] relative shrink-0 overflow-hidden rounded-lg">
+            <div className="w-[130px] h-[80px] relative shrink-0 overflow-hidden rounded-md">
               <Image
                 src={recipe.thumbnailUrl || '/images/noImage.jpg'}
                 alt="レシピ画像"

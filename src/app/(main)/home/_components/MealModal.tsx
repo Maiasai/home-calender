@@ -67,7 +67,7 @@ const MealModal = ({ selectedRecipes, isEmpty }: Props) => {
                   return (
                     <div key={r.id} className="flex items-center gap-3 mb-4">
                       {/* 画像 */}
-                      <div className="w-[130px] h-[80px] overflow-hidden relative shrink-0 rounded-lg">
+                      <div className="w-[130px] h-[80px] overflow-hidden relative shrink-0 rounded-md">
                         <Image
                           src={imageSrc}
                           alt="画像"

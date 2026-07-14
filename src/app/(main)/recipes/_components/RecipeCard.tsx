@@ -81,40 +81,42 @@ const RecipeCard = ({
           selectedIds.includes(String(recipe.id)) ? 'opacity-60' : ''
         }`}
       >
-        <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl">
-          <Image
-            src={imageSrc}
-            alt="レシピ画像ない場合の画像"
-            fill //Image が親の箱いっぱいに広がる
-            className="object-cover" //画像の比率を保ったまま箱いっぱいに表示はみ出る部分は切り取る
-          />
-
-          <div className="absolute flex gap-x-2 md:top-4 md:right-4 top-1 right-1">
-            <FavoriteButton
-              recipeId={recipe.id}
-              isFavorite={isFav}
-              onToggle={(id, current) => {
-                if (isBulkMode) return;
-                //③FavoriteButtonからきた「recipeId,isFavorite」が「id, current」に入って
-                //toggleStatusが実行
-                toggleStatus(id, current, 'isFavorite', mutate, token);
-              }}
+        <div className="border shadow">
+          <div className="relative w-full aspect-[4/3] overflow-hidden rounded-sm">
+            <Image
+              src={imageSrc}
+              alt="レシピ画像ない場合の画像"
+              fill //Image が親の箱いっぱいに広がる
+              className="object-cover" //画像の比率を保ったまま箱いっぱいに表示はみ出る部分は切り取る
             />
 
-            <CookedButton
-              recipeId={recipe.id}
-              isCooked={isCoo}
-              onToggle={() => {
-                if (isBulkMode) return;
-                //toggleStatusがDB更新を担当
-                toggleStatus(recipe.id, isCoo, 'hasCooked', mutate, token);
-              }}
-            />
+            <div className="absolute flex gap-x-2 md:top-4 md:right-4 top-1 right-1">
+              <FavoriteButton
+                recipeId={recipe.id}
+                isFavorite={isFav}
+                onToggle={(id, current) => {
+                  if (isBulkMode) return;
+                  //③FavoriteButtonからきた「recipeId,isFavorite」が「id, current」に入って
+                  //toggleStatusが実行
+                  toggleStatus(id, current, 'isFavorite', mutate, token);
+                }}
+              />
+
+              <CookedButton
+                recipeId={recipe.id}
+                isCooked={isCoo}
+                onToggle={() => {
+                  if (isBulkMode) return;
+                  //toggleStatusがDB更新を担当
+                  toggleStatus(recipe.id, isCoo, 'hasCooked', mutate, token);
+                }}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="flex  md:text-base text-sm mt-1 ml-2">
-          {recipe.title}
+          <div className="flex  md:text-base text-sm mt-1 ml-2">
+            {recipe.title}
+          </div>
         </div>
       </Link>
     </div>

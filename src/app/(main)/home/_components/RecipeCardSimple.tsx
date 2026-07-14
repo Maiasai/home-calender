@@ -24,24 +24,26 @@ const RecipeCardSimple = ({ recipe, selectedRecipes, toggleSelect }: Props) => {
     <div
       className={`
         cursor-pointer
-        ${isSelected ? 'border-orange-300 border-2 rounded-3xl p-2' : ''}
+        ${isSelected ? 'border-orange-300 border-2 rounded-md p-1' : ''}
       `}
     >
-      <div
-        className="relative"
-        onClick={() => toggleSelect(recipe)} //選択されたレシピが、オブジェクトで関数に渡される
-      >
-        <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded-2xl">
-          <Image
-            src={imageSrc}
-            alt="レシピ画像"
-            fill
-            className="object-cover"
-          />
-        </div>
+      <div className="border shadow">
+        <div
+          className="relative"
+          onClick={() => toggleSelect(recipe)} //選択されたレシピが、オブジェクトで関数に渡される
+        >
+          <div className="relative w-full max-w-[180px] aspect-[4/3] overflow-hidden rounded-sm">
+            <Image
+              src={imageSrc}
+              alt="レシピ画像"
+              fill
+              className="object-cover"
+            />
+          </div>
 
-        <div className="flex justify-between">
-          {truncateRecipeListTitle(recipe.title)}
+          <div className="flex justify-between ml-1">
+            {truncateRecipeListTitle(recipe.title)}
+          </div>
         </div>
       </div>
     </div>

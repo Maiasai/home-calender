@@ -63,7 +63,7 @@ const MealRecipeSelect = ({
       )}
 
       {/* レシピカード */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-3">
         {recipes?.map((recipe) => (
           <RecipeCardSimple
             key={recipe.id} //keyは子に渡せない

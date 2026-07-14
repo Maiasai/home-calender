@@ -112,7 +112,7 @@ const RecipesPage = () => {
           </div>
 
           {/* レシピ部分だけスクロール */}
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain mt-1 p-1">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain mt-1 p-2">
             {/* 一括操作モード */}
             {isBulkMode && (
               <div className="flex items-center mb-5 gap-3">
@@ -160,7 +160,7 @@ const RecipesPage = () => {
             )}
 
             {/* レシピカード */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-3 md:gap-6">
               {recipes?.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}

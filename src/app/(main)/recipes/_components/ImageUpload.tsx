@@ -41,7 +41,7 @@ const ImageUpload = ({
 
           <div
             onClick={openFile} //①画像選択でここが発火
-            className="relative w-[200px] h-[150px] border rounded-2xl overflow-hidden cursor-pointer flex items-center justify-center bg-gray-100"
+            className="relative w-[200px] h-[150px] border rounded-md overflow-hidden cursor-pointer flex items-center justify-center bg-gray-100"
           >
             {/* 画像 or NoImage */}
             {previewUrl ? (
