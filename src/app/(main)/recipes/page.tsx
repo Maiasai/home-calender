@@ -109,10 +109,11 @@ const RecipesPage = () => {
           <AnimatePresence>
             {menuOpen && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.1 }}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden"
               >
                 {/* お気に入りと作ったことある絞り込み */}
                 <FilterPanel
@@ -135,7 +136,7 @@ const RecipesPage = () => {
             className="flex justify-center"
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            <span className="mr-4">絞り込みメニュー</span>
+            <span className="mr-4 text-xs">絞り込みメニュー</span>
             <Image
               src={
                 menuOpen
