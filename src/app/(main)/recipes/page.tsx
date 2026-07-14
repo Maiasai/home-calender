@@ -11,8 +11,6 @@ import { CategoryFilter } from './_types/category/CategoryFilter';
 import { useRecipes } from './_hooks/useRecipes';
 import AddRecipeModalBase from './_components/AddRecipeModalBase';
 import SearchBar from './_components/SearchBar';
-import FilterPanel from './_components/FilterPanel';
-import CategoryFilterButtons from './_components/CategoryFilterButtons';
 import RecipeCard from './_components/RecipeCard';
 import ConfirmDialog from './_components/ConfirmDialog';
 import { useBodyScrollLock } from '@/components/_hooks/useBodyScrollLock';
@@ -20,14 +18,13 @@ import { useSupabaseSession } from '../home/_hooks/useSupabaseSession';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import ErrorMessage from './_components/ErrorMessage';
-import { AnimatePresence, motion } from 'motion/react';
 
 const RecipesPage = () => {
   const { token } = useSupabaseSession();
 
+  const [menuOpen, setMenuOpen] = useState(false);
   const [RecipeModalOpen, setRecipeModalOpen] = useState(false);
 
-  const [menuOpen, setMenuOpen] = useState(false);
   const [inputKeyword, setInputKeyword] = useState(''); //検索欄に入力中の文字
   const [keyword, setKeyword] = useState(''); // 検索実行用キーワード。ここに入った値がuseRecipesに渡る
   const [category, setCategory] = useState<CategoryFilter>(''); // "" は「すべて」
@@ -94,60 +91,25 @@ const RecipesPage = () => {
         </nav>
 
         <div className="p-2 flex flex-col flex-1 min-h-0 overflow-hidden">
-          {/* 検索・絞り込み項目 */}
-          <SearchBar
-            inputKeyword={inputKeyword}
-            setInputKeyword={setInputKeyword}
-            setKeyword={setKeyword}
-            setRecipeModalOpen={setRecipeModalOpen}
-            setIsBulkMode={setIsBulkMode}
-            isBulkMode={isBulkMode}
-          />
-
-          {/* 開閉される部分 */}
-
-          <AnimatePresence>
-            {menuOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className="overflow-hidden"
-              >
-                {/* お気に入りと作ったことある絞り込み */}
-                <FilterPanel
-                  favoriteFilter={favoriteFilter}
-                  setFavoriteFilter={setFavoriteFilter}
-                  cookedFilter={cookedFilter}
-                  setCookedFilter={setCookedFilter}
-                />
-
-                {/* カテゴリ絞り込み※クリック時にセット */}
-                <CategoryFilterButtons
-                  category={category}
-                  setCategory={setCategory}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <button
-            className="flex justify-center"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <span className="mr-4 text-xs">絞り込みメニュー</span>
-            <Image
-              src={
-                menuOpen
-                  ? '/images/menubutton02.png'
-                  : '/images/menubutton01.png'
-              }
-              alt="絞り込みボタン"
-              height={20}
-              width={20}
+          <div>
+            {/* 検索・絞り込み項目 */}
+            <SearchBar
+              inputKeyword={inputKeyword}
+              setInputKeyword={setInputKeyword}
+              setKeyword={setKeyword}
+              setRecipeModalOpen={setRecipeModalOpen}
+              setIsBulkMode={setIsBulkMode}
+              isBulkMode={isBulkMode}
+              favoriteFilter={favoriteFilter}
+              cookedFilter={cookedFilter}
+              category={category}
+              setCategory={setCategory}
+              setFavoriteFilter={setFavoriteFilter}
+              setCookedFilter={setCookedFilter}
+              menuOpen={menuOpen}
+              setMenuOpen={setMenuOpen}
             />
-          </button>
+          </div>
 
           {/* レシピ部分だけスクロール */}
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain mt-1 p-1">

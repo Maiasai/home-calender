@@ -3,6 +3,11 @@
 
 import PrimaryButton from '@/components/button/PrimaryButton';
 import Image from 'next/image';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import FilterPanel from './FilterPanel';
+import CategoryFilterButtons from './CategoryFilterButtons';
+import { CategoryFilter } from '../_types/category/CategoryFilter';
 
 type Props = {
   inputKeyword: string;
@@ -11,6 +16,14 @@ type Props = {
   setRecipeModalOpen: (v: boolean) => void;
   setIsBulkMode: (v: boolean) => void;
   isBulkMode: boolean;
+  favoriteFilter: boolean;
+  cookedFilter: boolean;
+  category: CategoryFilter;
+  setCategory: (v: CategoryFilter) => void;
+  setFavoriteFilter: (v: boolean) => void;
+  setCookedFilter: (v: boolean) => void;
+  menuOpen: boolean;
+  setMenuOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 const SearchBar = ({
@@ -20,11 +33,19 @@ const SearchBar = ({
   setRecipeModalOpen,
   setIsBulkMode,
   isBulkMode,
+  favoriteFilter,
+  cookedFilter,
+  category,
+  setCategory,
+  setFavoriteFilter,
+  setCookedFilter,
+  menuOpen,
+  setMenuOpen,
 }: Props) => {
   return (
-    <div className="flex flex-col md:flex-row justify-center mb-4 gap-2">
-      <div className="flex justify-center">
-        <div className="relative flex">
+    <div className="flex flex-col justify-center">
+      <div className="md:flex justify-center gap-2 mb-2">
+        <div className="relative flex mb-1">
           <input
             value={inputKeyword}
             onChange={(e) => setInputKeyword(e.currentTarget.value)}
@@ -52,24 +73,72 @@ const SearchBar = ({
             検索
           </PrimaryButton>
         </div>
+
+        <div className="flex justify-center gap-2">
+          <PrimaryButton
+            className="w-[100px] h-[34px]"
+            variant="primary"
+            onClick={() => setRecipeModalOpen(true)}
+          >
+            レシピ追加
+          </PrimaryButton>
+
+          <PrimaryButton
+            className="w-[120px] h-[34px]"
+            variant="primary"
+            onClick={() => setIsBulkMode(!isBulkMode)}
+          >
+            一括操作モード
+          </PrimaryButton>
+
+          <button
+            type="button"
+            className="flex justify-center items-center ml-1"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span className="mx-1 text-xs">絞り込み</span>
+            <Image
+              src={
+                menuOpen
+                  ? '/images/menubutton02.png'
+                  : '/images/menubutton01.png'
+              }
+              alt="絞り込みボタン"
+              height={20}
+              width={20}
+            />
+          </button>
+        </div>
       </div>
 
-      <div className="flex justify-center gap-2">
-        <PrimaryButton
-          className="w-[100px] h-[34px]"
-          variant="primary"
-          onClick={() => setRecipeModalOpen(true)}
-        >
-          レシピ追加
-        </PrimaryButton>
+      {/* 開閉される部分 */}
 
-        <PrimaryButton
-          className="w-[120px] h-[34px]"
-          variant="primary"
-          onClick={() => setIsBulkMode(!isBulkMode)}
-        >
-          一括操作モード
-        </PrimaryButton>
+      <div>
+        <AnimatePresence initial={false}>
+          {menuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              {/* お気に入りと作ったことある絞り込み */}
+              <FilterPanel
+                favoriteFilter={favoriteFilter}
+                setFavoriteFilter={setFavoriteFilter}
+                cookedFilter={cookedFilter}
+                setCookedFilter={setCookedFilter}
+              />
+
+              {/* カテゴリ絞り込み※クリック時にセット */}
+              <CategoryFilterButtons
+                category={category}
+                setCategory={setCategory}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
