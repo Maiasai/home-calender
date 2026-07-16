@@ -11,7 +11,7 @@ import {
   UseFormSetValue,
   UseFormTrigger,
 } from 'react-hook-form';
-import { RecipeIngredientFormPart } from '../_types/RecipeFormValues';
+import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { normalizeFraction, parseFraction } from './parseFraction';
 import ErrorMessage from './ErrorMessage';
 import { UnitData } from '@/app/api/units/route';
@@ -20,18 +20,16 @@ import DeleteIcon from '@/app/components/image/DeleteIcon';
 
 type Props = {
   //このコンポーネントが親から受け取る「データと関数の一覧」
-  registerServings: UseFormRegister<RecipeIngredientFormPart>;
-  errors: FieldErrors<RecipeIngredientFormPart>; //RHFのエラーの型
-  control: Control<RecipeIngredientFormPart>;
-  register: UseFormRegister<RecipeIngredientFormPart>;
-  setValue: UseFormSetValue<RecipeIngredientFormPart>;
+  control: Control<RecipeFormValues>;
+  register: UseFormRegister<RecipeFormValues>;
+  errors: FieldErrors<RecipeFormValues>; //RHFのエラーの型
+  setValue: UseFormSetValue<RecipeFormValues>;
+  getValues: UseFormGetValues<RecipeFormValues>;
+  trigger: UseFormTrigger<RecipeFormValues>;
   units: UnitData[];
-  getValues: UseFormGetValues<RecipeIngredientFormPart>;
-  trigger: UseFormTrigger<RecipeIngredientFormPart>;
 };
 
 const IngredientList = ({
-  registerServings,
   errors,
   control,
   register,
@@ -59,7 +57,7 @@ const IngredientList = ({
               inputMode="numeric" //文字列として扱うけど、数字入力向けのキーボードを出す
               className="w-20 px-2  py-1 border-b"
               //数字に変換してから、ここで親のRHFのservingsを更新している
-              {...registerServings('servings', {
+              {...register('servings', {
                 validate: (value) => {
                   const normalized = normalizeFraction(String(value));
 

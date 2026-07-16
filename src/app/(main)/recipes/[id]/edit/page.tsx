@@ -6,23 +6,11 @@ import BackIcon from '@/app/components/image/BackIcon';
 
 import { RecipeCategory } from '@/generated/prisma';
 import { useEffect, useState } from 'react';
-import {
-  Control,
-  FieldErrors,
-  useFieldArray,
-  useForm,
-  UseFormGetValues,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormTrigger,
-} from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSupabaseSession } from '../../../home/_hooks/useSupabaseSession';
-import {
-  RecipeFormValues,
-  RecipeIngredientFormPart,
-} from '../../_types/RecipeFormValues';
+import { RecipeFormValues } from '../../_types/RecipeFormValues';
 import PageTitle from '../../styles/PageTitle';
 import ImageUpload from '../../_components/ImageUpload';
 import TitleForm from '../../_components/TitleForm';
@@ -259,11 +247,9 @@ const RecipeEdit = ({ params }: Props) => {
         className="flex flex-col flex-1 min-h-0 overflow-hidden"
       >
         <div className="flex justify-between items-center mb-4 shrink-0">
-          <div>
-            <button type="button" onClick={handleBack}>
-              <BackIcon />
-            </button>
-          </div>
+          <button type="button" onClick={handleBack}>
+            <BackIcon />
+          </button>
 
           <button
             type="submit" //このボタンが押されたらフォームを送信する
@@ -297,23 +283,12 @@ const RecipeEdit = ({ params }: Props) => {
           <div className="flex flex-col space-y-10 mt-10">
             {/* 人数・材料 (必須)*/}
             <IngredientList
-              control={control as unknown as Control<RecipeIngredientFormPart>}
-              register={
-                register as unknown as UseFormRegister<RecipeIngredientFormPart>
-              }
-              registerServings={
-                register as unknown as UseFormRegister<RecipeIngredientFormPart>
-              }
-              errors={errors as FieldErrors<RecipeIngredientFormPart>}
-              setValue={
-                setValue as unknown as UseFormSetValue<RecipeIngredientFormPart>
-              }
-              getValues={
-                getValues as unknown as UseFormGetValues<RecipeIngredientFormPart>
-              }
-              trigger={
-                trigger as unknown as UseFormTrigger<RecipeIngredientFormPart>
-              }
+              control={control}
+              register={register}
+              errors={errors}
+              setValue={setValue}
+              getValues={getValues}
+              trigger={trigger}
               units={units}
             />
 

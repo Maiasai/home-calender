@@ -8,7 +8,7 @@ export type RecipeFormValues = RecipeIngredientFormPart & {
   memo?: string;
   thumbnailImageUrl?: string;
   thumbnailFile?: File | null; //画像ファイルそのもの、または null、または未定義
-  steps: Step[];
+  steps?: Step[];
   sourceUrl?: string;
 };
 

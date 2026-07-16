@@ -2,16 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  Control,
-  FieldErrors,
-  useFieldArray,
-  useForm,
-  UseFormGetValues,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormTrigger,
-} from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import IngredientList from './IngredientList';
 import StepList from './StepList';
 import ImageUpload from './ImageUpload';
@@ -20,10 +11,7 @@ import MemoForm from './MemoForm';
 import CategorySelector from './CategorySelector';
 import { RecipeCategory } from '@/generated/prisma';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
-import {
-  RecipeFormValues,
-  RecipeIngredientFormPart,
-} from '../_types/RecipeFormValues';
+import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import { RecipeData } from '../_types/RecipeTypes';
@@ -194,23 +182,12 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
           {/* 人数・材料 (必須)*/}
           <div className="flex items-center gap-6 bg-white m-5 p-4 rounded-lg">
             <IngredientList
-              control={control as unknown as Control<RecipeIngredientFormPart>}
-              register={
-                register as unknown as UseFormRegister<RecipeIngredientFormPart>
-              }
-              registerServings={
-                register as unknown as UseFormRegister<RecipeIngredientFormPart>
-              }
-              errors={errors as FieldErrors<RecipeIngredientFormPart>}
-              setValue={
-                setValue as unknown as UseFormSetValue<RecipeIngredientFormPart>
-              }
-              getValues={
-                getValues as unknown as UseFormGetValues<RecipeIngredientFormPart>
-              }
-              trigger={
-                trigger as unknown as UseFormTrigger<RecipeIngredientFormPart>
-              }
+              control={control}
+              register={register}
+              errors={errors}
+              setValue={setValue}
+              getValues={getValues}
+              trigger={trigger}
               units={units}
             />
           </div>

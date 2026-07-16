@@ -7,15 +7,7 @@ import MemoForm from './MemoForm';
 import CategorySelector from './CategorySelector';
 import { useEffect, useState } from 'react';
 import { RecipeCategory } from '@/generated/prisma';
-import {
-  Control,
-  FieldErrors,
-  useForm,
-  UseFormGetValues,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormTrigger,
-} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { CreateRecipeByUrlRequest } from '../_types/CreateRecipeByUrlRequest';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import UrlForm from './UrlForm';
@@ -26,7 +18,7 @@ import { RecipeData } from '../_types/RecipeTypes';
 import { mutate as globalMutate } from 'swr';
 import IngredientList from './IngredientList';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
-import { RecipeIngredientFormPart } from '../_types/RecipeFormValues';
+import { RecipeFormValues } from '../_types/RecipeFormValues';
 
 type Props = {
   onClose: () => void;
@@ -49,7 +41,7 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
     getValues,
     trigger,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<CreateRecipeByUrlRequest>({
+  } = useForm<RecipeFormValues>({
     mode: 'onChange',
     defaultValues: {
       title: '',
@@ -76,9 +68,12 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
     fetchUnits();
   }, []);
 
-  const onSubmit = async (data: CreateRecipeByUrlRequest) => {
+  const onSubmit = async (data: RecipeFormValues) => {
     const payload: CreateRecipeByUrlRequest = {
-      ...data,
+      title: data.title,
+      sourceUrl: data.sourceUrl ?? '',
+      memo: data.memo,
+      ingredients: data.ingredients,
       category: category || undefined, //未選択なら送らない\
       servings: data.servings ? Number(data.servings) : undefined,
     };
@@ -143,23 +138,12 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
 
           <div className="flex items-center gap-6 bg-white m-5 p-4 rounded-lg">
             <IngredientList
-              control={control as unknown as Control<RecipeIngredientFormPart>}
-              register={
-                register as unknown as UseFormRegister<RecipeIngredientFormPart>
-              }
-              registerServings={
-                register as unknown as UseFormRegister<RecipeIngredientFormPart>
-              }
-              errors={errors as FieldErrors<RecipeIngredientFormPart>}
-              setValue={
-                setValue as unknown as UseFormSetValue<RecipeIngredientFormPart>
-              }
-              getValues={
-                getValues as unknown as UseFormGetValues<RecipeIngredientFormPart>
-              }
-              trigger={
-                trigger as unknown as UseFormTrigger<RecipeIngredientFormPart>
-              }
+              control={control}
+              register={register}
+              errors={errors}
+              setValue={setValue}
+              getValues={getValues}
+              trigger={trigger}
               units={units}
             />
           </div>

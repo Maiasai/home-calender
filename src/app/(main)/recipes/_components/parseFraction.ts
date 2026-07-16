@@ -16,7 +16,7 @@ export const parseFraction = (input: string): number => {
   if (normalized.includes('/')) {
     const [numerator, denominator] = normalized.split('/').map(Number);
     if (!isNaN(numerator) && !isNaN(denominator)) {
-      return numerator / denominator;
+      return Math.round((numerator / denominator) * 10) / 10;
     }
   }
 
