@@ -238,7 +238,7 @@ const RecipeEdit = ({ params }: Props) => {
   if (!data) return <p>データが見つかりませんでした</p>;
 
   return (
-    <div className="max-w-xl mx-auto px-4 gap-2 h-full flex flex-col overflow-hidden">
+    <div className="max-w-3xl mx-auto px-4 gap-2 h-full flex flex-col overflow-hidden">
       {/* ページタイトル */}
       <PageTitle>レシピ編集</PageTitle>
 
@@ -261,7 +261,7 @@ const RecipeEdit = ({ params }: Props) => {
           </button>
         </div>
 
-        <div className="max-w-lg mx-auto w-full flex-1 min-h-0 overflow-y-auto overscroll-contain pb-24">
+        <div className=" mx-auto w-full flex-1 min-h-0 overflow-y-auto overscroll-contain pb-24">
           {/* レシピ画像 */}
           <ImageUpload
             control={control}

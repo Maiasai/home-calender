@@ -152,12 +152,6 @@ const IngredientList = ({
                   className="w-[150px] px-2 py-1 border-b"
                   {...register(`ingredients.${index}.amount`, {
                     validate: (value) => {
-                      const row = getValues(`ingredients.${index}`);
-
-                      if (!value && row.unitId) {
-                        return '単位がある場合、量を入力してください';
-                      }
-
                       const parsed = parseFraction(String(value));
 
                       if (Number.isNaN(parsed)) {
