@@ -99,6 +99,7 @@ export const GET = async (request: NextRequest) => {
           id: item.recipe.id,
           title: item.recipe.title,
           thumbnailUrl: item.recipe.thumbnailUrl,
+          servings: item.recipe.servings ?? null,
           ingredients: item.recipe.recipeIngredients.map((ri) => ({
             id: ri.ingredient.id,
             name: ri.ingredient.name,

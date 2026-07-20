@@ -8,22 +8,48 @@ import { IngredientItem } from './typs';
 export const getIngredients = (meal: Meal): (IngredientItem | null)[] => {
   if (!meal) return [];
 
-  return meal?.recipes.flatMap((r) =>
-    (r.recipe.ingredients ?? []).map((i) => {
-      const matched = ingredientsData.find(
-        (master) =>
-          i.name.includes(master.name) ||
-          i.name.includes(master.normalizedName),
+  return meal.recipes.flatMap((r) => {
+    const servings =
+      r.recipe.servings != null && r.recipe.servings > 0
+        ? r.recipe.servings
+        : 1;
+
+    return (r.recipe.ingredients ?? []).map((i) => {
+      const matched = ingredientsData.find((master) =>
+        master.aliases.some((alias) => i.name.includes(alias)),
       );
 
+      // // 栄養マスタにない材料は除外
       if (!matched) return null;
 
+      // 数量が登録されていない材料は除外
       if (i.amount == null) return null;
+
+      const unitName = i.unit?.name;
+
+      if (!unitName) return null;
+
+      let amountInGrams: number;
+
+      if (unitName === 'g') {
+        amountInGrams = i.amount;
+      } else if (unitName === 'kg') {
+        amountInGrams = i.amount * 1000;
+      } else {
+        const gramsPerUnit = matched.unitConversions?.[unitName];
+
+        if (gramsPerUnit == null) {
+          return null;
+        }
+        amountInGrams = i.amount * gramsPerUnit;
+      }
+      const amountPerServing = amountInGrams / servings;
+
       return {
         //栄養判定専用データに変換
         //レシピ側
         name: i.name,
-        amount: i.amount,
+        amount: amountPerServing,
         unitId: i.unit,
 
         //辞書側
@@ -31,6 +57,6 @@ export const getIngredients = (meal: Meal): (IngredientItem | null)[] => {
         vegetableType: matched.vegetableType,
         proteinScore: matched.proteinScore,
       };
-    }),
-  );
+    });
+  });
 };

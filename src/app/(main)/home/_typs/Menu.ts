@@ -7,6 +7,7 @@ export type ItemType = {
   id: string;
   title: string;
   thumbnailUrl?: string | null;
+  servings?: number | null;
   ingredients?: ItemIngredient[];
 };
 

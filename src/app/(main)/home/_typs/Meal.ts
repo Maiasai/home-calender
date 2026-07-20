@@ -12,9 +12,8 @@ export type Meal = {
       id: string;
       title: string;
       thumbnailUrl?: string;
-
-      //URL登録レシピ では登録なしのためoptional
-      ingredients?: ItemIngredient[];
+      servings?: number | null;
+      ingredients: ItemIngredient[];
     };
     mealType: MealType;
   }[];

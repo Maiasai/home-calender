@@ -18,7 +18,7 @@ export type IngredientItem = {
   nutritionCategory: NutritionCategory;
   vegetableType?: vegetableType;
   proteinScore?: number;
-  unitId: Unit;
+  unitId?: Unit;
 };
 
 export type Unit = {
