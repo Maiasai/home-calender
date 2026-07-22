@@ -215,7 +215,7 @@ const RecipeDetail = ({ params }: Props) => {
 
           {/* hrefは→ string | undefinedしか許さないため、return前でreturn nullを実施*/}
           <div className="flex justify-center">
-            {recipe.sourceType === 'URL' && recipe.sourceUrl && (
+            {recipe.sourceUrl && (
               <a
                 href={recipe.sourceUrl}
                 target="_blank"

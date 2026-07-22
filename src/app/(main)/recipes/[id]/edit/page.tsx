@@ -307,12 +307,10 @@ const RecipeEdit = ({ params }: Props) => {
             <MemoForm registerMemo={register} />
           </div>
 
-          {recipe?.sourceUrl && (
-            <div className="mt-8">
-              {/*  URLフォーム */}
-              <UrlForm registerUrl={register} errors={errors} />
-            </div>
-          )}
+          <div className="mt-8">
+            {/*  URLフォーム */}
+            <UrlForm registerUrl={register} errors={errors} />
+          </div>
         </div>
       </form>
     </div>
