@@ -95,7 +95,7 @@ const NickName = () => {
                 },
               })}
               placeholder="ニックネームを入力"
-              className={`max-w-[400px]${inputClass}`}
+              className={inputClass}
             />
             <div className="my-2 ml-2">
               <ErrorMessage error={errors.nickname} />
