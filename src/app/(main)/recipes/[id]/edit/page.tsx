@@ -261,7 +261,7 @@ const RecipeEdit = ({ params }: Props) => {
           </button>
         </div>
 
-        <div className=" mx-auto w-full flex-1 min-h-0 overflow-y-auto overscroll-contain pb-24">
+        <div className="mx-auto w-full flex-1 min-h-0 overflow-y-auto overscroll-contain pb-24 p-1 md:p-0">
           {/* レシピ画像 */}
           <ImageUpload
             control={control}
