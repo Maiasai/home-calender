@@ -163,7 +163,7 @@ const GroupOwner = ({
                             },
                           })}
                           placeholder="exsample@email.com"
-                          className={`max-w-[300px] ml-1 mb-2${inputClass}`}
+                          className={inputClass}
                         ></input>
                         {index > 0 && (
                           <button

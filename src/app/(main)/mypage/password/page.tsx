@@ -114,7 +114,7 @@ const ChangePassword = () => {
           onSubmit={handleSubmit(handleResetPassword)}
           className="flex justify-center flex-col px-2"
         >
-          <div className="w-full max-w-[400px] mx-auto mb-3 ">
+          <div className="w-full max-w-[400px] mx-auto mb-6">
             <div className="relative w-full">
               <input
                 type={showPassword ? 'text' : 'password'}

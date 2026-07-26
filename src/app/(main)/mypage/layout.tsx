@@ -19,8 +19,8 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const aboutApp = [
     { name: 'ヘルプ', href: '/mypage/help' },
     { name: 'お問い合わせ', href: '/mypage/contact' },
-    { name: '利用規約', href: '/terms' },
-    { name: 'プライバシーポリシー', href: '/privacy' },
+    { name: '利用規約', href: '/mypage/terms' },
+    { name: 'プライバシーポリシー', href: '/mypage/privacy' },
     { name: '退会', href: '/mypage/withdrawal' },
   ];
 
