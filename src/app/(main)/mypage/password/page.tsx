@@ -1,7 +1,6 @@
 //マイページ＞パスワードの変更
 
 'use client';
-import Image from 'next/image';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import ErrorMessage from '../../recipes/_components/ErrorMessage';
@@ -14,6 +13,7 @@ import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import { PasswordUpdateType } from './_type/PasswordUpdateType';
 import { inputClass } from '@/components/input/inputStyles';
+import { Eye, EyeOff } from 'lucide-react';
 
 const ChangePassword = () => {
   //パスワード入力欄を 表示/非表示 にする boolean
@@ -112,9 +112,9 @@ const ChangePassword = () => {
       {data.authProvider === 'EMAIL' ? (
         <form
           onSubmit={handleSubmit(handleResetPassword)}
-          className="flex justify-center flex-col"
+          className="flex justify-center flex-col px-2"
         >
-          <div className="w-full max-w-[400px] mx-auto mb-3">
+          <div className="w-full max-w-[400px] mx-auto mb-3 ">
             <div className="relative w-full">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -141,16 +141,7 @@ const ChangePassword = () => {
                 onClick={() => setShowPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
                 className="absolute right-3 top-1/2 -translate-y-1/2"
               >
-                <Image
-                  src={
-                    showPassword
-                      ? '/images/eye-solid-full.svg'
-                      : '/images/eye-slash-solid-full.svg'
-                  }
-                  alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={20}
-                  height={20}
-                />
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             <div className="pl-2 mb-1 mt-2">
@@ -188,18 +179,7 @@ const ChangePassword = () => {
                 onClick={() => setShowNewPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
                 className="absolute right-3 top-1/2 -translate-y-1/2"
               >
-                <Image
-                  src={
-                    showNewPassword
-                      ? '/images/eye-solid-full.svg'
-                      : '/images/eye-slash-solid-full.svg'
-                  }
-                  alt={
-                    showNewPassword ? 'パスワードを隠す' : 'パスワードを表示'
-                  }
-                  width={20}
-                  height={20}
-                />
+                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
 
@@ -230,16 +210,7 @@ const ChangePassword = () => {
                 onClick={() => setShowConfirm((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
                 className="absolute right-3 top-1/2 -translate-y-1/2"
               >
-                <Image
-                  src={
-                    showConfirm
-                      ? '/images/eye-solid-full.svg'
-                      : '/images/eye-slash-solid-full.svg'
-                  }
-                  alt={showConfirm ? 'パスワードを隠す' : 'パスワードを表示'}
-                  width={20}
-                  height={20}
-                />
+                {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             <div className="pl-2 mb-1 mt-2">

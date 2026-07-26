@@ -4,7 +4,7 @@
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { SignupData } from '@/app/login/_typs/SignupData';
 import { inputClass } from '@/components/input/inputStyles';
-import Image from 'next/image';
+import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
 
@@ -55,16 +55,7 @@ const PasswordInput = ({
           onClick={() => setShowPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
           className={`absolute right-3 top-2 mt-0.5`}
         >
-          <Image
-            src={
-              showPassword
-                ? '/images/eye-solid-full.svg'
-                : '/images/eye-slash-solid-full.svg'
-            }
-            alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-            width={22}
-            height={22}
-          />
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
         <div className="pl-2 mb-2 mt-2">
           {errorssign.password && <ErrorMessage error={errorssign.password} />}
@@ -90,16 +81,7 @@ const PasswordInput = ({
           onClick={() => setShowConfirm((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
           className="absolute right-3 top-2 mt-0.5"
         >
-          <Image
-            src={
-              showConfirm
-                ? '/images/eye-solid-full.svg'
-                : '/images/eye-slash-solid-full.svg'
-            }
-            alt={showConfirm ? 'パスワードを隠す' : 'パスワードを表示'}
-            width={22}
-            height={22}
-          />
+          {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
         <div className="pl-2 mb-2 mt-2">
           {errorssign.confirmPassword && (

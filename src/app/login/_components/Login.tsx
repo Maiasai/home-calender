@@ -12,11 +12,11 @@ import { SignupData } from '@/app/login/_typs/SignupData';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useState } from 'react';
-import Image from 'next/image';
 import { Mode } from '../_typs/Mode';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { inputClass } from '@/components/input/inputStyles';
+import { Eye, EyeOff } from 'lucide-react';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -123,16 +123,7 @@ const LoginModal = ({
               onClick={() => setShowPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
               className="absolute right-2 top-2 mt-0.5"
             >
-              <Image
-                src={
-                  showPassword
-                    ? '/images/eye-solid-full.svg'
-                    : '/images/eye-slash-solid-full.svg'
-                }
-                alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                width={22}
-                height={22}
-              />
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
           <div className="pl-2 mb-2 mt-2">
