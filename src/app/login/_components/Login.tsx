@@ -16,6 +16,7 @@ import Image from 'next/image';
 import { Mode } from '../_typs/Mode';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { inputClass } from '@/components/input/inputStyles';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -115,12 +116,12 @@ const LoginModal = ({
                 required: 'パスワードは必須です',
               })}
               placeholder="パスワードを入力"
-              className="border px-2 py-1 w-full"
+              className={inputClass}
             ></input>
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
-              className="absolute right-2 top-1 mt-0.5"
+              className="absolute right-2 top-2 mt-0.5"
             >
               <Image
                 src={

@@ -14,6 +14,7 @@ import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { GoogleMaterial } from './GoogleMeterial';
 import ModalDescriptionText from './ModalDescriptionText';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { inputClass } from '@/components/input/inputStyles';
 
 type Props = {
   handleSubmit: UseFormHandleSubmit<EmailFormValues>;
@@ -49,7 +50,7 @@ const MailInputModal = ({
               },
             })}
             placeholder="exsample@email.com"
-            className="border w-full p-2"
+            className={inputClass}
           />
           <div className="pl-2 mt-2">
             {errors.email && <ErrorMessage error={errors.email} />}

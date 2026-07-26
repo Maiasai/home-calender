@@ -3,6 +3,7 @@
 'use client';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { SignupData } from '@/app/login/_typs/SignupData';
+import { inputClass } from '@/components/input/inputStyles';
 import Image from 'next/image';
 import { useState } from 'react';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
@@ -47,12 +48,12 @@ const PasswordInput = ({
             },
           })}
           placeholder="パスワードを入力"
-          className="border px-2 py-1 w-full"
+          className={inputClass}
         />
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
-          className="absolute right-2 top-1 mt-0.5"
+          className={`absolute right-3 top-2 mt-0.5`}
         >
           <Image
             src={
@@ -82,12 +83,12 @@ const PasswordInput = ({
               value === password || 'パスワードが一致しません',
           })}
           placeholder="パスワードを入力（確認）"
-          className="border p-2 px-2 py-1 w-full "
+          className={inputClass}
         />
         <button
           type="button"
           onClick={() => setShowConfirm((prev) => !prev)} //prev（今の状態）→!prev（反対の状態）＝今の状態を反対の状態にする
-          className="absolute right-2 top-1 mt-0.5"
+          className="absolute right-3 top-2 mt-0.5"
         >
           <Image
             src={

@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import FilterPanel from './FilterPanel';
 import CategoryFilterButtons from './CategoryFilterButtons';
 import { CategoryFilter } from '../_types/category/CategoryFilter';
+import { inputClass } from '@/components/input/inputStyles';
 
 type Props = {
   inputKeyword: string;
@@ -55,7 +56,7 @@ const SearchBar = ({
                 setKeyword(inputKeyword);
               }
             }}
-            className="w-[259px] h-[34px] pl-8 border bg-gray-100 border-gray-300 rounded-lg"
+            className={`w-[259px] h-[34px] pl-8 ${inputClass}`}
             placeholder="料理名、食材でさがす"
           />
           <Image

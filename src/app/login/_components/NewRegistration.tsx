@@ -19,6 +19,7 @@ import PasswordInput from './PasswordInput';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import { useSupabaseSession } from '@/app/(main)/home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { inputClass } from '@/components/input/inputStyles';
 
 type Props = {
   setLoginModalOpen: (v: boolean) => void;
@@ -166,7 +167,7 @@ const NewRegistration = ({
   return (
     <div>
       <form onSubmit={handleSubmitsign(onSubmit)}>
-        <div className="flex items-center justify-center mb-2 text-base mt-8 font-semibold">
+        <div className="flex items-center justify-center mb-2 text-base my-8 font-semibold">
           <label>ニックネームを作成</label>
         </div>
 
@@ -181,7 +182,7 @@ const NewRegistration = ({
               },
             })}
             placeholder="ニックネームを入力"
-            className="border p-2 px-2 py-1 w-full"
+            className={inputClass}
           />
           <div className="pl-2 mb-2 mt-2">
             {errorssign.nickname && (
@@ -212,7 +213,7 @@ const NewRegistration = ({
               href="/terms"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-500 underline hover:text-blue-700"
+              className="font-bold text-blue-500 underline hover:text-blue-700"
             >
               利用規約
             </a>
@@ -222,7 +223,7 @@ const NewRegistration = ({
               href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-500 underline hover:text-blue-700"
+              className="font-bold text-blue-500 underline hover:text-blue-700"
             >
               プライバシーポリシー
             </a>

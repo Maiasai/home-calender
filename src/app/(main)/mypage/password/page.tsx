@@ -13,6 +13,7 @@ import PrimaryButton from '@/components/button/PrimaryButton';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
 import { PasswordUpdateType } from './_type/PasswordUpdateType';
+import { inputClass } from '@/components/input/inputStyles';
 
 const ChangePassword = () => {
   //パスワード入力欄を 表示/非表示 にする boolean
@@ -129,7 +130,7 @@ const ChangePassword = () => {
                   },
                 })}
                 placeholder="現在のパスワードを入力"
-                className="w-full border px-2 py-1 pr-10 rounded placeholder:text-sm"
+                className={`pr-10 ${inputClass}`}
               />
               <button
                 type="button"
@@ -176,7 +177,7 @@ const ChangePassword = () => {
                   },
                 })}
                 placeholder="新しいパスワードを入力"
-                className="w-full border px-2 py-1 pr-10 rounded placeholder:text-sm"
+                className={`pr-10 ${inputClass}`}
               />
               <button
                 type="button"
@@ -215,7 +216,7 @@ const ChangePassword = () => {
                     value === password || 'パスワードが一致しません',
                 })}
                 placeholder="新しいパスワードを入力（確認）"
-                className="w-full border px-2 py-1 pr-10 rounded placeholder:text-sm"
+                className={`pr-10 ${inputClass}`}
               />
               <button
                 type="button"

@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
+import { inputClass } from '@/components/input/inputStyles';
 
 const EmailChange = () => {
   const {
@@ -120,7 +121,7 @@ const EmailChange = () => {
                   },
                 })}
                 placeholder="exsample@email.com"
-                className="w-full  max-w-[400px] border px-2 py-1 rounded  ml-1 placeholder:text-sm"
+                className={`max-w-[400px] ml-1 ${inputClass}`}
               />
               <div className="ml-2">
                 <ErrorMessage error={errors.email} />

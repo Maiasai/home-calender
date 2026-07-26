@@ -17,6 +17,7 @@ import { InvitesType } from '@/app/api/family/_typs/InvitesType';
 import { KeyedMutator } from 'swr';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { truncateNickName } from '@/utils/format';
+import { inputClass } from '@/components/input/inputStyles';
 
 type Filed = {
   //useFieldArray内部で一意キーを自動付与してるから以下の型になる
@@ -162,7 +163,7 @@ const GroupOwner = ({
                             },
                           })}
                           placeholder="exsample@email.com"
-                          className="w-full  max-w-[300px] border px-2 py-1 rounded  ml-1 mb-2"
+                          className={`max-w-[300px] ml-1 mb-2${inputClass}`}
                         ></input>
                         {index > 0 && (
                           <button

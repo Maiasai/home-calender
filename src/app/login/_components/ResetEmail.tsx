@@ -10,6 +10,7 @@ import {
 } from 'react-hook-form';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { inputClass } from '@/components/input/inputStyles';
 
 type Props = {
   register: UseFormRegister<EmailFormValues>;
@@ -45,7 +46,7 @@ const ResetEmail = ({
               },
             })}
             placeholder="exsample@email.com"
-            className="border w-full p-2 mx-4"
+            className={`mx-4 ${inputClass}`}
           />
           <div className="pl-6 mt-2">
             {errors.email && <ErrorMessage error={errors.email} />}

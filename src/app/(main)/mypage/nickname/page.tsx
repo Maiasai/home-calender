@@ -12,6 +12,7 @@ import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { Loading } from '@/components/Loading';
 import { Empty } from '@/components/Empty';
+import { inputClass } from '@/components/input/inputStyles';
 
 const NickName = () => {
   const { token } = useSupabaseSession();
@@ -94,7 +95,7 @@ const NickName = () => {
                 },
               })}
               placeholder="ニックネームを入力"
-              className="w-full  max-w-[400px] border px-2 py-1 rounded placeholder:text-sm"
+              className={`max-w-[400px]${inputClass}`}
             />
             <div className="my-2 ml-2">
               <ErrorMessage error={errors.nickname} />

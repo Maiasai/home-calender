@@ -11,6 +11,7 @@ import { VerifyCodeFormValues } from '@/app/login/_typs/VerifyCodeFormValues';
 import ErrorMessage from '@/app/(main)/recipes/_components/ErrorMessage';
 import ModalDescriptionText from './ModalDescriptionText';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { inputClass } from '@/components/input/inputStyles';
 
 type Props = {
   handleSubmitOtp: UseFormHandleSubmit<VerifyCodeFormValues>;
@@ -56,7 +57,7 @@ const VerifyCodeMailInputModal = ({
               },
             })}
             placeholder="認証コードを入力"
-            className="border w-full p-2"
+            className={inputClass}
           />
           <div className="pl-2 mt-2">
             {otpErrors.otp && <ErrorMessage error={otpErrors.otp} />}
