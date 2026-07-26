@@ -13,6 +13,7 @@ import { fetcher } from '@/lib/featcher';
 import { motion } from 'motion/react';
 import { NotificationsResponse } from './notifications/page';
 import { useFamilyChangeWatcher } from './_hoocks/useFamilyChangeWatcher';
+import { Bell, Settings } from 'lucide-react';
 
 const Header = () => {
   const MENUS = [
@@ -55,12 +56,7 @@ const Header = () => {
                   href="/notifications"
                   className="relative inline-block ml-8"
                 >
-                  <Image
-                    src="/images/bell.png"
-                    alt="通知アイコン"
-                    width={30}
-                    height={20}
-                  />
+                  <Bell size={28} fill="#ff9300" color="#ff9300" />
                   {hasUnreadNonfications && (
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
                   )}
@@ -85,13 +81,7 @@ const Header = () => {
           {/* スマホ用通知アイコン */}
           <div className="flex absolute top-5 right-12 z-0 md:hidden">
             <Link href="/notifications" className="relative block">
-              <Image
-                src="/images/bell.png"
-                alt="通知アイコン"
-                width={30}
-                height={30}
-                className="w-[26px] h-[26px] min-w-[26px] min-h-[26px]"
-              />
+              <Bell size={28} fill="#ff9300" color="#ff9300" />
               {hasUnreadNonfications && (
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
               )}
@@ -101,13 +91,7 @@ const Header = () => {
           {/* 設定アイコン */}
           <div className="flex absolute top-5 right-2 z-10 md:hidden">
             <button onClick={() => setOpen(!open)} className="relative block">
-              <Image
-                src="/images/settings_24.png"
-                alt="設定アイコン"
-                width={30}
-                height={30}
-                className="w-[26px] h-[26px] min-w-[26px] min-h-[26px]"
-              />
+              <Settings size={26} />
             </button>
           </div>
 

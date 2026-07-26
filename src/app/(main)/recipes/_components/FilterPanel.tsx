@@ -1,5 +1,6 @@
 //お気に入りと作ったことある絞り込み
 
+import { Bookmark, Heart } from 'lucide-react';
 import Image from 'next/image';
 
 type Props = {
@@ -30,12 +31,7 @@ const FilterPanel = ({
           </label>
         </div>
 
-        <Image
-          src="/images/Heart01.png"
-          alt="お気に入りアイコン"
-          width={20}
-          height={20}
-        />
+        <Heart size={24} color="#ff5b99" fill="#ff5b99" />
       </div>
 
       <div className="flex justify-center gap-2">
@@ -49,12 +45,7 @@ const FilterPanel = ({
           <div className="ml-2">作ったことがある絞り込み</div>
         </label>
 
-        <Image
-          src="/images/bookmark01.png"
-          alt="作ったことあるアイコン"
-          width={20}
-          height={20}
-        />
+        <Bookmark size={24} color="#fecb3e" fill="#fecb3e" />
       </div>
     </div>
   );

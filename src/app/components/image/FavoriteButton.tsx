@@ -2,6 +2,7 @@
 
 'use client';
 
+import { Heart } from 'lucide-react';
 import Image from 'next/image';
 
 type Props = {
@@ -20,14 +21,12 @@ const FavoriteButton = ({ recipeId, isFavorite, onToggle }: Props) => {
         //→②ここの状態が親に渡される
       }}
     >
-      <div className="bg-black/10 backdrop-blur-sm rounded-full p-1 shadow-md flex items-center justify-center">
-        <Image
-          src={isFavorite ? '/images/Heart01.png' : '/images/Heart02.png'}
-          alt="お気に入り"
-          width={20}
-          height={20}
-          className="object-contain"
-        />
+      <div className="bg-black/10 backdrop-blur-sm rounded-full p-1 shadow-sm flex items-center justify-center">
+        {isFavorite ? (
+          <Heart size={24} color="#ff5b99" fill="#ff5b99" />
+        ) : (
+          <Heart size={24} color="#ffffff" />
+        )}
       </div>
     </button>
   );
