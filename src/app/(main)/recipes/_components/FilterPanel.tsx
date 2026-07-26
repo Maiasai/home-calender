@@ -1,7 +1,6 @@
 //お気に入りと作ったことある絞り込み
 
 import { Bookmark, Heart } from 'lucide-react';
-import Image from 'next/image';
 
 type Props = {
   favoriteFilter: boolean;

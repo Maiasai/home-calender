@@ -3,7 +3,6 @@
 'use client';
 
 import { Bookmark } from 'lucide-react';
-import Image from 'next/image';
 
 type Props = {
   recipeId: string;
