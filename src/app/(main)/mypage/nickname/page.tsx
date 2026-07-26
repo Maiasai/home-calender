@@ -83,7 +83,7 @@ const NickName = () => {
         ニックネームの変更
       </nav>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex justify-center">
         <div className="flex items-center max-w-md mx-auto">
           <div className="flex flex-col p-1">
             <input

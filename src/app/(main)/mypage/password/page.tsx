@@ -102,6 +102,7 @@ const ChangePassword = () => {
   if (isLoading) return <Loading />;
   if (!data) return <Empty />;
   if (error) return <ErrorMessage />;
+
   return (
     <div className="max-w-3xl mx-auto">
       <nav className="flex justify-center border-b-2 mb-10">
@@ -109,9 +110,12 @@ const ChangePassword = () => {
       </nav>
 
       {data.authProvider === 'EMAIL' ? (
-        <form onSubmit={handleSubmit(handleResetPassword)}>
-          <div className="flex flex-col max-w-md mx-auto mb-3">
-            <div className="relative w-full max-w-[400px]">
+        <form
+          onSubmit={handleSubmit(handleResetPassword)}
+          className="flex justify-center flex-col"
+        >
+          <div className="w-full max-w-[400px] mx-auto mb-3">
+            <div className="relative w-full">
               <input
                 type={showPassword ? 'text' : 'password'}
                 {...register('currentPassword', {
@@ -130,7 +134,7 @@ const ChangePassword = () => {
                   },
                 })}
                 placeholder="現在のパスワードを入力"
-                className={`pr-10 ${inputClass}`}
+                className={inputClass}
               />
               <button
                 type="button"
@@ -156,8 +160,8 @@ const ChangePassword = () => {
             </div>
           </div>
 
-          <div className="flex flex-col max-w-md mx-auto mb-4">
-            <div className="relative w-full max-w-[400px]">
+          <div className="w-full max-w-[400px] mx-auto mb-4">
+            <div className="relative w-full">
               <input
                 //パスワード表示切り替えの実装（ここでpsswordにするとHTMLが自動で⚫︎⚫︎⚫︎⚫︎表示にしてくれる）
                 type={showNewPassword ? 'text' : 'password'}
@@ -177,7 +181,7 @@ const ChangePassword = () => {
                   },
                 })}
                 placeholder="新しいパスワードを入力"
-                className={`pr-10 ${inputClass}`}
+                className={inputClass}
               />
               <button
                 type="button"
@@ -186,16 +190,19 @@ const ChangePassword = () => {
               >
                 <Image
                   src={
-                    showPassword
+                    showNewPassword
                       ? '/images/eye-solid-full.svg'
                       : '/images/eye-slash-solid-full.svg'
                   }
-                  alt={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
+                  alt={
+                    showNewPassword ? 'パスワードを隠す' : 'パスワードを表示'
+                  }
                   width={20}
                   height={20}
                 />
               </button>
             </div>
+
             <div className="pl-2 mb-1 mt-2">
               {errors.newPassword && (
                 <ErrorMessage error={errors.newPassword} />
@@ -206,8 +213,8 @@ const ChangePassword = () => {
             </p>
           </div>
 
-          <div className="flex flex-col max-w-md mx-auto mb-10">
-            <div className="relative w-full max-w-[400px]">
+          <div className="w-full  max-w-[400px] mx-auto mb-10">
+            <div className="relative w-full">
               <input
                 type={showConfirm ? 'text' : 'password'}
                 {...register('confirmPassword', {
@@ -216,7 +223,7 @@ const ChangePassword = () => {
                     value === password || 'パスワードが一致しません',
                 })}
                 placeholder="新しいパスワードを入力（確認）"
-                className={`pr-10 ${inputClass}`}
+                className={inputClass}
               />
               <button
                 type="button"

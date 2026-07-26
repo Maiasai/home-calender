@@ -93,7 +93,7 @@ const EmailChange = () => {
         メールアドレスの変更
       </nav>
       {data.authProvider === 'EMAIL' ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex justify-center">
           <div className="flex items-center max-w-md mx-auto p-1">
             <div className="flex flex-col p-1">
               <div className="flex flex-col justify-center mb-6">
