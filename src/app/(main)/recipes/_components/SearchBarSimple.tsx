@@ -2,6 +2,8 @@
 'use client';
 
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { inputClass } from '@/components/input/inputStyles';
+import Image from 'next/image';
 
 type Props = {
   inputKeyword: string;
@@ -15,7 +17,7 @@ const SearchBarSimple = ({
   setKeyword,
 }: Props) => {
   return (
-    <div className="flex justify-center mb-4 gap-2">
+    <div className="flex justify-center mb-4 gap-2 px-6 relative ">
       <input
         value={inputKeyword}
         onChange={(e) => setInputKeyword(e.currentTarget.value)}
@@ -25,8 +27,15 @@ const SearchBarSimple = ({
             setKeyword(inputKeyword);
           }
         }}
-        className="pl-5 w-[259px] h-[37px] border border-gray-300 rounded-lg"
-        placeholder="レシピ名、食材から探す"
+        className={`pl-8 ${inputClass}`}
+        placeholder="料理名、食材でさがす"
+      />
+      <Image
+        src="/images/search_24.png"
+        alt="検索アイコン"
+        className="absolute left-8 top-1/2 -translate-y-1/2 block"
+        width={20}
+        height={20}
       />
 
       <PrimaryButton

@@ -43,9 +43,9 @@ const CustomizeViewHeader = ({
           </PrimaryButton>
         </div>
 
-        <div className="flex items-center justify-center w-full mt-20 mb-28">
+        <div className="flex items-center justify-center w-full">
           {/* 献立がない場合の表示 */}
-          {isEmpty && <p>まだ献立がありません</p>}
+          {isEmpty && <p className=" mt-20 mb-28">まだ献立がありません</p>}
 
           {!isEmpty && (
             <p className="text-xs text-red-500 mb-2">
