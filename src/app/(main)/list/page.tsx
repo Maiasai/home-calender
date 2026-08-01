@@ -37,6 +37,7 @@ const List = () => {
 
   const [units, setUnits] = useState<UnitData[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItem[]>([]);
+  const [isUnitsLoading, setIsUnitsLoading] = useState(true);
 
   //メモ）mutate→最新データを再取得（サーバーと再同期）
   //メモ）onBlur→入力欄からフォーカスが外れた瞬間に発火するイベント
@@ -48,11 +49,14 @@ const List = () => {
   //単位取得用
   useEffect(() => {
     const fetchUnits = async () => {
-      const res = await fetch('/api/units');
-      const data: GetUnitsResponse = await res.json();
-      setUnits(data.units);
+      try {
+        const res = await fetch('/api/units');
+        const data: GetUnitsResponse = await res.json();
+        setUnits(data.units);
+      } finally {
+        setIsUnitsLoading(false);
+      }
     };
-
     fetchUnits();
   }, []);
 
@@ -216,7 +220,7 @@ const List = () => {
     }),
   );
 
-  if (isLoading) return <Loading />;
+  if (isLoading || isUnitsLoading) return <Loading />;
   if (!data) return <Empty />;
   if (error) return <ErrorMessage />;
 
@@ -384,6 +388,7 @@ const List = () => {
                                   />
                                   {/* 数量 */}
                                   <input
+                                    key={`${item.id}-${item.totalQuantity}`}
                                     type="number"
                                     className="w-12 md:w-20 px-2 border border-gray-300 rounded-lg p-1"
                                     disabled={item.checked}

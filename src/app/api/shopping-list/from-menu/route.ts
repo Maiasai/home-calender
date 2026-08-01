@@ -79,6 +79,7 @@ export const POST = async (request: NextRequest) => {
         { status: 404 },
       );
     }
+
     const familyId = dbUser.activeFamilyId; //変数にすることでnullじゃないことを確定して伝える
 
     const mealData = await prisma.menu.findFirst({
@@ -144,36 +145,82 @@ export const POST = async (request: NextRequest) => {
         })),
     );
 
+    //typeof data→dataの型を取ってきてという意味
+    type ShoppingItemData = (typeof data)[number];
+
+    const map = new Map<string, ShoppingItemData>();
+
+    data.forEach((item) => {
+      //同じ名前、同じ単位のものだけをまとめる
+      const key = `${item.name}-${item.unitId ?? 'no-unit'}`;
+      const existing = map.get(key); //mapの中にkeyと同じものあるか確認
+
+      if (!existing) {
+        map.set(key, { ...item });
+      } else {
+        existing.quantityText += item.quantityText;
+      }
+    });
+
+    const groupedData = Array.from(map.values());
+
     await Promise.all(
-      data.map(async (item) => {
-        const existing = await prisma.shoppingItem.findFirst({
+      groupedData.map(async (item) => {
+        const existingitems = await prisma.shoppingItem.findMany({
           where: {
             userId: user.id,
             familyId,
             name: item.name.trim(),
-            ...(item.unitId ? { unitId: item.unitId } : { unitId: null }),
+            unitId: item.unitId ?? null,
+            itemType: 'ITEM',
+          },
+          orderBy: {
+            sortOrder: 'asc',
           },
         });
 
-        if (existing) {
-          await prisma.shoppingItem.update({
-            where: {
-              id: existing.id,
-            },
-
-            data: {
-              quantityText:
-                (existing.quantityText ?? 0) + (item.quantityText ?? 0),
-            },
-          });
-        } else {
+        if (existingitems.length === 0) {
           await prisma.shoppingItem.create({
             data: {
               ...item,
               familyId: familyId,
             },
           });
+          return;
         }
+
+        const representative = existingitems[0]; //取得してきた同名の食材のsortOrderが一番小さいものを取得
+
+        //配列の同名食材の量をここで合計
+        const existingTotal = existingitems.reduce(
+          (sum, existingitems) => sum + (existingitems.quantityText ?? 0),
+          0,
+        );
+
+        //slice(1)→1番目から最後まで取ってくる
+        const duplicateIds = existingitems
+          .slice(1)
+          .map((existingitem) => existingitem.id);
+
+        await prisma.$transaction([
+          prisma.shoppingItem.update({
+            where: {
+              id: representative.id,
+            },
+            data: {
+              quantityText: existingTotal + (item.quantityText ?? 0),
+            },
+          }),
+
+          prisma.shoppingItem.deleteMany({
+            where: {
+              id: {
+                in: duplicateIds,
+              },
+              familyId,
+            },
+          }),
+        ]);
       }),
     );
     await createNotification({
@@ -196,7 +243,6 @@ export const POST = async (request: NextRequest) => {
 };
 
 //買い物リスト更新
-
 export const PUT = async (request: NextRequest) => {
   try {
     const user = await requireUser(request);
@@ -240,6 +286,64 @@ export const PUT = async (request: NextRequest) => {
       },
       data: updateData,
     });
+
+    const updatedItem = await prisma.shoppingItem.findFirst({
+      where: {
+        id: body.id,
+        familyId: dbUser.activeFamilyId,
+      },
+    });
+
+    if (
+      updatedItem &&
+      updatedItem.itemType === 'ITEM' &&
+      (body.name !== undefined || body.unitId !== undefined)
+    ) {
+      const sameItems = await prisma.shoppingItem.findMany({
+        where: {
+          familyId: dbUser.activeFamilyId,
+          name: updatedItem.name.trim(),
+          unitId: updatedItem.unitId,
+          itemType: 'ITEM',
+        },
+      });
+      if (sameItems.length > 1) {
+        const representative = sameItems[0];
+        const totalQuantity = sameItems.reduce(
+          (sum, item) => sum + (item.quantityText ?? 0),
+          0,
+        );
+
+        const duplicateIds = sameItems
+
+          .slice(1)
+
+          .map((item) => item.id);
+
+        await prisma.$transaction([
+          prisma.shoppingItem.update({
+            where: {
+              id: representative.id,
+            },
+
+            data: {
+              quantityText: totalQuantity,
+            },
+          }),
+
+          prisma.shoppingItem.deleteMany({
+            where: {
+              id: {
+                in: duplicateIds,
+              },
+
+              familyId: dbUser.activeFamilyId,
+            },
+          }),
+        ]);
+      }
+    }
+
     if (result.count === 0) {
       return NextResponse.json(
         { message: '更新対象が見つかりません' },
