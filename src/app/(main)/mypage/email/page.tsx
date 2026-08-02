@@ -35,10 +35,19 @@ const EmailChange = () => {
   };
 
   //入力されたメールアドレスに確認メールを送信
-  const onSubmit = async (data: EmailUpdateType) => {
+  const onSubmit = async (formData: EmailUpdateType) => {
+    if (!data) return;
+    if (data.isDemoUser) {
+      setError('email', {
+        type: 'manual',
+        message: 'デモアカウントではメールアドレスを変更できません。',
+      });
+      return;
+    }
+
     const { error } = await supabase.auth.updateUser(
       {
-        email: data.email,
+        email: formData.email,
       },
 
       {
@@ -112,6 +121,7 @@ const EmailChange = () => {
               </div>
               <input
                 type="email"
+                disabled={data.isDemoUser}
                 {...register('email', {
                   //ここがinputの値管理とバリデーションを担当
                   required: 'メールアドレスは必須です',
@@ -131,17 +141,23 @@ const EmailChange = () => {
                 ※ 受信可能なメールアドレスを入力してください。
               </p>
 
-              <div className="flex justify-center">
-                <PrimaryButton
-                  type="submit" //このボタンが押されたらフォームを送信する
-                  //|| → どちらかが true ならボタンは disabled
-                  disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
-                  className="w-[100px] h-[30px]"
-                  variant="primary"
-                >
-                  更新
-                </PrimaryButton>
-              </div>
+              {data.isDemoUser ? (
+                <p className="text-red-500 text-sm justify-center flex">
+                  ※デモアカウントのため、メールアドレスは変更できません。
+                </p>
+              ) : (
+                <div className="flex justify-center">
+                  <PrimaryButton
+                    type="submit" //このボタンが押されたらフォームを送信する
+                    //|| → どちらかが true ならボタンは disabled
+                    disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
+                    className="w-[100px] h-[30px]"
+                    variant="primary"
+                  >
+                    更新
+                  </PrimaryButton>
+                </div>
+              )}
             </div>
           </div>
         </form>

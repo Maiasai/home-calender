@@ -5,4 +5,5 @@ export type UserResponseType = {
   email: string;
   authProvider: AuthProvider;
   activeFamilyId: string | null;
+  isDemoUser: boolean;
 };

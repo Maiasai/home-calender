@@ -27,11 +27,14 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
+    const isDemoUser = user.id === process.env.DEMO_USER_ID;
+
     const response: UserResponseType = {
       nickname: result.nickname ?? null,
       email: result.email,
       authProvider: result.authProvider,
       activeFamilyId: result.activeFamilyId ?? null,
+      isDemoUser,
     };
 
     return NextResponse.json(response, { status: 200 });
