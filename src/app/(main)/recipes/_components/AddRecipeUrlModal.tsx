@@ -121,7 +121,7 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
             </div>
             {/* Url */}
             <div className="w-full">
-              <UrlForm registerUrl={register} errors={errors} />
+              <UrlForm registerUrl={register} errors={errors} isRequired />
             </div>
           </div>
           <div className="text-sm mx-8 text-gray-600">

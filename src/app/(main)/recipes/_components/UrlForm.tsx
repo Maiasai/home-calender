@@ -13,22 +13,27 @@ import ErrorMessage from './ErrorMessage';
 type Props<T extends FieldValues> = {
   registerUrl: UseFormRegister<T>;
   errors: FieldErrors<T>;
+  isRequired?: boolean;
 };
 
-const UrlForm = <T extends FieldValues>({ registerUrl, errors }: Props<T>) => {
+const UrlForm = <T extends FieldValues>({
+  registerUrl,
+  errors,
+  isRequired,
+}: Props<T>) => {
   return (
     <div className="flex flex-col items-start ">
       <div className="flex items-center">
         <p className="flex text-base text-gray-500 mb-1 ml-2 mt-1 ">
           レシピURLを貼り付けてください
         </p>
-        <span className="text-red-500 ml-1">*</span>
+        {isRequired && <span className="text-red-500 ml-1">*</span>}
       </div>
       <p className="ml-2 text-xs">※手入力も可</p>
 
       <input
         {...registerUrl('sourceUrl' as Path<T>, {
-          required: 'レシピURLは必須です',
+          required: isRequired ? 'レシピURLは必須です' : false,
           maxLength: {
             value: 2048,
             message: 'レシピURLは2048文字以内で入力してください ',
