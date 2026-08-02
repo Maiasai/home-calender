@@ -16,6 +16,17 @@ const supabaseAdmin = createClient(
 export const DELETE = async (request: NextRequest) => {
   try {
     const user = await requireUser(request);
+    const isDemoUser = user.id === process.env.DEMO_USER_ID;
+
+    if (isDemoUser) {
+      return NextResponse.json(
+        {
+          message: 'デモアカウントでは退会できません。',
+        },
+
+        { status: 403 },
+      );
+    }
     const userId = user.id;
 
     const [dbUser, ownedFamilies] = await Promise.all([

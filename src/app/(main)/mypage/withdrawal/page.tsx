@@ -5,13 +5,28 @@ import { useState } from 'react';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { useRouter } from 'next/navigation';
 import PrimaryButton from '@/components/button/PrimaryButton';
+import { UserResponseType } from '@/app/api/mypage/_typs/UserResponseType';
+import useSWR from 'swr';
+import { fetcher } from '@/lib/featcher';
+import { Empty } from '@/components/Empty';
 
 const Withdrawal = () => {
   const { token } = useSupabaseSession();
   const router = useRouter();
 
+  const { data } = useSWR<UserResponseType>('/api/mypage', fetcher);
+
   const [isDeleting, setIsDeleting] = useState(false);
+
   const handleWithdrawal = async () => {
+    if (!data) return;
+
+    if (data.isDemoUser) {
+      alert('デモアカウントでは退会できません。');
+
+      return;
+    }
+
     const ok = window.confirm(
       '退会すると、登録したレシピ・献立カレンダー・買い物リストなどのデータはすべて削除されます。\n\nこの操作は元に戻せません。\n\n本当に退会しますか？',
     );
@@ -48,6 +63,8 @@ const Withdrawal = () => {
     }
   };
 
+  if (!data) return <Empty />;
+
   return (
     <div className="max-w-3xl mx-auto">
       <nav className="flex justify-center border-b-2 mb-6">退会</nav>
@@ -75,16 +92,22 @@ const Withdrawal = () => {
         <p className="flex justify-center text-sm text-red-600 font-bold mb-6">
           この操作は元に戻せません。
         </p>
-        <div className="flex justify-center ">
-          <PrimaryButton
-            onClick={handleWithdrawal}
-            disabled={isDeleting}
-            className="px-4 py-2"
-            variant="danger"
-          >
-            {isDeleting ? '退会処理中...' : '退会する'}
-          </PrimaryButton>
-        </div>
+        {data.isDemoUser ? (
+          <p className="flex justify-center text-sm text-red-500">
+            ※デモアカウントのため、退会はできません。
+          </p>
+        ) : (
+          <div className="flex justify-center ">
+            <PrimaryButton
+              onClick={handleWithdrawal}
+              disabled={isDeleting}
+              className="px-4 py-2"
+              variant="danger"
+            >
+              {isDeleting ? '退会処理中...' : '退会する'}
+            </PrimaryButton>
+          </div>
+        )}
       </div>
     </div>
   );
