@@ -39,9 +39,15 @@ const ChangePassword = () => {
   const password = watch('newPassword'); // newPassword の値を常に取得
 
   const handleResetPassword: SubmitHandler<PasswordUpdateType> = async (
-    data,
+    formData,
   ) => {
-    const { currentPassword, newPassword, confirmPassword } = data;
+    if (!data) return;
+    if (data.isDemoUser) {
+      alert('デモアカウントではパスワードを変更できません。');
+      return;
+    }
+
+    const { currentPassword, newPassword, confirmPassword } = formData;
 
     if (!currentPassword || !newPassword || !confirmPassword) {
       //これを入れることでこの先の password は string 確定とする
@@ -117,6 +123,7 @@ const ChangePassword = () => {
           <div className="w-full max-w-[400px] mx-auto mb-6">
             <div className="relative w-full">
               <input
+                disabled={data.isDemoUser}
                 type={showPassword ? 'text' : 'password'}
                 {...register('currentPassword', {
                   required: 'パスワードは必須です',
@@ -154,6 +161,7 @@ const ChangePassword = () => {
           <div className="w-full max-w-[400px] mx-auto mb-4">
             <div className="relative w-full">
               <input
+                disabled={data.isDemoUser}
                 //パスワード表示切り替えの実装（ここでpsswordにするとHTMLが自動で⚫︎⚫︎⚫︎⚫︎表示にしてくれる）
                 type={showNewPassword ? 'text' : 'password'}
                 {...register('newPassword', {
@@ -196,6 +204,7 @@ const ChangePassword = () => {
           <div className="w-full  max-w-[400px] mx-auto mb-10">
             <div className="relative w-full">
               <input
+                disabled={data.isDemoUser}
                 type={showConfirm ? 'text' : 'password'}
                 {...register('confirmPassword', {
                   required: '確認用パスワードは必須です',
@@ -223,17 +232,23 @@ const ChangePassword = () => {
             </p>
           </div>
 
-          <div className="flex justify-center">
-            <PrimaryButton
-              type="submit" //このボタンが押されたらフォームを送信する
-              //|| → どちらかが true ならボタンは disabled
-              disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
-              className="w-[100px] h-[30px]"
-              variant="primary"
-            >
-              更新
-            </PrimaryButton>
-          </div>
+          {data.isDemoUser ? (
+            <p className="text-red-500 text-sm justify-center flex">
+              ※デモアカウントのため、パスワードは変更できません。
+            </p>
+          ) : (
+            <div className="flex justify-center">
+              <PrimaryButton
+                type="submit" //このボタンが押されたらフォームを送信する
+                //|| → どちらかが true ならボタンは disabled
+                disabled={!isValid || isSubmitting} // バリデーションエラーあり or 送信中なら押せない
+                className="w-[100px] h-[30px]"
+                variant="primary"
+              >
+                更新
+              </PrimaryButton>
+            </div>
+          )}
         </form>
       ) : (
         <div className="flex justify-center text-sm whitespace-pre-line text-gray-500 p-6">
