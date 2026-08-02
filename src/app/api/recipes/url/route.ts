@@ -55,7 +55,7 @@ export const POST = async (request: NextRequest) => {
         sourceUrl: body.sourceUrl,
         category: body.category || 'UNCLASSIFIED',
         memo: body.memo || null,
-        servings: 1,
+        servings: body.servings ?? 1,
         updatedByUserId: user.id, // 最終更新者
       },
     });
