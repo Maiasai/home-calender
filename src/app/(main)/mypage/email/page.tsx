@@ -38,10 +38,7 @@ const EmailChange = () => {
   const onSubmit = async (formData: EmailUpdateType) => {
     if (!data) return;
     if (data.isDemoUser) {
-      setError('email', {
-        type: 'manual',
-        message: 'デモアカウントではメールアドレスを変更できません。',
-      });
+      alert('デモアカウントではメールアドレスを変更できません。');
       return;
     }
 
