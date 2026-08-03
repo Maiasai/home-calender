@@ -71,6 +71,28 @@ const FooterNavigation = () => {
           />
           <span>買い物</span>
         </Link>
+
+        <Link
+          href="/mypage"
+          className={`flex h-full flex-1 flex-col items-center justify-center gap-1 text-xs ${
+            pathname === '/mypage'
+              ? 'text-[#fb923c] font-bold'
+              : 'text-[#999999]'
+          }`}
+        >
+          <Image
+            src={
+              pathname === '/mypage'
+                ? '/images/usericon.png'
+                : '/images/usericon2.png'
+            }
+            alt="ユーザーアイコン"
+            width={24}
+            height={24}
+            className="object-contain"
+          />
+          <span>マイページ</span>
+        </Link>
       </nav>
     </footer>
   );

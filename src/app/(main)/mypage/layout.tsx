@@ -1,7 +1,8 @@
 'use client';
 
+import { handleLogout } from '@/utils/logout';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname(); //現在開いているURL
@@ -23,6 +24,8 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
     { name: 'プライバシーポリシー', href: '/mypage/privacy' },
     { name: '退会', href: '/mypage/withdrawal' },
   ];
+
+  const router = useRouter();
 
   return (
     <div className="flex max-w-3xl mx-auto mt-10 gap-1 sm:gap-2  h-full overflow-hidden">
@@ -94,6 +97,13 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
                 <span>　›</span>
               </Link>
             ))}
+            <button
+              type="button"
+              onClick={() => handleLogout(router)}
+              className="p-1 sm:p-3 rounded-lg transition-colors border shadow-sm hover:bg-gray-100 text-left"
+            >
+              <span className="text-xs sm:text-sm">ログアウト</span>
+            </button>
           </div>
         </nav>
       </aside>

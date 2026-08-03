@@ -1,29 +1,26 @@
 //ヘッダー
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { supabase } from '@/lib/supabase';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserProfile } from './home/_hooks/useUserProfile';
-import { Setting } from './Setting';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/featcher';
 import { motion } from 'motion/react';
 import { NotificationsResponse } from './notifications/page';
 import { useFamilyChangeWatcher } from './_hoocks/useFamilyChangeWatcher';
-import { Bell, Settings } from 'lucide-react';
+import { Bell } from 'lucide-react';
+import { handleLogout } from '@/utils/logout';
 
 const Header = () => {
   const MENUS = [
     { href: '/home', label: '献立' },
     { href: '/recipes', label: 'レシピ' },
     { href: '/list', label: '買い物リスト' },
-    { href: '/mypage', label: 'マイページ' },
   ];
 
-  const [open, setOpen] = useState(false); //ハンバーガーメニュー用
   useFamilyChangeWatcher();
   const { data } = useSWR<NotificationsResponse>('/api/notifications', fetcher);
 
@@ -34,13 +31,6 @@ const Header = () => {
 
   const { profile } = useUserProfile();
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    sessionStorage.removeItem('familyWatcherUserId');
-    sessionStorage.removeItem('activeFamilyId');
-    router.replace('/');
-  };
-
   return (
     <nav className="site-header md:mt-2 w-full">
       <div className="flex justify-center flex-col w-full max-w-[900px] mx-auto  mb-4 md:mb-2">
@@ -50,7 +40,7 @@ const Header = () => {
               <div className="items-center space-x-10 mr-8 mb-4  hidden md:flex">
                 {/* Reactはデータが揃ってなくても描画してしまうため、データがあるときだけ描画する(クラッシュ対策）*/}
                 {profile && <span>{profile.nickname} さんログイン中</span>}
-                <button onClick={handleLogout}>ログアウト</button>
+                <button onClick={() => handleLogout(router)}>ログアウト</button>
 
                 <Link
                   href="/notifications"
@@ -66,8 +56,6 @@ const Header = () => {
           )}
         </div>
         <div className="relative  flex pt-2 pl-4 md:justify-center w-full shrink-0">
-          <Setting open={open} setOpen={setOpen} handleLogout={handleLogout} />
-
           <Link href="/home">
             <Image
               src="/images/rogo.png"
@@ -79,20 +67,13 @@ const Header = () => {
           </Link>
 
           {/* スマホ用通知アイコン */}
-          <div className="flex absolute top-5 right-12 z-0 md:hidden">
+          <div className="flex absolute top-5 right-4 z-0 md:hidden">
             <Link href="/notifications" className="relative block">
               <Bell size={28} fill="#ff9300" color="#ff9300" />
               {hasUnreadNonfications && (
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
               )}
             </Link>
-          </div>
-
-          {/* 設定アイコン */}
-          <div className="flex absolute top-5 right-2 z-10 md:hidden">
-            <button onClick={() => setOpen(!open)} className="relative block">
-              <Settings size={26} />
-            </button>
           </div>
 
           {/* PC表示 */}
