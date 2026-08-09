@@ -19,6 +19,7 @@ const Header = () => {
     { href: '/home', label: '献立' },
     { href: '/recipes', label: 'レシピ' },
     { href: '/list', label: '買い物リスト' },
+    { href: '/mypage', label: 'マイページ' },
   ];
 
   useFamilyChangeWatcher();
