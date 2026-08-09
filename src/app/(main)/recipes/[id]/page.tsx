@@ -132,6 +132,7 @@ const RecipeDetail = ({ params }: Props) => {
             alt="レシピ画像"
             src={imageSrc}
             fill
+            sizes="(max-width: 768px) 100vw, 768px"
           />
         </div>
 
