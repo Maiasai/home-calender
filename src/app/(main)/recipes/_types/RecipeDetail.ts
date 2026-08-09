@@ -33,3 +33,11 @@ export type RecipeDetail = {
     stepNumber: number;
   }[];
 };
+
+export type ShopAddBodyType = {
+  ingredient: {
+    name: string;
+    quantityText: number;
+    unitId: string | null;
+  }[];
+};

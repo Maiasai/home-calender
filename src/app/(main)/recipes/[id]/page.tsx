@@ -48,6 +48,43 @@ const RecipeDetail = ({ params }: Props) => {
       ? recipe.thumbnailUrl
       : '/images/noImage.jpg';
 
+  //買い物リストへ追加処理
+  const handleAddList = async (recipe: RecipeDetail) => {
+    const recipeIngredient = recipe.recipeIngredients;
+    if (recipeIngredient.length === 0) {
+      alert(
+        'このレシピには、買い物リストに追加できる材料が登録されていません。\n\nレシピ編集画面で材料を追加するか、買い物リスト画面で必要な材料を直接追加できます。',
+      );
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/shopping-list/from-recipe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ingredient: recipeIngredient.map((item) => ({
+            name: item.ingredient.name,
+            quantityText: item.quantityText,
+            unitId: item.unit?.id ?? null,
+          })),
+        }),
+      });
+      if (!res.ok) {
+        throw new Error('追加に失敗しました');
+      }
+      alert(
+        '買い物リストに追加しました。\n\n※レシピに登録されている材料をまとめて追加しました。必要に応じて買い物リストで調整してください。',
+      );
+    } catch (error) {
+      console.log(error);
+      alert('エラーが発生しました');
+    }
+  };
+
   //レシピ削除
   const deleteRecipe = async (id: string) => {
     if (!token) return;
@@ -100,6 +137,16 @@ const RecipeDetail = ({ params }: Props) => {
         </div>
 
         <div className="flex gap-2">
+          <button onClick={() => handleAddList(recipe)}>
+            <Image
+              src="/images/cartaddicon.png"
+              alt="買い物リストに追加アイコン"
+              width={28}
+              height={28}
+              className="object-contain mr-4"
+            />
+          </button>
+
           <PrimaryButton
             onClick={() => {
               if (confirm('本当に削除しますか？')) {
