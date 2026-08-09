@@ -98,7 +98,7 @@ const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
       const { data: uploadData, error } = await supabase.storage
         .from('post_thumbnail')
         .upload(filePath, data.thumbnailFile, {
-          cacheControl: '3600',
+          cacheControl: '31536000', //1年間
           upsert: false,
         });
 
