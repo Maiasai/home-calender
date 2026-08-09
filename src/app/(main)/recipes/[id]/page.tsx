@@ -143,7 +143,7 @@ const RecipeDetail = ({ params }: Props) => {
               alt="買い物リストに追加アイコン"
               width={28}
               height={28}
-              className="object-contain mr-4"
+              className="object-contain mr-4 active:scale-95 transition-all duration-150"
             />
           </button>
 
