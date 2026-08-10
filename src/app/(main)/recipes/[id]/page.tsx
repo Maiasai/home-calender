@@ -137,16 +137,6 @@ const RecipeDetail = ({ params }: Props) => {
         </div>
 
         <div className="flex gap-2">
-          <button onClick={() => handleAddList(recipe)}>
-            <Image
-              src="/images/cartaddicon.png"
-              alt="買い物リストに追加アイコン"
-              width={28}
-              height={28}
-              className="object-contain mr-4 active:scale-95 transition-all duration-150"
-            />
-          </button>
-
           <PrimaryButton
             onClick={() => {
               if (confirm('本当に削除しますか？')) {
@@ -204,8 +194,15 @@ const RecipeDetail = ({ params }: Props) => {
           <div className="flex flex-col space-y-10 mt-10 mb-10">
             {/* 材料 */}
             <div className="mb-4">
-              <div>
+              <div className="flex justify-between">
                 <h2 className="text-lg font-semibold mb-4">材料</h2>
+                <PrimaryButton
+                  onClick={() => handleAddList(recipe)}
+                  className="w-[130px] h-[30px] mb-2 mr-2"
+                  variant="third"
+                >
+                  買い物リスト追加
+                </PrimaryButton>
               </div>
 
               <h3 className="text-base font-semibold mb-3 ml-2">
