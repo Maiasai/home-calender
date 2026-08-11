@@ -125,10 +125,10 @@ const RecipesPage = () => {
                     type="button"
                     onClick={() => setConfirmOpen(true)}
                     disabled={selectedIds.length === 0}
-                    className={`transition${
+                    className={`shadow-md rounded-lg p-1 transition duration-150 active:scale-95 border border-gray-800${
                       selectedIds.length === 0
                         ? 'opacity-50 grayscale cursor-not-allowed'
-                        : ''
+                        : 'cursor-pointer'
                     }`}
                   >
                     <Image
@@ -145,8 +145,9 @@ const RecipesPage = () => {
                       setSelectedIds([]);
                       setIsBulkMode(false);
                     }}
+                    className="text-sm text-gray-500 shadow-md rounded-lg py-1 px-2 transition duration-150 active:scale-95 border border-gray-100"
                   >
-                    <label className="text-sm">キャンセル</label>
+                    キャンセル
                   </button>
                 </div>
               </div>
