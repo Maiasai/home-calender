@@ -21,6 +21,7 @@ import { useSearchParams } from 'next/navigation';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import AddRecipeModalBase from '../recipes/_components/AddRecipeModalBase';
 import TopGuideModal from './_components/TopGuideModal';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const TopPage = () => {
   const { token } = useSupabaseSession();
@@ -101,6 +102,16 @@ const TopPage = () => {
     //（例）31が来たら、31回回される　→　1〜31
     days.push(new Date(year, month, i)); //例の場合は[null,null,Date(2026-03-01),〜Date(2026-03-31)]
   }
+
+  //前月に移動（年またぎも自動対応）
+  const prevMonth = () => {
+    setCurrentMonth(new Date(year, month - 1, 1));
+  };
+
+  //次月に移動（年またぎも自動対応）
+  const nextMonth = () => {
+    setCurrentMonth(new Date(year, month + 1, 1));
+  };
 
   // ==============================
   // 献立データ取得
@@ -207,6 +218,19 @@ const TopPage = () => {
         ＋レシピを追加
       </PrimaryButton>
 
+      {/* 月切り替え */}
+      <div className="flex justify-between items-center mb-4">
+        <button onClick={prevMonth} className="ml-2">
+          <ChevronLeft />
+        </button>
+        <h2 className="text-lg font-bold">
+          {year}年 {month + 1}月
+        </h2>
+        <button onClick={nextMonth} className="mr-2">
+          <ChevronRight />
+        </button>
+      </div>
+
       <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain  py-1 md:py-4">
         {isRecipeModalOpen && (
           <AddRecipeModalBase
@@ -220,9 +244,6 @@ const TopPage = () => {
           days={days}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
-          year={year}
-          month={month}
-          setCurrentMonth={setCurrentMonth}
         />
         <Image
           src="/images/homeimage.png"

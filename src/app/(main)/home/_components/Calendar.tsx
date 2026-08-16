@@ -6,52 +6,17 @@ import { Dispatch, SetStateAction } from 'react';
 import { MonthData } from '../_typs/Menu';
 import { CalendarCell } from '../_typs/CalendarCell';
 import { CalenderUi } from './CalenderUi';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type Props = {
   data: MonthData;
   days: CalendarCell[];
   selectedDate: Date;
   setSelectedDate: Dispatch<SetStateAction<Date>>;
-  year: number;
-  month: number;
-  setCurrentMonth: Dispatch<SetStateAction<Date>>;
 };
 
-const Calender = ({
-  data,
-  days,
-  selectedDate,
-  setSelectedDate,
-  year,
-  month,
-  setCurrentMonth,
-}: Props) => {
-  //前月に移動（年またぎも自動対応）
-  const prevMonth = () => {
-    setCurrentMonth(new Date(year, month - 1, 1));
-  };
-
-  //次月に移動（年またぎも自動対応）
-  const nextMonth = () => {
-    setCurrentMonth(new Date(year, month + 1, 1));
-  };
-
+const Calender = ({ data, days, selectedDate, setSelectedDate }: Props) => {
   return (
     <div>
-      {/* 月切り替え */}
-      <div className="flex justify-between items-center mb-4">
-        <button onClick={prevMonth} className="ml-2">
-          <ChevronLeft />
-        </button>
-        <h2 className="text-lg font-bold">
-          {year}年 {month + 1}月
-        </h2>
-        <button onClick={nextMonth} className="mr-2">
-          <ChevronRight />
-        </button>
-      </div>
-
       {/* 曜日 */}
       <div className="grid grid-cols-7 text-center text-sm font-semibold mb-2">
         <div>日</div>
