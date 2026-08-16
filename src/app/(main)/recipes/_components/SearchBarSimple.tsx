@@ -27,7 +27,7 @@ const SearchBarSimple = ({
             setKeyword(inputKeyword);
           }
         }}
-        className={`pl-8 ${inputClass}`}
+        className={`w-[259px] h-[34px] pl-8 ${inputClass}`}
         placeholder="料理名、食材でさがす"
       />
       <Image
