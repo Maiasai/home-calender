@@ -231,7 +231,7 @@ const TopPage = () => {
         </button>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain  py-1 md:py-4">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain py-1 md:py-4">
         {isRecipeModalOpen && (
           <AddRecipeModalBase
             open={isRecipeModalOpen}

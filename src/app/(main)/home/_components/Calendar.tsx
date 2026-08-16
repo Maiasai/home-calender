@@ -5,7 +5,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { MonthData } from '../_typs/Menu';
 import { CalendarCell } from '../_typs/CalendarCell';
-import { CalenderUi } from './CalenderUi';
 
 type Props = {
   data: MonthData;
@@ -16,19 +15,19 @@ type Props = {
 
 const Calender = ({ data, days, selectedDate, setSelectedDate }: Props) => {
   return (
-    <div>
+    <div className="border border-gray-100 shadow-lg">
       {/* 曜日 */}
-      <div className="grid grid-cols-7 text-center text-sm font-semibold mb-2">
-        <div>日</div>
+      <div className="grid grid-cols-7 text-center text-sm font-semibold border border-gray-100">
+        <div className="text-red-500">日</div>
         <div>月</div>
         <div>火</div>
         <div>水</div>
         <div>木</div>
         <div>金</div>
-        <div>土</div>
+        <div className="text-blue-500">土</div>
       </div>
 
-      <div className="grid grid-cols-7 auto-rows-[100px] mb-2">
+      <div className="grid grid-cols-7 auto-rows-[100px]">
         {days.map((date, index) => {
           if (!date) {
             //nullはここに入ってきて、からの配列を作る
@@ -47,7 +46,7 @@ const Calender = ({ data, days, selectedDate, setSelectedDate }: Props) => {
             <button
               key={index}
               onClick={() => setSelectedDate(date)}
-              className={`flex flex-col text-center md:p-2 p-1 rounded text-sm border
+              className={`flex flex-col text-center rounded text-sm border p-1
                 ${isSelected ? 'bg-orange-50' : 'hover:bg-gray-100'}
                 `}
             >
@@ -60,12 +59,11 @@ const Calender = ({ data, days, selectedDate, setSelectedDate }: Props) => {
                     {dayData?.breakfast.map((databreak, index) => {
                       if (index === 0) {
                         return (
-                          <div key={databreak.id} className="w-full h-full">
-                            <CalenderUi
-                              iconData="/images/morningIcon.png"
-                              altData="朝アイコン"
-                              title={databreak.title}
-                            />
+                          <div
+                            key={databreak.id}
+                            className="w-full h-full bg-yellow-100 text-yellow-500 text-sm font-bold rounded-lg"
+                          >
+                            朝
                           </div>
                         );
                       }
@@ -78,12 +76,11 @@ const Calender = ({ data, days, selectedDate, setSelectedDate }: Props) => {
                     {dayData?.lunch.map((datalunch, index) => {
                       if (index === 0) {
                         return (
-                          <div key={datalunch.id} className="w-full h-full">
-                            <CalenderUi
-                              iconData="/images/daytimeIcon.png"
-                              altData="昼アイコン"
-                              title={datalunch.title}
-                            />
+                          <div
+                            key={datalunch.id}
+                            className="w-full h-full bg-red-100 text-red-400 text-sm font-bold rounded-lg"
+                          >
+                            昼
                           </div>
                         );
                       }
@@ -97,12 +94,11 @@ const Calender = ({ data, days, selectedDate, setSelectedDate }: Props) => {
                     {dayData?.dinner.map((datadinner, index) => {
                       if (index === 0) {
                         return (
-                          <div key={datadinner.id} className="w-full h-full">
-                            <CalenderUi
-                              iconData="/images/nightIcon.png"
-                              altData="夜アイコン"
-                              title={datadinner.title}
-                            />
+                          <div
+                            key={datadinner.id}
+                            className="w-full h-full bg-purple-100 text-purple-400 text-sm font-bold rounded-lg"
+                          >
+                            夜
                           </div>
                         );
                       }
