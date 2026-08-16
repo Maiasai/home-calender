@@ -34,7 +34,7 @@ const FilterPanel = ({
       </div>
 
       <div className="flex justify-center gap-2">
-        <label className="flex text-sm items-cente">
+        <label className="flex text-sm items-center">
           {/* labelを使うとクリック範囲を広げられる */}
           <input
             type="checkbox"
