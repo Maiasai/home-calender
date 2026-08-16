@@ -24,7 +24,7 @@ export const POST = async (request: NextRequest) => {
     }
     const familyId = dbUser.activeFamilyId;
 
-    await Promise.all(
+    const results = await Promise.all(
       body.ingredient.map(async (item) => {
         const ingredientItems = await prisma.shoppingItem.findMany({
           where: {
@@ -38,21 +38,53 @@ export const POST = async (request: NextRequest) => {
             sortOrder: 'asc',
           },
         });
+        return {
+          item,
+          ingredientItems,
+          isNew: ingredientItems.length === 0,
+        };
+      }),
+    );
+    const newItems = results
+      .filter((result) => result.isNew)
+      .map((result) => result.item);
 
-        if (ingredientItems.length === 0) {
-          await prisma.shoppingItem.create({
-            data: {
-              ...item,
-              userId: user.id,
-              familyId: familyId,
-            },
-          });
-          return;
-        }
+    const updateTargets = results.filter((result) => !result.isNew);
+    const newItemCount = newItems.length;
+
+    await prisma.shoppingItem.updateMany({
+      where: {
+        familyId,
+      },
+      data: {
+        sortOrder: {
+          increment: newItemCount,
+        },
+      },
+    });
+
+    await Promise.all(
+      newItems.map((item, index) =>
+        prisma.shoppingItem.create({
+          data: {
+            ...item,
+            userId: user.id,
+            familyId,
+            sortOrder: index,
+          },
+        }),
+      ),
+    );
+
+    await Promise.all(
+      updateTargets.map(async (updateItem) => {
+        //ingredientItems＝フロントと重複してたDB側のデータ
+        const ingredientItems = updateItem.ingredientItems;
+
         const representative = ingredientItems[0];
 
         const existingTotal = ingredientItems.reduce(
-          (sum, ingredientItems) => sum + (ingredientItems.quantityText ?? 0),
+          (sum, item) => sum + (item.quantityText ?? 0),
           0,
         );
 
@@ -66,7 +98,8 @@ export const POST = async (request: NextRequest) => {
               id: representative.id,
             },
             data: {
-              quantityText: existingTotal + (item.quantityText ?? 0),
+              //ここでDB側のデータとフロントから来たデータitemの数量を合算
+              quantityText: existingTotal + (updateItem.item.quantityText ?? 0),
             },
           }),
           prisma.shoppingItem.deleteMany({
@@ -80,6 +113,7 @@ export const POST = async (request: NextRequest) => {
         ]);
       }),
     );
+
     await createNotification({
       familyId: dbUser.activeFamilyId,
       actorUserId: user.id,

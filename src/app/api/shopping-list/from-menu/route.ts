@@ -121,27 +121,13 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    //DBからsortOrderの最大値取得
-    const maxSortOrder = await prisma.shoppingItem.aggregate({
-      _max: {
-        sortOrder: true,
-      },
-      where: {
-        familyId: familyId,
-      },
-    });
-
-    let globalIndex = 0;
-
     const data = mealData.menuRecipes.flatMap((item) =>
       item.recipe.recipeIngredients
         .filter((ing) => ing.ingredient?.name?.trim())
         .map((ing) => ({
-          userId: user.id,
           name: ing.ingredient!.name.trim(),
           quantityText: ing.quantityText ?? 0,
           unitId: ing.unit?.id ?? null,
-          sortOrder: (maxSortOrder._max.sortOrder ?? -1) + 1 + globalIndex++,
         })),
     );
 
@@ -164,9 +150,9 @@ export const POST = async (request: NextRequest) => {
 
     const groupedData = Array.from(map.values());
 
-    await Promise.all(
+    const results = await Promise.all(
       groupedData.map(async (item) => {
-        const existingitems = await prisma.shoppingItem.findMany({
+        const existingItems = await prisma.shoppingItem.findMany({
           where: {
             userId: user.id,
             familyId,
@@ -178,27 +164,63 @@ export const POST = async (request: NextRequest) => {
             sortOrder: 'asc',
           },
         });
+        return {
+          item, //今回追加しようとしているフロントからのデータ
+          existingItems: existingItems, //Prisma で持ってきた、DBにすでに存在する材料データ
+          isNew: existingItems.length === 0, //新規かどうかの判定
+        };
+      }),
+    );
+    //新規作成対象の item オブジェクトを丸ごと持っておく
+    const newItems = results
+      .filter((result) => result.isNew)
+      .map((result) => result.item);
 
-        if (existingitems.length === 0) {
-          await prisma.shoppingItem.create({
-            data: {
-              ...item,
-              familyId: familyId,
-            },
-          });
-          return;
-        }
+    //DBに一致するものがあった、今回追加予定の材料（フロントからの）を取り出している
+    const updateTargets = results.filter((result) => !result.isNew);
 
-        const representative = existingitems[0]; //取得してきた同名の食材のsortOrderが一番小さいものを取得
+    //DBになかったアイテム=今回create対象（resultsがture)のものがここでいくつあるか調べる
+    const newItemCount = newItems.length;
+
+    await prisma.shoppingItem.updateMany({
+      where: {
+        familyId,
+      },
+      data: {
+        sortOrder: {
+          //そのレコードが持っている現在の値に、指定した数を加算する
+          increment: newItemCount,
+        },
+      },
+    });
+
+    await Promise.all(
+      newItems.map((item, index) =>
+        prisma.shoppingItem.create({
+          data: {
+            ...item,
+            userId: user.id,
+            familyId,
+            sortOrder: index,
+          },
+        }),
+      ),
+    );
+
+    await Promise.all(
+      updateTargets.map(async (updateItem) => {
+        const existingItems = updateItem.existingItems;
+        if (existingItems.length === 0) return;
+        const representative = existingItems[0]; //取得してきた同名の食材のsortOrderが一番小さいものを取得
 
         //配列の同名食材の量をここで合計
-        const existingTotal = existingitems.reduce(
+        const existingTotal = existingItems.reduce(
           (sum, existingitems) => sum + (existingitems.quantityText ?? 0),
           0,
         );
 
         //slice(1)→1番目から最後まで取ってくる
-        const duplicateIds = existingitems
+        const duplicateIds = existingItems
           .slice(1)
           .map((existingitem) => existingitem.id);
 
@@ -208,7 +230,7 @@ export const POST = async (request: NextRequest) => {
               id: representative.id,
             },
             data: {
-              quantityText: existingTotal + (item.quantityText ?? 0),
+              quantityText: existingTotal + (updateItem.item.quantityText ?? 0),
             },
           }),
 
@@ -221,8 +243,10 @@ export const POST = async (request: NextRequest) => {
             },
           }),
         ]);
+        return;
       }),
     );
+
     await createNotification({
       familyId: dbUser.activeFamilyId,
       actorUserId: user.id,
@@ -305,6 +329,9 @@ export const PUT = async (request: NextRequest) => {
           name: updatedItem.name.trim(),
           unitId: updatedItem.unitId,
           itemType: 'ITEM',
+        },
+        orderBy: {
+          sortOrder: 'asc',
         },
       });
       if (sameItems.length > 1) {
