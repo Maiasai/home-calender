@@ -10,7 +10,6 @@ export type GroupedItem = {
     name: string;
   } | null;
   totalQuantity: number;
-  count: number;
   checked: boolean;
   sortOrder: number;
   itemType: ShoppingItemType;

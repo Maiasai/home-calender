@@ -25,17 +25,15 @@ export const createGroupedItems = (data: Shoppinglist[]): GroupedItem[] => {
         name: item.name,
         unit: item.unit ?? null,
         totalQuantity: item.quantityText ?? 0,
-        count: 1,
         checked: item.checked, //買ったかどうか　ture/false
         sortOrder: item.sortOrder ?? 0, //見た目の順番をデータ化したもの
         itemType: item.itemType,
       });
     } else {
       //同じ名前が出た回数
-      existing.count += 1;
       existing.totalQuantity += item.quantityText ?? 0;
       existing.sortOrder = Math.min(
-        //ここで最初に出てきた位置保持
+        //同じ材料の中で一番小さい sortOrder を保持する
         existing.sortOrder,
 
         item.sortOrder ?? 0,
