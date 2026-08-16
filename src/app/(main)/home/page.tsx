@@ -113,6 +113,16 @@ const TopPage = () => {
     setCurrentMonth(new Date(year, month + 1, 1));
   };
 
+  //カレンダー上で日付押下後、下部にスクロールさせる処理
+  useEffect(() => {
+    if (selectedDate) {
+      document.getElementById('menu-detail')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }, [selectedDate]);
+
   // ==============================
   // 献立データ取得
   // ==============================

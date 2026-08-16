@@ -78,7 +78,7 @@ const CalenderSelectedDate = ({
   useBodyScrollLock({ open: nutritionOpen });
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" id="menu-detail">
       <div className="mt-4 p-3 border rounded">
         <div className="flex justify-between items-center mb-4 ">
           {displayDate} の献立
