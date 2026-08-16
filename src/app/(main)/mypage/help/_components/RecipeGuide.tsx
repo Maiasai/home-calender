@@ -27,7 +27,7 @@ const RecipeGuide = ({ setSelectedImage }: Props) => {
           <li>
             ヘッダーの「レシピ」を開く
             <p className="ml-2 text-xs md:text-sm text-gray-500">
-              ※スマートフォンの場合はメニュー内にあります。
+              ※スマートフォンの場合は下メニュー内にあります。
             </p>
           </li>
 
