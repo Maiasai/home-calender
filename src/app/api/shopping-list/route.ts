@@ -22,9 +22,9 @@ export const POST = async (request: NextRequest) => {
         { status: 404 },
       );
     }
-    const maxSortOrder = await prisma.shoppingItem.aggregate({
-      _max: {
-        sortOrder: true, //ここでDBに今ある最大sortOrderを取得
+    const minSortOrder = await prisma.shoppingItem.aggregate({
+      _min: {
+        sortOrder: true, //ここでDBに今ある最小sortOrderを取得
       },
       where: {
         familyId: dbUser.activeFamilyId,
@@ -41,8 +41,8 @@ export const POST = async (request: NextRequest) => {
         unitId: body.unitId ?? null,
         itemType: body.itemType,
 
-        //今DBにある一番大きいsortOrderを見て、その次の番号を付ける→create時に保存
-        sortOrder: (maxSortOrder._max.sortOrder ?? -1) + 1, //ソート番号を付与
+        //今DBにある一番小さいsortOrderを見て、その前の番号を付ける→create時に保存
+        sortOrder: (minSortOrder._min.sortOrder ?? -1) - 1, //ソート番号を付与
       },
     });
 
