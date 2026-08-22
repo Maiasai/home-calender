@@ -41,6 +41,7 @@ const MenuButton = ({ onEdit, onDelete, onList, onNutrition }: Props) => {
             width={30}
             height={30}
             className="mr-1"
+            unoptimized
           />
         </button>
       </DropdownMenu.Trigger>

@@ -16,6 +16,7 @@ const CloseButton = ({ onClose }: Props) => {
         alt="閉じるボタン"
         width={30}
         height={30}
+        unoptimized
       />
     </button>
   );

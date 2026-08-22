@@ -69,6 +69,7 @@ const TitleForm = <T extends FieldValues>({
             className="w-4 h-4 opacity-60 mt-2 ml-2"
             width={20}
             height={20}
+            unoptimized
           />
         )}
       </div>

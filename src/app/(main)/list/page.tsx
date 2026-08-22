@@ -265,6 +265,7 @@ const List = () => {
               alt="削除"
               width={20}
               height={20}
+              unoptimized
             />
             一括
           </button>
@@ -320,6 +321,7 @@ const List = () => {
                                   alt="削除アイコン"
                                   width={20}
                                   height={20}
+                                  unoptimized
                                 />
                               </button>
                               <div
@@ -338,6 +340,7 @@ const List = () => {
                                   width={30}
                                   height={30}
                                   draggable={false}
+                                  unoptimized
                                 />
                               </div>
                             </div>
@@ -449,6 +452,7 @@ const List = () => {
                                   width={20}
                                   height={20}
                                   className="ml-2"
+                                  unoptimized
                                 />
                               </button>
 
@@ -470,6 +474,7 @@ const List = () => {
                                   height={30}
                                   draggable={false}
                                   className="md:ml-1"
+                                  unoptimized
                                 />
                               </div>
                             </div>

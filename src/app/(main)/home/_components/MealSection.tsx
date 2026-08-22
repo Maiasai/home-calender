@@ -44,6 +44,7 @@ export const MealSection = ({
                 width={30}
                 height={30}
                 className="object-contain"
+                unoptimized
               />{' '}
             </div>
 

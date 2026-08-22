@@ -53,6 +53,7 @@ const MealModal = ({ selectedRecipes, isEmpty }: Props) => {
                     className="mb-2"
                     width={25}
                     height={25}
+                    unoptimized
                   />
                 )}
 

@@ -65,6 +65,7 @@ const SearchBar = ({
             className="absolute left-2 top-1/2 -translate-y-1/2 block"
             width={20}
             height={20}
+            unoptimized
           />
           <PrimaryButton
             className="flex items-center justify-center gap-1 w-[84px] h-[34px] ml-2"

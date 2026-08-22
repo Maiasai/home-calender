@@ -26,6 +26,7 @@ const FooterNavigation = () => {
             width={24}
             height={24}
             className="object-contain"
+            unoptimized
           />
           <span>献立</span>
         </Link>
@@ -48,6 +49,7 @@ const FooterNavigation = () => {
             width={24}
             height={24}
             className="object-contain"
+            unoptimized
           />
           <span>レシピ</span>
         </Link>
@@ -68,6 +70,7 @@ const FooterNavigation = () => {
             width={24}
             height={24}
             className="object-contain"
+            unoptimized
           />
           <span>買い物</span>
         </Link>
@@ -90,6 +93,7 @@ const FooterNavigation = () => {
             width={24}
             height={24}
             className="object-contain"
+            unoptimized
           />
           <span>マイページ</span>
         </Link>

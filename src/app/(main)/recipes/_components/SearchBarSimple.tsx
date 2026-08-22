@@ -36,6 +36,7 @@ const SearchBarSimple = ({
         className="absolute left-8 top-1/2 -translate-y-1/2 block"
         width={20}
         height={20}
+        unoptimized
       />
 
       <PrimaryButton

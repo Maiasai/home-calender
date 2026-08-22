@@ -27,6 +27,7 @@ const AddRecipeSelect = ({ onSelect }: Props) => {
                 alt="URLから追加するアイコン"
                 width={40}
                 height={40}
+                unoptimized
               />
             </div>
 
@@ -54,6 +55,7 @@ const AddRecipeSelect = ({ onSelect }: Props) => {
                 alt="オリジナルレシピを登録するアイコン"
                 width={40}
                 height={40}
+                unoptimized
               />
             </div>
 

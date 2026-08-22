@@ -63,6 +63,7 @@ const ImageUpload = ({
                 alt="カメラアイコン"
                 width={20}
                 height={20}
+                unoptimized
               />
             </div>
           </div>

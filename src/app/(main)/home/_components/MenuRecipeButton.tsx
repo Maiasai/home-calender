@@ -16,6 +16,7 @@ const MenuRecipeButton = ({ onRemoveFromMenu }: Props) => {
             width={30}
             height={30}
             className="mr-1"
+            unoptimized
           />
         </button>
       </DropdownMenu.Trigger>
