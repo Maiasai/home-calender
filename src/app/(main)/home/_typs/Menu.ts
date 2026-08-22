@@ -5,6 +5,7 @@ import { MealId } from './MealId';
 
 export type ItemType = {
   id: string;
+  menuRecipeId: string;
   title: string;
   thumbnailUrl?: string | null;
   servings?: number | null;

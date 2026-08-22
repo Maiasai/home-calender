@@ -5,12 +5,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ItemType } from '../_typs/Menu';
+import MenuRecipeButton from './MenuRecipeButton';
 
 type Props = {
   items: ItemType[];
   iconSrc: string;
   iconAlt: string;
   selectedDate: Date;
+  onRemoveFromMenu: (menuRecipeId: string) => void;
 };
 
 export const MealSection = ({
@@ -18,6 +20,7 @@ export const MealSection = ({
   iconSrc,
   iconAlt,
   selectedDate,
+  onRemoveFromMenu,
 }: Props) => {
   const selectedDateKey = selectedDate.toLocaleDateString('sv-SE');
 
@@ -34,6 +37,9 @@ export const MealSection = ({
             key={item.id}
             className="flex items-center text-sm gap-x-2 mb-4 "
           >
+            <MenuRecipeButton
+              onRemoveFromMenu={() => onRemoveFromMenu(item.menuRecipeId)}
+            />
             <div className="shink-0">
               <Image
                 src={iconSrc}

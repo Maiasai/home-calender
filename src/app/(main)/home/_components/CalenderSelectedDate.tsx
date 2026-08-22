@@ -7,7 +7,7 @@ import MenuButton from './MenuButton';
 import { Meal } from '../_typs/Meal';
 import { useState } from 'react';
 import ConfirmDialog from '../../recipes/_components/ConfirmDialog';
-import { MealId } from '../_typs/MealId';
+import { MealId, MealRecipeId } from '../_typs/MealId';
 import { NutritionResult } from '@/lib/nutrition/typs';
 import calculateNutrition from '@/lib/nutrition/calculateNutrition';
 import NutritionResultView from './NutritionResultView';
@@ -41,7 +41,11 @@ const CalenderSelectedDate = ({
   const selectedKey = selectedDate.toLocaleDateString('sv-SE'); //選択している日付
   const selectedDayData = data?.[selectedKey]; //右記のような形→{breakfast: Recipe[] lunch: Recipe[] dinner: Recipe[]}
   const [open, setOpen] = useState(false);
-  const [targetMealId, setTargetMealId] = useState<MealId | null>(null);
+  const [targetMealId, setTargetMealId] = useState<MealId | null>(null); //献立全件削除用State
+
+  const [singleDeleteOpen, setSingleDeleteOpen] = useState(false); // 個別削除用
+  const [targetMenuRecipeId, setTargetMenuRecipeId] =
+    useState<MealRecipeId | null>(null); //献立個別削除用State
   const [nutritionResult, setNutritionResult] =
     useState<NutritionResult | null>(null); //栄養チェック結果管理用
   const [nutritionOpen, setNutritionOpen] = useState(false); //栄養チェックモーダル管理用
@@ -66,6 +70,27 @@ const CalenderSelectedDate = ({
         },
         body: JSON.stringify({
           id: mealId,
+        }),
+      });
+      await mutate();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  //献立個別削除処理
+  const handleDeleteOneMeal = async (mealRecipeId: MealRecipeId) => {
+    if (!mealRecipeId) return;
+
+    try {
+      await fetch('/api/meal-plan/recipe', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: mealRecipeId,
         }),
       });
       await mutate();
@@ -110,6 +135,7 @@ const CalenderSelectedDate = ({
             />
           )}
         </div>
+
         <div className="max-h-80 overflow-y-auto">
           {isEmpty && <div>献立が未登録です</div>}
 
@@ -119,6 +145,11 @@ const CalenderSelectedDate = ({
             iconSrc="/images/morningIcon.png"
             iconAlt="朝アイコン"
             selectedDate={selectedDate}
+            onRemoveFromMenu={(menuRecipeId) => {
+              //menuRecipeId→子が渡した item.menuRecipeId を受け取るための変数名
+              setTargetMenuRecipeId(menuRecipeId);
+              setSingleDeleteOpen(true);
+            }}
           />
 
           {/* 昼 */}
@@ -127,6 +158,10 @@ const CalenderSelectedDate = ({
             iconSrc="/images/daytimeIcon.png"
             iconAlt="昼アイコン"
             selectedDate={selectedDate}
+            onRemoveFromMenu={(menuRecipeId) => {
+              setTargetMenuRecipeId(menuRecipeId);
+              setSingleDeleteOpen(true);
+            }}
           />
 
           {/* 夜 */}
@@ -135,6 +170,10 @@ const CalenderSelectedDate = ({
             iconSrc="/images/nightIcon.png"
             iconAlt="夜アイコン"
             selectedDate={selectedDate}
+            onRemoveFromMenu={(menuRecipeId) => {
+              setTargetMenuRecipeId(menuRecipeId);
+              setSingleDeleteOpen(true);
+            }}
           />
         </div>
       </div>
@@ -142,13 +181,26 @@ const CalenderSelectedDate = ({
       <ConfirmDialog
         open={open}
         title="確認"
-        message="この献立を削除しますか？"
+        message="この献立を全件削除しますか？"
         onCancel={() => setOpen(false)}
         onConfirm={async () => {
           if (!targetMealId) return;
 
           await deleteMeal(targetMealId);
           setOpen(false);
+        }}
+      />
+
+      <ConfirmDialog
+        open={singleDeleteOpen}
+        title="確認"
+        message="この献立を削除しますか？"
+        onCancel={() => setSingleDeleteOpen(false)}
+        onConfirm={async () => {
+          if (!targetMenuRecipeId) return;
+
+          await handleDeleteOneMeal(targetMenuRecipeId);
+          setSingleDeleteOpen(false);
         }}
       />
 

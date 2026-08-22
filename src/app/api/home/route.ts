@@ -96,7 +96,8 @@ export const GET = async (request: NextRequest) => {
         //その日のレシピを全部
         const data = {
           //フロントで必要なものだけを整形
-          id: item.recipe.id,
+          id: item.recipe.id, //レシピ本体のid
+          menuRecipeId: item.id, // 献立1品のID
           title: item.recipe.title,
           thumbnailUrl: item.recipe.thumbnailUrl,
           servings: item.recipe.servings ?? null,

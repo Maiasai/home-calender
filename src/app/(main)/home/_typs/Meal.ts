@@ -8,6 +8,7 @@ export type Meal = {
   id: MealId;
   date: string;
   recipes: {
+    menuRecipeId: string; //献立登録1件のid
     recipe: {
       id: string;
       title: string;

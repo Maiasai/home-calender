@@ -18,6 +18,7 @@ export const buildMead = ({
     recipes: [
       //配列の中に配列で展開されてしまうため、スプレッド構文を使用。[{...},{...},{...}]
       ...selectedDayData.breakfast.map((r) => ({
+        menuRecipeId: r.menuRecipeId,
         recipe: {
           id: r.id,
           title: r.title,
@@ -28,6 +29,7 @@ export const buildMead = ({
         mealType: 'BREAKFAST' as const,
       })),
       ...selectedDayData.lunch.map((r) => ({
+        menuRecipeId: r.menuRecipeId,
         recipe: {
           id: r.id,
           title: r.title,
@@ -38,6 +40,7 @@ export const buildMead = ({
         mealType: 'LUNCH' as const,
       })),
       ...selectedDayData.dinner.map((r) => ({
+        menuRecipeId: r.menuRecipeId,
         recipe: {
           id: r.id,
           title: r.title,
