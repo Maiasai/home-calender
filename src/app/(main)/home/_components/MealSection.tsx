@@ -58,6 +58,7 @@ export const MealSection = ({
                   alt={item.title}
                   fill
                   className="object-cover"
+                  sizes="150px"
                 />
               </div>
             </Link>

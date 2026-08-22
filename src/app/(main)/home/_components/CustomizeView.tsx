@@ -55,6 +55,7 @@ const CustomizeView = ({ selectedRecipes, setSelectedRecipes }: Props) => {
                 alt="レシピ画像"
                 fill
                 className="object-cover"
+                sizes="130px"
               />
             </div>
 

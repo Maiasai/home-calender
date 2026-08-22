@@ -74,6 +74,7 @@ const MealModal = ({ selectedRecipes, isEmpty }: Props) => {
                           alt="画像"
                           fill
                           className="object-cover"
+                          sizes="130px"
                         />
                       </div>
 
