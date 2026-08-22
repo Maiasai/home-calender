@@ -22,6 +22,7 @@ import PrimaryButton from '@/components/button/PrimaryButton';
 import AddRecipeModalBase from '../recipes/_components/AddRecipeModalBase';
 import TopGuideModal from './_components/TopGuideModal';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSwipeable } from 'react-swipeable';
 
 const TopPage = () => {
   const { token } = useSupabaseSession();
@@ -70,6 +71,14 @@ const TopPage = () => {
   const [currentMonth, setCurrentMonth] = useState(
     new Date(initialDate.getFullYear(), initialDate.getMonth(), 1), //年月を取得しこの形になる　→ new Dateで今の月の1日を作成(2026, 2, 1)
   );
+
+  //カレンダー　スワイプ処理
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => nextMonth(),
+    onSwipedRight: () => prevMonth(),
+    delta: 50, //左右に50px以上動いたらスワイプと認める
+    preventScrollOnSwipe: false, //スワイプを検出しても、ブラウザ標準のスクロールを止めない
+  });
 
   // ==============================
   // カレンダー表示用データ作成　※今表示しているカレンダーの情報を取得
@@ -249,12 +258,15 @@ const TopPage = () => {
           />
         )}
         {/* カレンダー(7列、gap-1でマスの間隔) */}
-        <Calender
-          data={data}
-          days={days}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-        />
+
+        <section {...swipeHandlers}>
+          <Calender
+            data={data}
+            days={days}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+          />
+        </section>
         <Image
           src="/images/homeimage.png"
           alt="ホームの画像"
