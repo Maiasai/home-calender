@@ -37,9 +37,6 @@ export const MealSection = ({
             key={item.id}
             className="flex items-center text-sm gap-x-2 mb-4 "
           >
-            <MenuRecipeButton
-              onRemoveFromMenu={() => onRemoveFromMenu(item.menuRecipeId)}
-            />
             <div className="shink-0">
               <Image
                 src={iconSrc}
@@ -70,6 +67,10 @@ export const MealSection = ({
             >
               {item.title}
             </Link>
+
+            <MenuRecipeButton
+              onRemoveFromMenu={() => onRemoveFromMenu(item.menuRecipeId)}
+            />
           </div>
         );
       })}

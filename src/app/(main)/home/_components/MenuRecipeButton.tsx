@@ -22,7 +22,7 @@ const MenuRecipeButton = ({ onRemoveFromMenu }: Props) => {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          align="start"
+          align="end"
           sideOffset={3}
           className="z-50 w-55 rounded border bg-white p-1 shadow-md"
         >
