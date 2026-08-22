@@ -3,6 +3,7 @@
 import { UseFormSetValue } from 'react-hook-form';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { convertHeicToJpeg } from '@/lib/convertHeicToJpeg';
+import { resizeRecipeImage } from '@/lib/resizeRecipeImage';
 
 //画像が選ばれた→supabaseにUP→その結果をreact-hook-formに反映
 
@@ -23,7 +24,8 @@ const handleImageChange = async ({ event, setValue, setPreviewUrl }: Props) => {
   if (!originalFile) return;
 
   try {
-    const file = await convertHeicToJpeg(originalFile);
+    const convertedFile = await convertHeicToJpeg(originalFile);
+    const file = await resizeRecipeImage(convertedFile);
 
     //選択直後プレビュー
     const preview = URL.createObjectURL(file);
