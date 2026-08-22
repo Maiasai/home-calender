@@ -156,7 +156,7 @@ const RecipeEdit = ({ params }: Props) => {
       const { data: uploadData, error } = await supabase.storage
         .from('post_thumbnail')
         .upload(filePath, data.thumbnailFile, {
-          cacheControl: '3600',
+          cacheControl: '31536000',
           upsert: false,
         });
 
