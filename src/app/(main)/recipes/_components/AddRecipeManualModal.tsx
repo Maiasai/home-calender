@@ -181,6 +181,10 @@ const AddRecipeManualModal = ({
             {/* タイトル (必須)*/}
             <TitleForm registerTitle={register} errors={errors} step={step} />
           </div>
+          <div className="text-sm mx-8 text-gray-600">
+            ※入力した材料は買い物リストに使用されます。
+            また、栄養チェックでは野菜・肉類・卵・豆腐などの入力内容をもとに判定を行います。
+          </div>
 
           {/* カテゴリ */}
           <div className="flex items-center h-[80px] gap-6 bg-white m-5 p-4 rounded-lg">
