@@ -24,6 +24,7 @@ const titles = {
 
 const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
   const [step, setStep] = useState<RecipeModalStep>('select');
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleClose = () => {
     setStep('select'); //stepを初期化
@@ -49,11 +50,23 @@ const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
         )}
 
         {step === 'URL' && (
-          <AddRecipeUrlModal onClose={onClose} step={step} mutate={mutate} />
+          <AddRecipeUrlModal
+            onClose={onClose}
+            step={step}
+            mutate={mutate}
+            previewUrl={previewUrl}
+            setPreviewUrl={setPreviewUrl}
+          />
         )}
 
         {step === 'MANUAL' && (
-          <AddRecipeManualModal onClose={onClose} step={step} mutate={mutate} />
+          <AddRecipeManualModal
+            onClose={onClose}
+            step={step}
+            mutate={mutate}
+            previewUrl={previewUrl}
+            setPreviewUrl={setPreviewUrl}
+          />
         )}
       </div>
     </div>

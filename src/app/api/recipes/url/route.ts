@@ -49,7 +49,7 @@ export const POST = async (request: NextRequest) => {
       data: {
         ownerUserId: user.id, // 作成者
         familyId: dbUser.activeFamilyId!, // 所属グループ
-
+        thumbnailUrl: body.thumbnailImageUrl,
         title: body.title || 'URLレシピ',
         sourceType: 'URL',
         sourceUrl: body.sourceUrl,

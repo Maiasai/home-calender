@@ -5,7 +5,7 @@
 import TitleForm from './TitleForm';
 import MemoForm from './MemoForm';
 import CategorySelector from './CategorySelector';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { RecipeCategory } from '@/generated/prisma';
 import { useForm } from 'react-hook-form';
 import { CreateRecipeByUrlRequest } from '../_types/CreateRecipeByUrlRequest';
@@ -19,14 +19,25 @@ import { mutate as globalMutate } from 'swr';
 import IngredientList from './IngredientList';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
+import { supabase } from '@/lib/supabase';
+import { v4 as uuidv4 } from 'uuid';
+import ImageUpload from './ImageUpload';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
   mutate?: KeyedMutator<RecipeData[]>;
+  previewUrl: string | null;
+  setPreviewUrl: Dispatch<SetStateAction<string | null>>;
 };
 
-const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
+const AddRecipeUrlModal = ({
+  onClose,
+  step,
+  mutate,
+  previewUrl,
+  setPreviewUrl,
+}: Props) => {
   const { token } = useSupabaseSession();
 
   const [category, setCategory] = useState<RecipeCategory | ''>('');
@@ -44,6 +55,7 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
   } = useForm<RecipeFormValues>({
     mode: 'onChange',
     defaultValues: {
+      thumbnailImageUrl: '',
       title: '',
       sourceUrl: '',
 
@@ -69,11 +81,41 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
   }, []);
 
   const onSubmit = async (data: RecipeFormValues) => {
+    let thumbnailImageUrl = data.thumbnailImageUrl;
+    if (data.thumbnailFile) {
+      const uuid = uuidv4(); //ランダムな一意なIDを作る関数
+      const extension = data.thumbnailFile.name.split('.').pop() || 'jpg';
+      const filePath = `private/${uuid}.${extension}`;
+
+      //②supabaseにアップロード（uuid名で保存）
+      //uploadDataには保存された場所が入ってくる
+      const { data: uploadData, error } = await supabase.storage
+        .from('post_thumbnail')
+        .upload(filePath, data.thumbnailFile, {
+          cacheControl: '31536000', //1年間
+          upsert: false,
+        });
+
+      //アップロード失敗した場合
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      //ここで公開URL取得
+      const publicUrl = await supabase.storage
+        .from('post_thumbnail') //supabage Storageのpost_thumbnailというパケットにあるdata.pathファイルの外部アクセスURLをくださいと指示
+        .getPublicUrl(uploadData.path).data.publicUrl;
+
+      thumbnailImageUrl = publicUrl;
+    }
+
     const payload: CreateRecipeByUrlRequest = {
       title: data.title,
       sourceUrl: data.sourceUrl ?? '',
       memo: data.memo,
       ingredients: data.ingredients,
+      thumbnailImageUrl,
       category: category || undefined, //未選択なら送らない\
       servings: data.servings ? Number(data.servings) : undefined,
     };
@@ -111,12 +153,18 @@ const AddRecipeUrlModal = ({ onClose, step, mutate }: Props) => {
     <div className="bg-gray-100 w-full max-w-[800px] max-h-[80vh] overflow-y-auto ">
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col items-center md:h-[260px] h-[250px] bg-white m-5 p-4 rounded-lg">
+          <div className="flex items-center flex-col md:flex-row md:h-[250px] h-[250px] gap-6 bg-white m-5 p-4 rounded-lg">
+            {/* 画像 */}
+            <ImageUpload
+              control={control}
+              setValue={setValue}
+              previewUrl={previewUrl}
+              setPreviewUrl={setPreviewUrl}
+            />
+          </div>
+          <div className="flex flex-col items-center md:h-[200px] h-[220px] bg-white m-5 p-4 rounded-lg">
             {/* タイトル */}
-            <div className="w-full mb-6">
-              <p className="text-xs text-red-400 mb-2 ml-2">
-                * マークがついている項目は必須です
-              </p>
+            <div className="w-full mb-2">
               <TitleForm registerTitle={register} errors={errors} step={step} />
             </div>
             {/* Url */}

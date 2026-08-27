@@ -1,7 +1,7 @@
 //レシピ登録モーダル（オリジナルレシピを入力）
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import IngredientList from './IngredientList';
 import StepList from './StepList';
@@ -25,6 +25,8 @@ type Props = {
   onClose: () => void;
   step: RecipeModalStep;
   mutate?: KeyedMutator<RecipeData[]>;
+  previewUrl: string | null;
+  setPreviewUrl: Dispatch<SetStateAction<string | null>>;
 };
 
 type CreateRecipeRequest = RecipeFormValues & {
@@ -32,11 +34,17 @@ type CreateRecipeRequest = RecipeFormValues & {
   category?: RecipeCategory;
 };
 
-const AddRecipeManualModal = ({ onClose, step, mutate }: Props) => {
+const AddRecipeManualModal = ({
+  onClose,
+  step,
+  mutate,
+  previewUrl,
+  setPreviewUrl,
+}: Props) => {
   const { token } = useSupabaseSession();
 
   const [category, setCategory] = useState<RecipeCategory | ''>('');
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const [units, setUnits] = useState<UnitData[]>([]); //ここで選択肢を管理
 
   const {
