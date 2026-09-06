@@ -56,6 +56,7 @@ const CustomizeView = ({ selectedRecipes, setSelectedRecipes }: Props) => {
                 fill
                 className="object-cover"
                 sizes="130px"
+                unoptimized
               />
             </div>
 

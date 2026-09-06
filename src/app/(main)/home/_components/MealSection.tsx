@@ -59,6 +59,7 @@ export const MealSection = ({
                   fill
                   className="object-cover"
                   sizes="150px"
+                  unoptimized
                 />
               </div>
             </Link>

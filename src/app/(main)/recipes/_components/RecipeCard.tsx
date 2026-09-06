@@ -90,6 +90,7 @@ const RecipeCard = ({
               fill //Image が親の箱いっぱいに広がる
               className="object-cover" //画像の比率を保ったまま箱いっぱいに表示はみ出る部分は切り取る
               sizes="(max-width: 768px) 33vw, 256px"
+              unoptimized
             />
 
             <div className="absolute flex gap-x-2 md:top-4 md:right-4 top-1 right-1">

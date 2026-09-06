@@ -39,6 +39,7 @@ const RecipeCardSimple = ({ recipe, selectedRecipes, toggleSelect }: Props) => {
               fill
               className="object-cover"
               sizes="(max-width: 540px) 33vw, 180px"
+              unoptimized
             />
           </div>
 

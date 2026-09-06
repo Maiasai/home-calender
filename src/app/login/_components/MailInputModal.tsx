@@ -80,6 +80,7 @@ const MailInputModal = ({
           alt="またはの画像"
           width={400}
           height={10}
+          unoptimized
         />
       </div>
 
