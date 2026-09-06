@@ -142,7 +142,7 @@ const CalenderSelectedDate = ({
           {/* 朝 */}
           <MealSection
             items={selectedDayData?.breakfast || []}
-            iconSrc="/images/morningIcon.png"
+            iconSrc="/images/morningIcon.webp"
             iconAlt="朝アイコン"
             selectedDate={selectedDate}
             onRemoveFromMenu={(menuRecipeId) => {
@@ -155,7 +155,7 @@ const CalenderSelectedDate = ({
           {/* 昼 */}
           <MealSection
             items={selectedDayData?.lunch || []}
-            iconSrc="/images/daytimeIcon.png"
+            iconSrc="/images/daytimeIcon.webp"
             iconAlt="昼アイコン"
             selectedDate={selectedDate}
             onRemoveFromMenu={(menuRecipeId) => {
@@ -167,7 +167,7 @@ const CalenderSelectedDate = ({
           {/* 夜 */}
           <MealSection
             items={selectedDayData?.dinner || []}
-            iconSrc="/images/nightIcon.png"
+            iconSrc="/images/nightIcon.webp"
             iconAlt="夜アイコン"
             selectedDate={selectedDate}
             onRemoveFromMenu={(menuRecipeId) => {
