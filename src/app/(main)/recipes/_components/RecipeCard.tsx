@@ -2,22 +2,21 @@
 'use client';
 
 import Link from 'next/link';
-
-import { KeyedMutator } from 'swr';
-import { RecipeData } from '../_types/RecipeTypes';
+import { RecipeData, RecipePageResponse } from '../_types/RecipeTypes';
 import Image from 'next/image';
 import FavoriteButton from '@/app/components/image/FavoriteButton';
 import CookedButton from '@/app/components/image/CookedButton';
 import toggleStatus from '../../home/_hooks/toggleStatus';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { RecipeListTitle } from '@/utils/format';
+import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 
 type Props = {
   recipe: RecipeData;
   isBulkMode: boolean;
   selectedIds: string[];
   setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
-  mutate: KeyedMutator<RecipeData[]>; //SWRが用意した型（そのデータを更新できる mutate 関数）
+  mutate: SWRInfiniteKeyedMutator<RecipePageResponse[]>; //SWRが用意した型（そのデータを更新できる mutate 関数）
 };
 
 const RecipeCard = ({

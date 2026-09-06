@@ -4,7 +4,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import Image from 'next/image';
 import { CategoryFilter } from './_types/category/CategoryFilter';
@@ -37,7 +37,15 @@ const RecipesPage = () => {
 
   //レシピ情報を取得
   //mutateはもう一度fetch("/api/recipes")する（これによってUIが更新）
-  const { recipes, isLoading, isError, mutate } = useRecipes({
+  const {
+    recipes,
+    hasMore,
+    loadMore,
+    isLoading,
+    isLoadingMore,
+    isError,
+    mutate,
+  } = useRecipes({
     //レンダリング時に毎回実行されるもの（setStateされ再レンダリング後に実行）
     //下記４つがuseRecipesのfilterとして渡される
     keyword,
@@ -45,6 +53,42 @@ const RecipesPage = () => {
     favorite: favoriteFilter, //意味）APIパラメータ名 : UIのstate
     cooked: cookedFilter,
   });
+
+  //スクロール判定
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const loadMoreTriggerRef = useRef<HTMLDivElement>(null);
+
+  //監視処理
+  useEffect(() => {
+    const triggerElement = loadMoreTriggerRef.current;
+    const scrollContainer = scrollContainerRef.current;
+
+    if (!triggerElement || !scrollContainer) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+
+        // 一番下の要素が見えていて、続きがあり、通信中でなければ取得
+        if (entry.isIntersecting && hasMore && !isLoadingMore) {
+          loadMore();
+        }
+      },
+      {
+        // このスクロール枠の中で見えたかを判定
+        root: scrollContainer,
+
+        // 一番下へ到着する少し前に取得開始
+        rootMargin: '0px 0px 200px 0px',
+      },
+    );
+
+    observer.observe(triggerElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMore, isLoadingMore, loadMore]);
 
   //一括削除モード
   const handleBulkDelete = async () => {
@@ -112,7 +156,10 @@ const RecipesPage = () => {
           </div>
 
           {/* レシピ部分だけスクロール */}
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain mt-1 p-2">
+          <div
+            ref={scrollContainerRef}
+            className="flex-1 min-h-0 overflow-y-auto overscroll-contain mt-1 p-2"
+          >
             {/* 一括操作モード */}
             {isBulkMode && (
               <div className="flex items-center mb-5 gap-3">
@@ -173,6 +220,10 @@ const RecipesPage = () => {
                   mutate={mutate}
                 />
               ))}
+            </div>
+
+            <div ref={loadMoreTriggerRef} className="flex justify-center py-5">
+              {isLoadingMore && <p>読み込み中...</p>}
             </div>
           </div>
 

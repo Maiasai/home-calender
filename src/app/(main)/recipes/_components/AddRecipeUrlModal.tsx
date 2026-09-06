@@ -13,8 +13,7 @@ import { RecipeModalStep } from '../_types/RecipeModalStep';
 import UrlForm from './UrlForm';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
-import { KeyedMutator } from 'swr';
-import { RecipeData } from '../_types/RecipeTypes';
+import { RecipePageResponse } from '../_types/RecipeTypes';
 import { mutate as globalMutate } from 'swr';
 import IngredientList from './IngredientList';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
@@ -22,11 +21,12 @@ import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { supabase } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import ImageUpload from './ImageUpload';
+import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
-  mutate?: KeyedMutator<RecipeData[]>;
+  mutate?: SWRInfiniteKeyedMutator<RecipePageResponse[]>;
   previewUrl: string | null;
   setPreviewUrl: Dispatch<SetStateAction<string | null>>;
 };

@@ -7,13 +7,13 @@ import AddRecipeUrlModal from './AddRecipeUrlModal';
 import AddRecipeManualModal from './AddRecipeManualModal';
 import PageHeader from './PageHeader';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
-import { RecipeData } from '../_types/RecipeTypes';
-import { KeyedMutator } from 'swr';
+import { RecipePageResponse } from '../_types/RecipeTypes';
+import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  mutate?: KeyedMutator<RecipeData[]>;
+  mutate?: SWRInfiniteKeyedMutator<RecipePageResponse[]>;
 };
 
 const titles = {

@@ -2,6 +2,11 @@
 
 import { RecipeCategory } from 'generated/prisma';
 
+export type RecipePageResponse = {
+  recipes: RecipeData[];
+  hasMore: boolean;
+};
+
 //useSWRで使っている型
 export interface RecipeData {
   //APIのクエリパラメーター名

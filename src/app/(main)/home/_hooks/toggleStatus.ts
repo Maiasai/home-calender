@@ -1,8 +1,8 @@
 //FavoriteButtonもしくはCookedButtonが走ったあと、ここの関数が実行
 //レシピ ID と、どのステータスを更新するか（お気に入り or 作った）を送る関数
 
-import { KeyedMutator } from 'swr/_internal';
-import { RecipeData } from '../../recipes/_types/RecipeTypes';
+import { RecipePageResponse } from '../../recipes/_types/RecipeTypes';
+import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 
 type CookedAndIsFavoriteRequestBody = {
   isFavorite?: boolean;
@@ -16,54 +16,58 @@ const toggleStatus = async (
   id: string, // ← recipe.id レシピID
   current: boolean, // ← isFav 現在の状態（お気に入りかどうか / 作ったことあるか）
   key: StatusKey, // ← "isFavorite" どのステータスを更新するか
-  mutate: KeyedMutator<RecipeData[]>, // ← mutate を引数で受け取る
+  mutate: SWRInfiniteKeyedMutator<RecipePageResponse[]>, // ← mutate を引数で受け取る
   token: string | null,
 ) => {
   // UIの先行更新（optimistic update）
   //mutateは再取得だけじゃない。mutate((現在のキャッシュ) => 新しいキャッシュ, false)でキャッシュだけ先に書き換えができてしまう
-  mutate((recipes: RecipeData[] | undefined) => {
+  mutate((pages) => {
     //このrecipesは/api/recipesから取ってきたキャッシュデータ
-    if (!recipes) return recipes;
+    if (!pages) return pages;
 
-    return recipes.map((reciper) => {
-      //recipes配列の中の該当レシピだけ書き換える
+    return pages.map((page) => ({
+      ...page,
 
-      if (reciper.id === id) {
-        if (key === 'isFavorite') {
-          //該当レシピを探す（クリックされたレシピだけ変更）
-          return {
-            ...reciper,
-            userRecipeStatus: [
-              {
-                //既存の userRecipeStatus[0] があればコピー
-                // reciper.userRecipeStatus?.[0]がundefinedのまま展開するとエラーになるから、
-                // なければ { isFavorite: false } を仮で使う
-                ...(reciper.userRecipeStatus?.[0] ?? {
-                  isFavorite: false,
-                }),
-                isFavorite: !current,
-                // その後で isFavorite: !current で上書き
-              },
-            ],
-          };
+      recipes: page.recipes.map((recipe) => {
+        //recipes配列の中の該当レシピだけ書き換える
+
+        if (recipe.id === id) {
+          if (key === 'isFavorite') {
+            //該当レシピを探す（クリックされたレシピだけ変更）
+            return {
+              ...recipe,
+              userRecipeStatus: [
+                {
+                  //既存の userRecipeStatus[0] があればコピー
+                  // reciper.userRecipeStatus?.[0]がundefinedのまま展開するとエラーになるから、
+                  // なければ { isFavorite: false } を仮で使う
+                  ...(recipe.userRecipeStatus?.[0] ?? {
+                    isFavorite: false,
+                  }),
+                  isFavorite: !current,
+                  // その後で isFavorite: !current で上書き
+                },
+              ],
+            };
+          }
+
+          if (key === 'hasCooked') {
+            return {
+              ...recipe,
+              familyRecipeStatus: [
+                {
+                  ...(recipe.familyRecipeStatus?.[0] ?? {
+                    hasCooked: false,
+                  }),
+                  hasCooked: !current,
+                },
+              ],
+            };
+          }
         }
-
-        if (key === 'hasCooked') {
-          return {
-            ...reciper,
-            familyRecipeStatus: [
-              {
-                ...(reciper.familyRecipeStatus?.[0] ?? {
-                  hasCooked: false,
-                }),
-                hasCooked: !current,
-              },
-            ],
-          };
-        }
-      }
-      return reciper; //変更対象じゃないレシピはそのまま返す
-    });
+        return recipe; //変更対象じゃないレシピはそのまま返す
+      }),
+    }));
   }, false); //false→このmutate直後に再取得しない
 
   //API更新

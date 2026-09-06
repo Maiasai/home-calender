@@ -1,7 +1,7 @@
 //献立作成モーダル（切り替え用）
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import MealModal from './MealModal';
 import MealRecipeSelect from './MealRecipeSelect';
 import { MealModalStep } from '../_typs/MealModalStep';
@@ -60,13 +60,50 @@ const MealModalBase = ({
   const isEmpty = selectedRecipes.length === 0;
 
   //レシピ情報を取得
-  const { recipes, isLoading, isError } = useRecipes({
-    //レンダリング時に毎回実行されるもの（setStateされ再レンダリング後に実行）
-    keyword,
-    category, //選択中のカテゴリが入る
-    favorite: favoriteFilter, //意味）APIパラメータ名 : UIのstate
-    cooked: cookedFilter,
-  });
+  const { recipes, hasMore, loadMore, isLoading, isLoadingMore, isError } =
+    useRecipes({
+      //レンダリング時に毎回実行されるもの（setStateされ再レンダリング後に実行）
+      keyword,
+      category, //選択中のカテゴリが入る
+      favorite: favoriteFilter, //意味）APIパラメータ名 : UIのstate
+      cooked: cookedFilter,
+    });
+
+  //スクロール判定
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const loadMoreTriggerRef = useRef<HTMLDivElement>(null);
+
+  //監視処理
+  useEffect(() => {
+    const triggerElement = loadMoreTriggerRef.current;
+    const scrollContainer = scrollContainerRef.current;
+
+    if (!triggerElement || !scrollContainer) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+
+        // 一番下の要素が見えていて、続きがあり、通信中でなければ取得
+        if (entry.isIntersecting && hasMore && !isLoadingMore) {
+          loadMore();
+        }
+      },
+      {
+        // このスクロール枠の中で見えたかを判定
+        root: scrollContainer,
+
+        // 一番下へ到着する少し前に取得開始
+        rootMargin: '0px 0px 200px 0px',
+      },
+    );
+
+    observer.observe(triggerElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMore, isLoadingMore, loadMore]);
 
   //編集画面の場合（最初からデータありの状態にする）
   //Reactは「コンポーネントを再利用」してしまうため、手動でリセットする必要がある
@@ -152,17 +189,28 @@ const MealModalBase = ({
           )}
 
           {/* ここだけスクロール */}
-          <div className="overflow-y-auto max-h-[calc(80vh-220px)] px-2 pb-6">
+          <div
+            ref={scrollContainerRef}
+            className="overflow-y-auto max-h-[calc(80vh-220px)] px-2 pb-6"
+          >
             {step === 'select' && ( //ボタンが押されたらstep変更を依頼
               <MealModal selectedRecipes={selectedRecipes} isEmpty={isEmpty} />
             )}
 
             {step === 'recipeSelect' && ( //ボタンが押されたらstep変更を依頼
-              <MealRecipeSelect
-                recipes={recipes}
-                selectedRecipes={selectedRecipes}
-                setSelectedRecipes={setSelectedRecipes}
-              />
+              <>
+                <MealRecipeSelect
+                  recipes={recipes}
+                  selectedRecipes={selectedRecipes}
+                  setSelectedRecipes={setSelectedRecipes}
+                />
+                <div
+                  ref={loadMoreTriggerRef}
+                  className="flex justify-center py-5"
+                >
+                  {isLoadingMore && <p>読み込み中...</p>}
+                </div>
+              </>
             )}
 
             {step === 'customize' && ( //ボタンが押されたらstep変更を依頼

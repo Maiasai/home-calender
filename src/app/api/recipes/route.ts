@@ -28,6 +28,13 @@ export const GET = async (request: NextRequest) => {
     const isFavorite = searchParams.get('favorite');
     const isCooked = searchParams.get('cooked');
 
+    //一覧取得用
+    const page = Math.max(Number(searchParams.get('page')) || 1, 1); //最初の1：値がない・数字でない場合の初期値
+
+    //1回のAPIアクセスで最大18件取得
+    const limit = 18;
+    const skip = (page - 1) * limit; // すでに表示済みとして飛ばす数
+
     if (!dbUser?.activeFamilyId) {
       return NextResponse.json(
         { message: 'family not found' },
@@ -111,6 +118,11 @@ export const GET = async (request: NextRequest) => {
       orderBy: {
         createdAt: 'desc',
       },
+      // 前のページまでに表示した件数を飛ばす
+      skip,
+
+      // 表示する18件＋続きの確認用1件
+      take: limit + 1,
 
       //上記のwhereはどのレシピを取得するか。以下selectは取得したレシピの中から、どの項目を返すかを決めている
       select: {
@@ -138,8 +150,10 @@ export const GET = async (request: NextRequest) => {
         },
       },
     });
+    const hasMore = recipeget.length > limit; //＜判定用＞取得したレシピの件数がlimitを超えているかチェック→ここではbooleanが返却値
+    const recipes = recipeget.slice(0, limit); //実際に使う件数に調整
 
-    return NextResponse.json(recipeget, { status: 200 });
+    return NextResponse.json({ recipes, hasMore }, { status: 200 });
   } catch (error) {
     console.error('GET /api/recipes error:', error);
 

@@ -14,17 +14,17 @@ import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
-import { RecipeData } from '../_types/RecipeTypes';
-import { KeyedMutator } from 'swr';
+import { RecipePageResponse } from '../_types/RecipeTypes';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '@/lib/supabase';
 import { mutate as globalMutate } from 'swr';
+import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
-  mutate?: KeyedMutator<RecipeData[]>;
+  mutate?: SWRInfiniteKeyedMutator<RecipePageResponse[]>;
   previewUrl: string | null;
   setPreviewUrl: Dispatch<SetStateAction<string | null>>;
 };
