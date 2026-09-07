@@ -59,6 +59,11 @@ export const useRecipes = (filters: Filters) => {
     await setSize((currentSize) => currentSize + 1);
   };
 
+  const refreshRecipes = async (): Promise<void> => {
+    await setSize(1);
+    await mutate();
+  };
+
   return {
     recipes, //SWRのdataを渡してる
     hasMore,
@@ -66,6 +71,7 @@ export const useRecipes = (filters: Filters) => {
     isLoading,
     isLoadingMore: isValidating && size > 1, //「さらに表示」を押したときにローディング表示を出すための値
     isError: error,
-    mutate,
+    refreshRecipes, // 登録・削除用
+    mutate, // お気に入り・作った状態の変更用
   };
 };

@@ -7,13 +7,11 @@ import AddRecipeUrlModal from './AddRecipeUrlModal';
 import AddRecipeManualModal from './AddRecipeManualModal';
 import PageHeader from './PageHeader';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
-import { RecipePageResponse } from '../_types/RecipeTypes';
-import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  mutate?: SWRInfiniteKeyedMutator<RecipePageResponse[]>;
+  refreshRecipes?: () => Promise<void>;
 };
 
 const titles = {
@@ -22,7 +20,7 @@ const titles = {
   MANUAL: 'オリジナルでレシピ登録する',
 };
 
-const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
+const AddRecipeModalBase = ({ open, onClose, refreshRecipes }: Props) => {
   const [step, setStep] = useState<RecipeModalStep>('select');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -53,7 +51,7 @@ const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
           <AddRecipeUrlModal
             onClose={onClose}
             step={step}
-            mutate={mutate}
+            refreshRecipes={refreshRecipes}
             previewUrl={previewUrl}
             setPreviewUrl={setPreviewUrl}
           />
@@ -63,7 +61,7 @@ const AddRecipeModalBase = ({ open, onClose, mutate }: Props) => {
           <AddRecipeManualModal
             onClose={onClose}
             step={step}
-            mutate={mutate}
+            refreshRecipes={refreshRecipes}
             previewUrl={previewUrl}
             setPreviewUrl={setPreviewUrl}
           />

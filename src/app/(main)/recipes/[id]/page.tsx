@@ -5,7 +5,7 @@
 import BackIcon from '@/app/components/image/BackIcon';
 import CategoryBadge from '@/app/components/image/CategoryBadge';
 import { useRouter, useSearchParams } from 'next/navigation';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import Image from 'next/image';
 import PageTitle from '../styles/PageTitle';
 import type { RecipeDetail } from '../_types/RecipeDetail';
@@ -30,11 +30,12 @@ const RecipeDetail = ({ params }: Props) => {
   const from = searchParams.get('from');
   const date = searchParams.get('date');
 
+  const { mutate: globalMutate } = useSWRConfig();
+
   const {
     data: recipe,
     error,
     isLoading,
-    mutate,
   } = useSWR<RecipeDetail>(`/api/recipes/${id}`, fetcher);
   //ここでdata→fetchで取ったデータ
   //error→エラー情報　isLoading→取得中かどうか
@@ -98,7 +99,14 @@ const RecipeDetail = ({ params }: Props) => {
     if (!res.ok) {
       return;
     }
-    mutate();
+    // レシピ一覧関係の古いキャッシュを破棄
+    await globalMutate(
+      (cacheKey) =>
+        typeof cacheKey === 'string' && cacheKey.includes('/api/recipes?'),
+      undefined,
+      { revalidate: false },
+    );
+
     router.push('/recipes');
   };
 

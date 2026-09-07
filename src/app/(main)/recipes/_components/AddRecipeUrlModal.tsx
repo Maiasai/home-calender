@@ -13,7 +13,6 @@ import { RecipeModalStep } from '../_types/RecipeModalStep';
 import UrlForm from './UrlForm';
 import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import PrimaryButton from '@/components/button/PrimaryButton';
-import { RecipePageResponse } from '../_types/RecipeTypes';
 import { mutate as globalMutate } from 'swr';
 import IngredientList from './IngredientList';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
@@ -21,12 +20,11 @@ import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { supabase } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import ImageUpload from './ImageUpload';
-import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
-  mutate?: SWRInfiniteKeyedMutator<RecipePageResponse[]>;
+  refreshRecipes?: () => Promise<void>;
   previewUrl: string | null;
   setPreviewUrl: Dispatch<SetStateAction<string | null>>;
 };
@@ -34,7 +32,7 @@ type Props = {
 const AddRecipeUrlModal = ({
   onClose,
   step,
-  mutate,
+  refreshRecipes,
   previewUrl,
   setPreviewUrl,
 }: Props) => {
@@ -135,7 +133,7 @@ const AddRecipeUrlModal = ({
       }
 
       onClose();
-      await mutate?.();
+      await refreshRecipes?.();
       await globalMutate(
         //keyが文字列かつ、/api/recipesで始まるものだけ再取得
         (key) => typeof key === 'string' && key.startsWith('/api/recipes'),

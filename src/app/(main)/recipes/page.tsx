@@ -44,6 +44,7 @@ const RecipesPage = () => {
     isLoading,
     isLoadingMore,
     isError,
+    refreshRecipes,
     mutate,
   } = useRecipes({
     //レンダリング時に毎回実行されるもの（setStateされ再レンダリング後に実行）
@@ -110,7 +111,7 @@ const RecipesPage = () => {
       alert('削除に失敗しました');
       return;
     }
-    mutate(); // useRecipes のカスタムフックを再実行>最新データを取得→削除済みのレシピが UI から消える
+    await refreshRecipes(); // useRecipes のカスタムフックを再実行>最新データを取得→削除済みのレシピが UI から消える
     setSelectedIds([]); // チェック選択状態をリセット
     setIsBulkMode(false); // 一括モード解除→チェックボックス自体も消える
   };
@@ -127,7 +128,7 @@ const RecipesPage = () => {
       <AddRecipeModalBase
         open={RecipeModalOpen} //RecipeModalOpenをopenという名前で渡している（モーダル開いているかどうかを子コンポーネントに伝えている）
         onClose={() => setRecipeModalOpen(false)}
-        mutate={mutate}
+        refreshRecipes={refreshRecipes}
       />
       <div className="max-w-3xl mx-auto h-full overflow-hidden flex flex-col ">
         <nav className="flex justify-center border-b-2 md:mb-2 mb-1 shrink-0">

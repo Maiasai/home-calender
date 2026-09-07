@@ -14,17 +14,15 @@ import { useSupabaseSession } from '../../home/_hooks/useSupabaseSession';
 import { RecipeFormValues } from '../_types/RecipeFormValues';
 import { RecipeModalStep } from '../_types/RecipeModalStep';
 import { GetUnitsResponse, UnitData } from '@/app/api/units/route';
-import { RecipePageResponse } from '../_types/RecipeTypes';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '@/lib/supabase';
 import { mutate as globalMutate } from 'swr';
-import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
-  mutate?: SWRInfiniteKeyedMutator<RecipePageResponse[]>;
+  refreshRecipes?: () => Promise<void>;
   previewUrl: string | null;
   setPreviewUrl: Dispatch<SetStateAction<string | null>>;
 };
@@ -37,7 +35,7 @@ type CreateRecipeRequest = RecipeFormValues & {
 const AddRecipeManualModal = ({
   onClose,
   step,
-  mutate,
+  refreshRecipes,
   previewUrl,
   setPreviewUrl,
 }: Props) => {
@@ -155,7 +153,7 @@ const AddRecipeManualModal = ({
         (key) => typeof key === 'string' && key.startsWith('/api/recipes'),
       );
       onClose();
-      await mutate?.();
+      await refreshRecipes?.();
     } catch (err: unknown) {
       if (err instanceof Error) {
         alert(err.message);

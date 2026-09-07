@@ -18,10 +18,10 @@ const toggleStatus = async (
   key: StatusKey, // ← "isFavorite" どのステータスを更新するか
   mutate: SWRInfiniteKeyedMutator<RecipePageResponse[]>, // ← mutate を引数で受け取る
   token: string | null,
-) => {
+): Promise<void> => {
   // UIの先行更新（optimistic update）
   //mutateは再取得だけじゃない。mutate((現在のキャッシュ) => 新しいキャッシュ, false)でキャッシュだけ先に書き換えができてしまう
-  mutate((pages) => {
+  await mutate((pages) => {
     //このrecipesは/api/recipesから取ってきたキャッシュデータ
     if (!pages) return pages;
 
