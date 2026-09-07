@@ -24,7 +24,6 @@ import ImageUpload from './ImageUpload';
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
-  refreshRecipes?: () => Promise<void>;
   previewUrl: string | null;
   setPreviewUrl: Dispatch<SetStateAction<string | null>>;
 };
@@ -32,7 +31,6 @@ type Props = {
 const AddRecipeUrlModal = ({
   onClose,
   step,
-  refreshRecipes,
   previewUrl,
   setPreviewUrl,
 }: Props) => {
@@ -133,10 +131,11 @@ const AddRecipeUrlModal = ({
       }
 
       onClose();
-      await refreshRecipes?.();
       await globalMutate(
         //keyが文字列かつ、/api/recipesで始まるものだけ再取得
-        (key) => typeof key === 'string' && key.startsWith('/api/recipes'),
+        (key) => typeof key === 'string' && key.includes('/api/recipes'),
+        undefined,
+        { revalidate: false },
       );
     } catch (err: unknown) {
       if (err instanceof Error) {

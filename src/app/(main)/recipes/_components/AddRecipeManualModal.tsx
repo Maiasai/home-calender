@@ -22,7 +22,6 @@ import { mutate as globalMutate } from 'swr';
 type Props = {
   onClose: () => void;
   step: RecipeModalStep;
-  refreshRecipes?: () => Promise<void>;
   previewUrl: string | null;
   setPreviewUrl: Dispatch<SetStateAction<string | null>>;
 };
@@ -35,7 +34,6 @@ type CreateRecipeRequest = RecipeFormValues & {
 const AddRecipeManualModal = ({
   onClose,
   step,
-  refreshRecipes,
   previewUrl,
   setPreviewUrl,
 }: Props) => {
@@ -150,10 +148,11 @@ const AddRecipeManualModal = ({
       alert('レシピを登録しました');
       reset(); //成功したら入力欄をクリア
       await globalMutate(
-        (key) => typeof key === 'string' && key.startsWith('/api/recipes'),
+        (key) => typeof key === 'string' && key.includes('/api/recipes?'),
+        undefined,
+        { revalidate: false },
       );
       onClose();
-      await refreshRecipes?.();
     } catch (err: unknown) {
       if (err instanceof Error) {
         alert(err.message);

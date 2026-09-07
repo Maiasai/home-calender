@@ -128,7 +128,6 @@ const RecipesPage = () => {
       <AddRecipeModalBase
         open={RecipeModalOpen} //RecipeModalOpenをopenという名前で渡している（モーダル開いているかどうかを子コンポーネントに伝えている）
         onClose={() => setRecipeModalOpen(false)}
-        refreshRecipes={refreshRecipes}
       />
       <div className="max-w-3xl mx-auto h-full overflow-hidden flex flex-col ">
         <nav className="flex justify-center border-b-2 md:mb-2 mb-1 shrink-0">

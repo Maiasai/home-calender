@@ -11,7 +11,6 @@ import { RecipeModalStep } from '../_types/RecipeModalStep';
 type Props = {
   open: boolean;
   onClose: () => void;
-  refreshRecipes?: () => Promise<void>;
 };
 
 const titles = {
@@ -20,7 +19,7 @@ const titles = {
   MANUAL: 'オリジナルでレシピ登録する',
 };
 
-const AddRecipeModalBase = ({ open, onClose, refreshRecipes }: Props) => {
+const AddRecipeModalBase = ({ open, onClose }: Props) => {
   const [step, setStep] = useState<RecipeModalStep>('select');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -51,7 +50,6 @@ const AddRecipeModalBase = ({ open, onClose, refreshRecipes }: Props) => {
           <AddRecipeUrlModal
             onClose={onClose}
             step={step}
-            refreshRecipes={refreshRecipes}
             previewUrl={previewUrl}
             setPreviewUrl={setPreviewUrl}
           />
@@ -61,7 +59,6 @@ const AddRecipeModalBase = ({ open, onClose, refreshRecipes }: Props) => {
           <AddRecipeManualModal
             onClose={onClose}
             step={step}
-            refreshRecipes={refreshRecipes}
             previewUrl={previewUrl}
             setPreviewUrl={setPreviewUrl}
           />
