@@ -61,7 +61,7 @@ const SearchBar = ({
           />
           {inputKeyword && (
             <button
-              className="text-lg absolute right-20 top-1/2 -translate-y-1/2 block"
+              className="text-lg absolute right-20 mr-1 top-1/2 -translate-y-1/2 block"
               onClick={() => setInputKeyword('')}
             >
               ×
