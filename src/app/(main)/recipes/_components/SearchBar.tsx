@@ -59,6 +59,14 @@ const SearchBar = ({
             className={`w-[259px] h-[34px] pl-8 ${inputClass}`}
             placeholder="料理名、食材でさがす"
           />
+          {inputKeyword && (
+            <button
+              className="text-lg absolute right-20 top-1/2 -translate-y-1/2 block"
+              onClick={() => setInputKeyword('')}
+            >
+              ×
+            </button>
+          )}
           <Image
             src="/images/search_24.png"
             alt="検索アイコン"
