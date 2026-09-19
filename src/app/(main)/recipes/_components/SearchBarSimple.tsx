@@ -38,6 +38,14 @@ const SearchBarSimple = ({
         height={20}
         unoptimized
       />
+      {inputKeyword && (
+        <button
+          className="text-lg absolute right-28 sm:mr-4 mr-2 top-1/2 -translate-y-1/2 block"
+          onClick={() => setInputKeyword('')}
+        >
+          ×
+        </button>
+      )}
 
       <PrimaryButton
         className="flex items-center justify-center gap-1 w-[114px] h-[34px]"
