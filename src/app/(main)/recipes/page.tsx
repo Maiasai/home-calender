@@ -115,7 +115,10 @@ const RecipesPage = () => {
     setSelectedIds([]); // チェック選択状態をリセット
     setIsBulkMode(false); // 一括モード解除→チェックボックス自体も消える
   };
-
+  const handleReset = () => {
+    setInputKeyword('');
+    setKeyword('');
+  };
   //モーダル外 スクロール防止
   useBodyScrollLock({ open: RecipeModalOpen });
 
@@ -152,6 +155,7 @@ const RecipesPage = () => {
               setCookedFilter={setCookedFilter}
               menuOpen={menuOpen}
               setMenuOpen={setMenuOpen}
+              handleReset={handleReset}
             />
           </div>
 

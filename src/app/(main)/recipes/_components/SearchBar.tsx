@@ -25,6 +25,7 @@ type Props = {
   setCookedFilter: (v: boolean) => void;
   menuOpen: boolean;
   setMenuOpen: Dispatch<SetStateAction<boolean>>;
+  handleReset: () => void;
 };
 
 const SearchBar = ({
@@ -42,6 +43,7 @@ const SearchBar = ({
   setCookedFilter,
   menuOpen,
   setMenuOpen,
+  handleReset,
 }: Props) => {
   return (
     <div className="flex flex-col justify-center">
@@ -61,8 +63,9 @@ const SearchBar = ({
           />
           {inputKeyword && (
             <button
+              type="button"
               className="text-lg absolute right-20 mr-1 top-1/2 -translate-y-1/2 block"
-              onClick={() => setInputKeyword('')}
+              onClick={handleReset}
             >
               ×
             </button>

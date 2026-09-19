@@ -9,12 +9,14 @@ type Props = {
   inputKeyword: string;
   setInputKeyword: (v: string) => void;
   setKeyword: (v: string) => void;
+  handleReset: () => void;
 };
 
 const SearchBarSimple = ({
   inputKeyword,
   setInputKeyword,
   setKeyword,
+  handleReset,
 }: Props) => {
   return (
     <div className="flex justify-center mb-4 gap-2 px-6 relative ">
@@ -40,8 +42,9 @@ const SearchBarSimple = ({
       />
       {inputKeyword && (
         <button
+          type="button"
           className="text-lg absolute right-28 sm:mr-4 mr-2 top-1/2 -translate-y-1/2 block"
-          onClick={() => setInputKeyword('')}
+          onClick={() => handleReset()}
         >
           ×
         </button>

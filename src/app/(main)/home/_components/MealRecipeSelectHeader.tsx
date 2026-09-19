@@ -25,6 +25,7 @@ type Props = {
   selectedRecipes: SelectedRecipe[];
   onBack: () => void;
   mode: 'create' | 'edit';
+  handleReset: () => void;
 };
 
 const MealRecipeSelectHeader = ({
@@ -40,6 +41,7 @@ const MealRecipeSelectHeader = ({
   selectedRecipes,
   onBack,
   mode,
+  handleReset,
 }: Props) => {
   const hasSelectedRecipes = selectedRecipes.length > 0;
   const isDisabled = mode === 'create' && !hasSelectedRecipes; //選択なしなら非活性
@@ -63,6 +65,7 @@ const MealRecipeSelectHeader = ({
         inputKeyword={inputKeyword}
         setInputKeyword={setInputKeyword}
         setKeyword={setKeyword}
+        handleReset={handleReset}
       />
       {/* お気に入りと作ったことある絞り込み */}
       <FilterPanel

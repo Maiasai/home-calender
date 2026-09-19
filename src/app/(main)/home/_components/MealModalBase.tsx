@@ -126,6 +126,11 @@ const MealModalBase = ({
     onClose();
   };
 
+  const handleReset = () => {
+    setInputKeyword('');
+    setKeyword('');
+  };
+
   if (!open) return null;
   if (isLoading) return <Loading fullScreen />;
   if (!recipes) return <Empty />;
@@ -185,6 +190,7 @@ const MealModalBase = ({
               selectedRecipes={selectedRecipes}
               onBack={() => setStep('select')}
               mode={mode}
+              handleReset={handleReset}
             />
           )}
 
