@@ -159,52 +159,52 @@ const RecipesPage = () => {
             />
           </div>
 
+          {/* 一括操作モード */}
+          {isBulkMode && (
+            <div className="flex items-center my-1 ml-4 gap-3">
+              <div className="text-sm text-gray200">
+                {selectedIds.length}件選択中
+              </div>
+
+              <div className="flex items-center gap-x-4 ml-6">
+                <button
+                  type="button"
+                  onClick={() => setConfirmOpen(true)}
+                  disabled={selectedIds.length === 0}
+                  className={`shadow-md rounded-lg p-1 transition duration-150 active:scale-95 border border-gray-800${
+                    selectedIds.length === 0
+                      ? 'opacity-50 grayscale cursor-not-allowed'
+                      : 'cursor-pointer'
+                  }`}
+                >
+                  <Image
+                    src="/images/deleate.png"
+                    alt="削除ボタン"
+                    width={70}
+                    height={70}
+                    unoptimized
+                  />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedIds([]);
+                    setIsBulkMode(false);
+                  }}
+                  className="text-sm text-gray-500 shadow-md rounded-lg py-1 px-2 transition duration-150 active:scale-95 border border-gray-100"
+                >
+                  キャンセル
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* レシピ部分だけスクロール */}
           <div
             ref={scrollContainerRef}
             className="flex-1 min-h-0 overflow-y-auto overscroll-contain mt-1 p-2"
           >
-            {/* 一括操作モード */}
-            {isBulkMode && (
-              <div className="flex items-center mb-5 gap-3">
-                <div className="text-sm text-gray200">
-                  {selectedIds.length}件選択中
-                </div>
-
-                <div className="flex items-center gap-x-4 ml-6">
-                  <button
-                    type="button"
-                    onClick={() => setConfirmOpen(true)}
-                    disabled={selectedIds.length === 0}
-                    className={`shadow-md rounded-lg p-1 transition duration-150 active:scale-95 border border-gray-800${
-                      selectedIds.length === 0
-                        ? 'opacity-50 grayscale cursor-not-allowed'
-                        : 'cursor-pointer'
-                    }`}
-                  >
-                    <Image
-                      src="/images/deleate.png"
-                      alt="削除ボタン"
-                      width={70}
-                      height={70}
-                      unoptimized
-                    />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedIds([]);
-                      setIsBulkMode(false);
-                    }}
-                    className="text-sm text-gray-500 shadow-md rounded-lg py-1 px-2 transition duration-150 active:scale-95 border border-gray-100"
-                  >
-                    キャンセル
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* 検索結果ない場合 */}
             {!isLoading && recipes?.length === 0 && (
               <p className="text-center mt-10">
