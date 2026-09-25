@@ -3,9 +3,12 @@
 
 // 全角→半角、スラッシュ変換
 export const normalizeFraction = (input: string): string => {
-  return input
-    .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
-    .replace(/[／∕]/g, '/');
+  return (
+    input
+      //「全角数字の文字コード」と「半角数字の文字コード」の差が、16進数で FEE0（10進数で65248）だから使っている
+      .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
+      .replace(/[／∕]/g, '/')
+  );
 };
 
 // 文字列を小数に変換

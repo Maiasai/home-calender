@@ -231,6 +231,7 @@ export const DELETE = async (request: NextRequest) => {
         familyId: dbUser.activeFamilyId,
       },
     });
+    console.log('献立削除', result);
 
     return NextResponse.json(result, { status: 200 });
   } catch {

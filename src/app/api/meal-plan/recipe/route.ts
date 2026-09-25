@@ -17,23 +17,62 @@ export const DELETE = async (request: NextRequest) => {
         activeFamilyId: true,
       },
     });
-    if (!dbUser?.activeFamilyId) {
+    const familyId = dbUser?.activeFamilyId;
+
+    if (!familyId) {
       return NextResponse.json(
         { message: 'family not found' },
         { status: 404 },
       );
     }
-    const result = await prisma.menuRecipe.deleteMany({
-      where: {
-        id: body.id,
-        menu: {
-          familyId: dbUser.activeFamilyId,
+
+    const result = await prisma.$transaction(async (tx) => {
+      //削除対象のmenuRecipeから親のmenuIdを探す
+      const mealRecipe = await tx.menuRecipe.findFirst({
+        where: {
+          id: body.id,
+          menu: {
+            familyId,
+          },
         },
-      },
+        select: {
+          menuId: true, //献立箱MenuのID
+        },
+      });
+      if (mealRecipe === null) {
+        return null;
+      }
+
+      const deleteResult = await tx.menuRecipe.deleteMany({
+        where: {
+          id: body.id,
+          menu: {
+            familyId,
+          },
+        },
+      });
+
+      //同じmenuidに紐づくmenuRecipeの残数を数える
+      const remainingCount = await tx.menuRecipe.count({
+        //countは単なる数値
+        where: {
+          menuId: mealRecipe.menuId,
+        },
+      });
+      //空箱なら親Menuも削除
+      if (remainingCount === 0) {
+        await tx.menu.deleteMany({
+          where: {
+            id: mealRecipe.menuId,
+            familyId,
+          },
+        });
+      }
+      return deleteResult;
     });
-    if (result.count === 0) {
+    if (result === null) {
       return NextResponse.json(
-        { message: '削除対象の献立が見つかりません' },
+        { message: '対象の献立idが見つかりません' },
         { status: 404 },
       );
     }
